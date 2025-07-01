@@ -1,0 +1,133 @@
+
+import { useState } from "react";
+import { 
+  signInWithEmailAndPassword, 
+  signOut, 
+  getIdToken,
+  createUserWithEmailAndPassword,
+  AuthError
+} from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "../config/firebase";
+import { User } from "../types";
+import { toast } from "@/components/ui/use-toast";
+
+export const useFirebaseAuth = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  
+  const loginWithFirebase = async (email: string, password: string): Promise<User | null> => {
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      try {
+        // Get user data from Firestore
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as User;
+          
+          // Get fresh token with claims
+          await firebaseUser.getIdToken(true);
+          
+          setLoading(false);
+          return userData;
+        } else {
+          // User document doesn't exist in Firestore
+          console.error("User document not found in Firestore");
+          setLoading(false);
+          return null;
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setLoading(false);
+        return null;
+      }
+    } catch (error) {
+      const firebaseError = error as AuthError;
+      let errorMessage = "Invalid email or password";
+      
+      if (firebaseError.code === 'auth/invalid-credential') {
+        errorMessage = "Invalid credentials. Please check your email and password.";
+      } else if (firebaseError.code === 'auth/user-not-found') {
+        errorMessage = "User not found. Please contact your administrator.";
+      } else if (firebaseError.code === 'auth/wrong-password') {
+        errorMessage = "Incorrect password. Please try again.";
+      } else if (firebaseError.code === 'auth/invalid-email') {
+        errorMessage = "Invalid email format.";
+      } else if (firebaseError.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
+      }
+      
+      toast({
+        title: "Login failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
+      setLoading(false);
+      return null;
+    }
+  };
+
+  const registerWithFirebase = async (name: string, email: string, password: string, role: User['role']): Promise<User | null> => {
+    setLoading(true);
+    try {
+      // Create the user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      // Create user data
+      const userData: User = {
+        id: firebaseUser.uid,
+        email: email,
+        name: name,
+        role: role
+      };
+      
+      // Store user data in Firestore
+      await setDoc(doc(db, "users", firebaseUser.uid), userData);
+      
+      setLoading(false);
+      return userData;
+    } catch (error) {
+      const firebaseError = error as AuthError;
+      let errorMessage = "Failed to create account";
+      
+      if (firebaseError.code === 'auth/email-already-in-use') {
+        errorMessage = "This email is already in use.";
+      } else if (firebaseError.code === 'auth/invalid-email') {
+        errorMessage = "Invalid email format.";
+      } else if (firebaseError.code === 'auth/weak-password') {
+        errorMessage = "Password is too weak. Please use a stronger password.";
+      } else if (firebaseError.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
+      }
+      
+      toast({
+        title: "Registration failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
+      setLoading(false);
+      return null;
+    }
+  };
+
+  const logoutFromFirebase = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  return {
+    loginWithFirebase,
+    registerWithFirebase,
+    logoutFromFirebase,
+    loading
+  };
+};

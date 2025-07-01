@@ -1,0 +1,176 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 33% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 33% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 33% 14%;
+
+    --primary: 30 98% 53%;  /* Yellow Box Orange/Yellow */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 30 98% 53%;   /* Yellow Box Orange/Yellow */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 30 98% 53%;     /* Yellow Box Orange/Yellow */
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 26 33% 14%;  /* Yellowbox dark */
+    --sidebar-foreground: 0 0% 100%;  /* Pure white for maximum contrast */
+    --sidebar-primary: 30 98% 53%;    /* Yellow Box Orange/Yellow */
+    --sidebar-primary-foreground: 26 33% 14%;  /* Dark background for contrast on buttons */
+    --sidebar-accent: 218 11% 45%;    /* Lighter accent for better contrast */
+    --sidebar-accent-foreground: 0 0% 100%;  /* Pure white for text in accent areas */
+    --sidebar-border: 0 0% 100%;      /* White border for maximum visibility */
+    --sidebar-ring: 30 98% 53%;       /* Yellow Box Orange/Yellow */
+  }
+
+  .dark {
+    --background: 222 33% 14%;
+    --foreground: 0 0% 98%;
+
+    --card: 222 33% 16%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 222 33% 16%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 30 98% 53%;  /* Yellow Box Orange/Yellow */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 225 15% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 225 15% 20%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 30 98% 53%;   /* Yellow Box Orange/Yellow */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 225 15% 20%;
+    --input: 225 15% 20%;
+    --ring: 30 98% 53%;     /* Yellow Box Orange/Yellow */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    min-height: 100vh;
+  }
+  
+  #root {
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-card rounded-lg shadow-card border border-border p-4 md:p-6 transition-shadow hover:shadow-card-hover;
+  }
+
+  .stat-card {
+    @apply card flex flex-col gap-1;
+  }
+
+  .stat-value {
+    @apply text-2xl font-semibold;
+  }
+
+  .stat-label {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .stat-change {
+    @apply flex items-center text-xs font-medium mt-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-1 rounded text-xs font-medium;
+  }
+
+  /* Premium UI components */
+  .premium-card {
+    @apply bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-xl border border-yellow-500/20 p-6;
+  }
+  
+  .premium-button {
+    @apply bg-gradient-to-r from-yellow-500 to-amber-500 text-white font-medium px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300;
+  }
+  
+  .premium-input {
+    @apply border-2 border-yellow-400/20 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent;
+  }
+}
+
+/* Animation utilities */
+@keyframes shine {
+  0% {
+    background-position: -100% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.shine-effect {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 192, 0, 0.2),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shine 2s infinite;
+}
+
+/* Dubai skyline silhouette for luxury feel */
+.dubai-skyline {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320' fill='%23f97316' opacity='0.05'%3E%3Cpath d='M0,224L40,229.3C80,235,160,245,240,224C320,203,400,149,480,149.3C560,149,640,203,720,197.3C800,192,880,128,960,128C1040,128,1120,192,1200,186.7C1280,181,1360,107,1400,69.3L1440,32L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}

@@ -1,0 +1,76 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - users can only read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations', 'Finance'];
+    }
+    
+    // Riders collection - role-based access
+    match /riders/{riderId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations'];
+      
+      // Rider-Applicants can only read their own data
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Rider-Applicant' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email == resource.data.email;
+    }
+    
+    // Documents collection - role-based access
+    match /documents/{documentId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations'];
+      
+      // Rider-Applicants can only read their own documents
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Rider-Applicant' &&
+        exists(/databases/$(database)/documents/riders/$(resource.data.riderId)) &&
+        get(/databases/$(database)/documents/riders/$(resource.data.riderId)).data.email == 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email;
+    }
+    
+    // Expenses collection - role-based access
+    match /expenses/{expenseId} {
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations', 'Finance'];
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations'];
+      
+      // Finance can approve/reject but not create
+      allow update: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Finance' &&
+        request.resource.data.keys().hasOnly(['status', 'approvedBy', 'approvedAt', 'updatedAt']);
+    }
+    
+    // Budgets collection - Admin and Finance access
+    match /budgets/{budgetId} {
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Finance'];
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Operations';
+    }
+    
+    // Bikes collection - Admin and Operations access
+    match /bikes/{bikeId} {
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations'];
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Rider-Applicant';
+    }
+    
+    // Notifications collection - users can read their own notifications
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations']);
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Operations'];
+    }
+  }
+}
