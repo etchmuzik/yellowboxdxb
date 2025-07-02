@@ -63,7 +63,7 @@ export function ExpensesContent() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Expenses</h1>
-        {(isAdmin || isOperations) && (
+        {(isAdmin || isFinance) && (
           <Button onClick={() => setShowAddExpense(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Expense

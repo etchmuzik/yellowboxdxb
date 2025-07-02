@@ -105,7 +105,17 @@ export function AddExpenseForm({ riderId, onSuccess, onCancel }: AddExpenseFormP
       }
     } catch (error) {
       const err = error as { message?: string };
-      toast.error(err.message || "Failed to add expense");
+      const errorMessage = err.message || "Failed to add expense";
+      
+      let description = errorMessage;
+      
+      if (errorMessage.includes('permission') || errorMessage.includes('Permission')) {
+        description = 'You need Admin or Finance role to create expenses. Please contact an administrator.';
+      } else if (errorMessage.includes('authenticated')) {
+        description = 'Please log in to create expenses.';
+      }
+      
+      toast.error(description);
     } finally {
       setSubmitting(false);
     }

@@ -13,6 +13,7 @@ import { AddExpenseForm } from "./AddExpenseForm";
 import { toast } from "@/components/ui/sonner";
 import { exportRiderData } from "@/utils/exportUtils";
 import { Rider, SpendEvent } from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RiderHeaderProps {
   fullName: string;
@@ -26,6 +27,10 @@ interface RiderHeaderProps {
 export function RiderHeader({ fullName, email, phone, riderId, rider, expenses }: RiderHeaderProps) {
   const navigate = useNavigate();
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+  const { currentUser } = useAuth();
+  
+  const isAdmin = currentUser?.role === 'Admin';
+  const isFinance = currentUser?.role === 'Finance';
   
   const handleExportData = async () => {
     try {
@@ -56,9 +61,11 @@ export function RiderHeader({ fullName, email, phone, riderId, rider, expenses }
           <Button variant="outline" onClick={handleExportData}>
             <Download className="mr-2 h-4 w-4" /> Export Data
           </Button>
-          <Button onClick={() => setIsAddExpenseOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Expense
-          </Button>
+          {(isAdmin || isFinance) && (
+            <Button onClick={() => setIsAddExpenseOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Expense
+            </Button>
+          )}
         </div>
       </div>
 

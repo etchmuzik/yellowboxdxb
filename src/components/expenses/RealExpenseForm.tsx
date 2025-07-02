@@ -137,9 +137,22 @@ export function RealExpenseForm({ onSuccess, preSelectedRiderId }: RealExpenseFo
       onSuccess?.();
     } catch (error) {
       console.error('Error adding expense:', error);
+      
+      // Check if it's a permission error
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add expense';
+      let description = 'Failed to add expense';
+      
+      if (errorMessage.includes('permission') || errorMessage.includes('Permission')) {
+        description = 'You need Admin or Finance role to create expenses. Please contact an administrator.';
+      } else if (errorMessage.includes('authenticated')) {
+        description = 'Please log in to create expenses.';
+      } else {
+        description = errorMessage;
+      }
+      
       toast({
         title: 'Error',
-        description: 'Failed to add expense',
+        description,
         variant: 'destructive',
       });
     } finally {
