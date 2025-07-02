@@ -21,6 +21,10 @@ const Index = () => {
   if (isFinance() && !isAdmin()) {
     return <Navigate to="/finance-dashboard" replace />;
   }
+  
+  if (isOperations() && !isAdmin()) {
+    return <Navigate to="/operations-dashboard" replace />;
+  }
 
   // Show role-specific dashboard for Admin and Operations
   const getDashboardContent = () => {

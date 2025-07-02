@@ -25,7 +25,7 @@ const RequireAuth = ({ children, fallbackPath }: RequireAuthProps) => {
       if (isGenericRoute) {
         const roleRedirects: Record<UserRole, string> = {
           'Admin': '/',
-          'Operations': '/',
+          'Operations': '/operations-dashboard',
           'Finance': '/finance-dashboard',
           'Rider-Applicant': '/rider-dashboard'
         };

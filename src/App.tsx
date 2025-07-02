@@ -20,6 +20,7 @@ import Visas from "./pages/Visas";
 import { Setup } from "./pages/Setup";
 import FinanceDashboard from "./pages/FinanceDashboard";
 import RiderDashboard from "./pages/RiderDashboard";
+import OperationsDashboard from "./pages/OperationsDashboard";
 import RequireAuth from "./components/auth/RequireAuth";
 import RoleGuard from "./components/auth/RoleGuard";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -73,6 +74,18 @@ function App() {
                     allowedRoles={['Rider-Applicant']}
                   >
                     <RiderDashboard />
+                  </RoleGuard>
+                }
+              />
+              <Route
+                path="/operations-dashboard"
+                element={
+                  <RoleGuard 
+                    feature="riders" 
+                    category="navigation"
+                    allowedRoles={['Operations', 'Admin']}
+                  >
+                    <OperationsDashboard />
                   </RoleGuard>
                 }
               />

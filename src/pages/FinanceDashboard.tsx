@@ -23,6 +23,9 @@ import { useAuth } from '@/hooks/use-auth';
 import { ExpenseApprovalList } from '@/components/expenses/ExpenseApprovalList';
 import { BudgetOverview } from '@/components/finance/BudgetOverview';
 import { MonthlyReport } from '@/components/finance/MonthlyReport';
+import { exportFinancialSummaryPDF } from '@/utils/pdfExportUtils';
+import { getAllRiders } from '@/services/riderService';
+import { toast } from '@/components/ui/use-toast';
 
 export default function FinanceDashboard() {
   const { currentUser } = useAuth();
@@ -72,6 +75,24 @@ export default function FinanceDashboard() {
   const remainingBudget = totalBudget - approvedExpenses;
   const budgetUtilization = totalBudget > 0 ? (approvedExpenses / totalBudget) * 100 : 0;
 
+  const handleExportReport = async () => {
+    try {
+      const riders = await getAllRiders();
+      exportFinancialSummaryPDF(allExpenses, budgets, riders);
+      toast({
+        title: 'Report Exported',
+        description: 'Financial summary report has been downloaded successfully.',
+      });
+    } catch (error) {
+      console.error('Error exporting report:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Failed to export report. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -87,7 +108,7 @@ export default function FinanceDashboard() {
           <h1 className="text-3xl font-bold">Finance Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, {currentUser?.name}</p>
         </div>
-        <Button variant="outline">
+        <Button variant="outline" onClick={handleExportReport}>
           <Download className="mr-2 h-4 w-4" />
           Export Report
         </Button>

@@ -2,11 +2,20 @@
 import { Rider, SpendEvent, Budget } from "@/types";
 import { formatCurrency } from "@/utils/dataUtils";
 import { format } from "date-fns";
+import { exportRiderExpensePDF } from "@/utils/pdfExportUtils";
+import {
+  generateMonthlyExpenseReportCSV,
+  generateExpenseDetailsReportCSV,
+  generateBudgetAnalysisReportCSV,
+  generateCategoryBreakdownReportCSV,
+  generateRiderProgressReportCSV,
+  downloadCSV
+} from "@/utils/csvExportUtils";
 
 /**
  * Exports rider data and their expenses as a CSV file
  */
-export const exportRiderData = (rider: Rider, expenses: SpendEvent[]): void => {
+export const exportRiderDataCSV = (rider: Rider, expenses: SpendEvent[]): void => {
   // Format the data for CSV
   const totalSpend = expenses.reduce((acc, expense) => acc + expense.amountAed, 0);
   
@@ -56,74 +65,91 @@ export const exportRiderData = (rider: Rider, expenses: SpendEvent[]): void => {
 };
 
 /**
+ * Exports rider data with format selection
+ */
+export const exportRiderData = (rider: Rider, expenses: SpendEvent[], format: 'csv' | 'pdf' = 'csv'): void => {
+  if (format === 'pdf') {
+    exportRiderExpensePDF(rider, expenses);
+  } else {
+    exportRiderDataCSV(rider, expenses);
+  }
+};
+
+/**
  * Exports a report as a CSV file based on report type
  */
-export const exportReport = (reportType: string): void => {
+export const exportReport = async (reportType: string, month?: Date): Promise<void> => {
   let csvContent = '';
   let filename = '';
   
-  switch (reportType) {
-    case "monthly-expense":
-      csvContent = generateMonthlyExpenseReport();
-      filename = `monthly_expense_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
-      break;
+  try {
+    switch (reportType) {
+      case "monthly-expense":
+        csvContent = await generateMonthlyExpenseReportCSV(month || new Date());
+        filename = `monthly_expense_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+        break;
     case "expense-details":
-      csvContent = generateExpenseDetailsReport();
+      csvContent = await generateExpenseDetailsReportCSV();
       filename = `expense_details_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "budget-analysis":
-      csvContent = generateBudgetAnalysisReport();
+      csvContent = await generateBudgetAnalysisReportCSV();
       filename = `budget_analysis_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "category-breakdown":
-      csvContent = generateCategoryBreakdownReport();
+      csvContent = await generateCategoryBreakdownReportCSV();
       filename = `category_breakdown_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "rider-progress":
-      csvContent = generateRiderProgressReport();
+      csvContent = await generateRiderProgressReportCSV();
       filename = `rider_progress_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "test-results":
+      // TODO: Implement with real data
       csvContent = generateTestResultsReport();
       filename = `test_results_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "rider-expense-log":
+      // TODO: Implement with real data
       csvContent = generateRiderExpenseLogReport();
       filename = `rider_expense_log_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "onboarding-timeline":
+      // TODO: Implement with real data
       csvContent = generateOnboardingTimelineReport();
       filename = `onboarding_timeline_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "document-compliance":
+      // TODO: Implement with real data
       csvContent = generateDocumentComplianceReport();
       filename = `document_compliance_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "visa-status":
+      // TODO: Implement with real data
       csvContent = generateVisaStatusReport();
       filename = `visa_status_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "medical-audit":
+      // TODO: Implement with real data
       csvContent = generateMedicalAuditReport();
       filename = `medical_audit_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     case "receipt-verification":
+      // TODO: Implement with real data
       csvContent = generateReceiptVerificationReport();
       filename = `receipt_verification_report_${format(new Date(), 'yyyy-MM-dd')}.csv`;
       break;
     default:
       console.error(`Unknown report type: ${reportType}`);
       return;
+    }
+    
+    // Download the CSV
+    downloadCSV(csvContent, filename);
+  } catch (error) {
+    console.error(`Error generating ${reportType} report:`, error);
+    throw error;
   }
-  
-  // Create and trigger download
-  const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", filename);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 };
 
 /**

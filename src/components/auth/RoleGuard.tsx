@@ -61,7 +61,7 @@ export default function RoleGuard({
     // User is authenticated but doesn't have the right role
     const roleRedirects: Record<UserRole, string> = {
       'Admin': '/',
-      'Operations': '/',
+      'Operations': '/operations-dashboard',
       'Finance': '/finance-dashboard',
       'Rider-Applicant': '/rider-dashboard'
     };

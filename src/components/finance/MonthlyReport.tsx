@@ -12,6 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { exportMonthlyExpensePDF } from '@/utils/pdfExportUtils';
+import { toast } from '@/components/ui/use-toast';
 
 interface MonthlyReportProps {
   selectedMonth: Date;
@@ -60,13 +62,78 @@ export function MonthlyReport({ selectedMonth, expenses, budget }: MonthlyReport
   );
 
   const handleExportPDF = () => {
-    // TODO: Implement PDF export
-    console.log('Export PDF for', format(selectedMonth, 'MMMM yyyy'));
+    try {
+      exportMonthlyExpensePDF(expenses, budget, selectedMonth);
+      toast({
+        title: 'PDF Exported',
+        description: 'Monthly expense report has been downloaded successfully.',
+      });
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Failed to export PDF. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleExportCSV = () => {
-    // TODO: Implement CSV export
-    console.log('Export CSV for', format(selectedMonth, 'MMMM yyyy'));
+    try {
+      // Create CSV content
+      let csvContent = 'Monthly Expense Report\n';
+      csvContent += `Month: ${format(selectedMonth, 'MMMM yyyy')}\n\n`;
+      
+      // Summary
+      csvContent += 'Summary\n';
+      csvContent += `Total Budget,${budget?.totalBudget || 0}\n`;
+      csvContent += `Approved Expenses,${totalApproved}\n`;
+      csvContent += `Pending Expenses,${totalPending}\n`;
+      csvContent += `Rejected Expenses,${totalRejected}\n\n`;
+      
+      // Expenses by Category
+      csvContent += 'Expenses by Category\n';
+      csvContent += 'Category,Count,Total Amount,Average\n';
+      
+      Object.entries(categoryTotals)
+        .sort(([, a], [, b]) => b.total - a.total)
+        .forEach(([category, data]) => {
+          csvContent += `${category},${data.count},${data.total},${(data.total / data.count).toFixed(2)}\n`;
+        });
+      
+      csvContent += '\nTop Riders by Expense\n';
+      csvContent += 'Rider,Expense Count,Total Amount\n';
+      
+      Object.entries(riderTotals)
+        .sort(([, a], [, b]) => b.total - a.total)
+        .slice(0, 10)
+        .forEach(([, data]) => {
+          csvContent += `"${data.name}",${data.count},${data.total}\n`;
+        });
+      
+      // Create download link
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `expense_report_${format(selectedMonth, 'yyyy-MM')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: 'CSV Exported',
+        description: 'Monthly expense report has been downloaded successfully.',
+      });
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Failed to export CSV. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
