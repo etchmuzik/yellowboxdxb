@@ -21,10 +21,11 @@ service cloud.firestore {
     }
     
     // Check if database is in bootstrap state (no users exist)
+    // IMPORTANT: Set ENABLE_BOOTSTRAP to false in production
     function isBootstrapMode() {
-      // This is a simplified check - in practice, you might want to check multiple collections
-      // For development, we allow bootstrap when authenticated but no user document exists
-      return isAuthenticated() && getUserDataSafe() == null;
+      // Bootstrap mode disabled for production - set to true only for initial setup
+      let ENABLE_BOOTSTRAP = false;
+      return ENABLE_BOOTSTRAP && isAuthenticated() && getUserDataSafe() == null;
     }
     
     function hasRole(role) {

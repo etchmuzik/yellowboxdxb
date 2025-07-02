@@ -4,15 +4,34 @@ import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth"
 import { getFunctions } from "firebase/functions";
 import { getStorage } from "firebase/storage";
 
-// Firebase configuration using environment variables with fallback values
+// Firebase configuration - MUST be set via environment variables
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyAy7LWZ6Ni0x2RiveXFEHaa6R0GYT63wVs",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "yellowbox-8e0e6.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "yellowbox-8e0e6",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "yellowbox-8e0e6.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "47222199157",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:47222199157:web:c5d8e374f6a6054dd7b408"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
+
+// Validate required environment variables
+const requiredEnvVars = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_AUTH_DOMAIN',
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_STORAGE_BUCKET',
+  'VITE_FIREBASE_MESSAGING_SENDER_ID',
+  'VITE_FIREBASE_APP_ID'
+];
+
+const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
+
+if (missingVars.length > 0) {
+  throw new Error(
+    `Missing required environment variables: ${missingVars.join(', ')}. ` +
+    'Please create a .env file based on .env.example and fill in your Firebase configuration.'
+  );
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
