@@ -4,6 +4,8 @@ import { FirestoreService } from "./firestoreService";
 import { COLLECTIONS, FirestoreExpense } from "@/config/firestore-schema";
 import { SpendEvent, SpendCategory } from "@/types";
 import { auth } from "@/config/firebase";
+import { logExpenseActivity } from "./activityService";
+import { NotificationService } from "./notificationService";
 
 export class ExpenseFirestoreService {
   static async getAllExpenses(): Promise<SpendEvent[]> {
@@ -59,7 +61,15 @@ export class ExpenseFirestoreService {
         updatedAt: new Date().toISOString()
       };
 
-      return await FirestoreService.addDocument<FirestoreExpense>(COLLECTIONS.EXPENSES, firestoreData);
+      const expenseId = await FirestoreService.addDocument<FirestoreExpense>(COLLECTIONS.EXPENSES, firestoreData);
+      
+      // Log activity
+      await logExpenseActivity('create', expenseId, expenseData.amountAed, expenseData.riderId);
+      
+      // Send notification to Finance team
+      await NotificationService.notifyExpenseSubmitted(expenseId, expenseData.riderId, expenseData.amountAed);
+      
+      return expenseId;
     } catch (error) {
       console.error("Error creating expense:", error);
       throw error;
@@ -87,12 +97,24 @@ export class ExpenseFirestoreService {
         throw new Error("User must be authenticated to approve expenses");
       }
 
+      // Get expense details for logging
+      const expense = await FirestoreService.getDocument<FirestoreExpense>(COLLECTIONS.EXPENSES, expenseId);
+      if (!expense) {
+        throw new Error('Expense not found');
+      }
+
       await FirestoreService.updateDocument(COLLECTIONS.EXPENSES, expenseId, {
         status: 'Approved',
         approvedBy: currentUser.uid,
         approvedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
+      
+      // Log activity
+      await logExpenseActivity('approve', expenseId, expense.amountAed, expense.riderId);
+      
+      // Send notification to rider
+      await NotificationService.notifyExpenseApproved(expenseId, expense.riderId, expense.amountAed);
     } catch (error) {
       console.error("Error approving expense:", error);
       throw error;
@@ -124,12 +146,24 @@ export class ExpenseFirestoreService {
 
   static async rejectExpense(expenseId: string, reason: string): Promise<void> {
     try {
+      // Get expense details for logging
+      const expense = await FirestoreService.getDocument<FirestoreExpense>(COLLECTIONS.EXPENSES, expenseId);
+      if (!expense) {
+        throw new Error('Expense not found');
+      }
+
       await FirestoreService.updateDocument(COLLECTIONS.EXPENSES, expenseId, {
         status: 'rejected',
         rejectionReason: reason,
         rejectedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
+      
+      // Log activity
+      await logExpenseActivity('reject', expenseId, expense.amountAed, expense.riderId, reason);
+      
+      // Send notification to rider
+      await NotificationService.notifyExpenseRejected(expenseId, expense.riderId, expense.amountAed, reason);
     } catch (error) {
       console.error("Error rejecting expense:", error);
       throw error;

@@ -11,48 +11,58 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-
-type Notification = {
-  id: number;
-  text: string;
-  read: boolean;
-  time: string;
-};
+import { useNotifications } from "@/contexts/NotificationContext";
+import { formatDistanceToNow } from "date-fns";
 
 export function NotificationsMenu() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [notifications, setNotifications] = useState<Notification[]>([
-    { id: 1, text: "Ahmed Hassan started new delivery", read: false, time: "10 min ago" },
-    { id: 2, text: "Sara's road test passed", read: false, time: "25 min ago" },
-    { id: 3, text: "Budget alert: 85% spent this month", read: true, time: "1 hour ago" },
-  ]);
+  const [isOpen, setIsOpen] = useState(false);
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  const handleMarkAllAsRead = async () => {
+    await markAllAsRead();
     toast({
       title: "Notifications",
       description: "All notifications marked as read",
     });
   };
 
-  const handleNotificationClick = (id: number) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
-    navigate("/notifications");
+  const handleNotificationClick = async (notification: any) => {
+    await markAsRead(notification.id);
+    if (notification.actionUrl) {
+      if (notification.actionUrl.startsWith('http')) {
+        window.open(notification.actionUrl, '_blank');
+      } else {
+        navigate(notification.actionUrl);
+      }
+    }
+    setIsOpen(false);
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'expense':
+        return '💰';
+      case 'document':
+        return '📄';
+      case 'rider':
+        return '🏍️';
+      case 'system':
+        return '⚡';
+      default:
+        return '📢';
+    }
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-nike-red text-[10px] font-medium text-white">
-              {unreadCount}
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
+              {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
         </Button>
@@ -64,7 +74,7 @@ export function NotificationsMenu() {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={markAllAsRead}
+              onClick={handleMarkAllAsRead}
               className="text-xs h-6"
             >
               Mark all as read
@@ -81,26 +91,28 @@ export function NotificationsMenu() {
               <DropdownMenuItem 
                 key={notification.id}
                 className={cn(
-                  "flex flex-col items-start p-3 cursor-pointer",
+                  "p-3 cursor-pointer",
                   !notification.read && "bg-muted/50"
                 )}
-                onClick={() => handleNotificationClick(notification.id)}
+                onClick={() => handleNotificationClick(notification)}
               >
-                <div className="font-medium text-left">{notification.text}</div>
-                <div className="text-xs text-muted-foreground mt-1">{notification.time}</div>
+                <div className="flex gap-3 w-full">
+                  <span className="text-xl flex-shrink-0">
+                    {getNotificationIcon(notification.type)}
+                  </span>
+                  <div className="flex-1">
+                    <div className="font-medium text-left">{notification.title}</div>
+                    <div className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      {notification.message}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
+                    </div>
+                  </div>
+                </div>
               </DropdownMenuItem>
             ))
           )}
-        </div>
-        <div className="p-2 border-t">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="w-full justify-center text-center"
-            onClick={() => navigate("/notifications")}
-          >
-            View all notifications
-          </Button>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

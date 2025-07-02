@@ -4,6 +4,7 @@ import { FirestoreService } from "./firestoreService";
 import { COLLECTIONS, FirestoreRider } from "@/config/firestore-schema";
 import { Rider, ApplicationStage, TestStatus } from "@/types";
 import { auth } from "@/config/firebase";
+import { logRiderActivity } from "./activityService";
 
 export class RiderFirestoreService {
   static async getAllRiders(): Promise<Rider[]> {
@@ -54,7 +55,15 @@ export class RiderFirestoreService {
         updatedAt: new Date().toISOString()
       };
 
-      return await FirestoreService.addDocument<FirestoreRider>(COLLECTIONS.RIDERS, firestoreData);
+      const riderId = await FirestoreService.addDocument<FirestoreRider>(COLLECTIONS.RIDERS, firestoreData);
+      
+      // Log activity
+      await logRiderActivity('create', riderId, { 
+        riderName: riderData.fullName,
+        applicationStage: riderData.applicationStage 
+      });
+      
+      return riderId;
     } catch (error) {
       console.error("Error creating rider:", error);
       throw error;
@@ -69,6 +78,14 @@ export class RiderFirestoreService {
       };
       
       await FirestoreService.updateDocument(COLLECTIONS.RIDERS, riderId, firestoreUpdates);
+      
+      // Log activity if status changed
+      if (updates.applicationStage) {
+        await logRiderActivity('update-status', riderId, {
+          newStatus: updates.applicationStage,
+          previousStatus: 'unknown' // In production, fetch previous status
+        });
+      }
     } catch (error) {
       console.error("Error updating rider:", error);
       throw error;

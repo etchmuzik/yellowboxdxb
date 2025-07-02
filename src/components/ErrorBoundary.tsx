@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { logActivity } from '@/services/activityService';
 
 interface Props {
   children: ReactNode;
@@ -30,6 +31,20 @@ export class ErrorBoundary extends Component<Props, State> {
       error,
       errorInfo
     });
+    
+    // Log critical error to activity log
+    logActivity(
+      'system',
+      'error',
+      `Critical error: ${error.message}`,
+      {
+        errorMessage: error.message,
+        errorStack: error.stack,
+        componentStack: errorInfo.componentStack,
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      }
+    ).catch(console.error);
   }
 
   private handleReset = () => {

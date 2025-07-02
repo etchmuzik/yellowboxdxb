@@ -2,6 +2,7 @@
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { Bike } from "../types";
+import { logRiderActivity } from "./activityService";
 
 const COLLECTION = "bikes";
 
@@ -71,11 +72,23 @@ export const assignBikeToRider = async (bikeId: string, riderId: string): Promis
     assignedRiderId: riderId,
     status: 'Assigned'
   });
+  
+  // Log activity
+  await logRiderActivity('assign-bike', riderId, { bikeId });
 };
 
 export const unassignBike = async (bikeId: string): Promise<void> => {
+  // Get the bike to find the rider ID for logging
+  const bike = await getBikeById(bikeId);
+  const riderId = bike?.assignedRiderId;
+  
   await updateDoc(doc(db, COLLECTION, bikeId), { 
     assignedRiderId: null,
     status: 'Available'
   });
+  
+  // Log activity if there was a rider assigned
+  if (riderId) {
+    await logRiderActivity('unassign-bike', riderId, { bikeId });
+  }
 };

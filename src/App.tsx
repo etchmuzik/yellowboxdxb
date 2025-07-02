@@ -4,6 +4,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./hooks/use-auth";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import Login from "./pages/Login";
 import Index from "./pages/Index";
 import Reports from "./pages/Reports";
@@ -24,7 +25,10 @@ import OperationsDashboard from "./pages/OperationsDashboard";
 import RequireAuth from "./components/auth/RequireAuth";
 import RoleGuard from "./components/auth/RoleGuard";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+import { SessionProvider } from "./components/auth/SessionProvider";
 import { initializeAppData } from "./utils/startupInit";
+import { setupGlobalErrorHandlers } from "./services/errorService";
 import { useEffect } from "react";
 import "./App.css";
 
@@ -34,15 +38,18 @@ function App() {
   // Initialize app data on startup
   useEffect(() => {
     initializeAppData();
+    setupGlobalErrorHandlers();
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="driver-expense-theme">
         <AuthProvider>
-          <ErrorBoundary>
-            <BrowserRouter>
-              <Routes>
+          <NotificationProvider>
+            <SessionProvider>
+              <ErrorBoundary>
+                <BrowserRouter>
+                  <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/setup" element={<Setup />} />
               <Route
@@ -173,7 +180,10 @@ function App() {
             </Routes>
           </BrowserRouter>
           <Toaster />
-          </ErrorBoundary>
+          <PWAInstallPrompt />
+              </ErrorBoundary>
+            </SessionProvider>
+          </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

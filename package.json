@@ -70,6 +70,8 @@
     "terser": "^5.39.2",
     "uuid": "^11.1.0",
     "vaul": "^0.9.3",
+    "vite-plugin-pwa": "^1.0.1",
+    "workbox-window": "^7.3.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

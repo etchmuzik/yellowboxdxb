@@ -11,6 +11,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { User } from "../types";
 import { toast } from "sonner";
+import { logAuthActivity } from "../services/activityService";
 
 export const useFirebaseAuth = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,6 +31,12 @@ export const useFirebaseAuth = () => {
           
           // Get fresh token with claims
           await firebaseUser.getIdToken(true);
+          
+          // Log successful login
+          await logAuthActivity('login', firebaseUser.uid, userData.email);
+          
+          // Store user display name for activity logging
+          localStorage.setItem('userDisplayName', userData.name);
           
           setLoading(false);
           return userData;
@@ -114,7 +121,12 @@ export const useFirebaseAuth = () => {
 
   const logoutFromFirebase = async () => {
     try {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await logAuthActivity('logout', currentUser.uid, currentUser.email || 'unknown');
+      }
       await signOut(auth);
+      localStorage.removeItem('userDisplayName');
     } catch (error) {
       console.error("Error signing out:", error);
     }
