@@ -1,10 +1,10 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/hooks/use-auth";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,6 +18,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save, User } from "lucide-react";
+import { getRiderById, updateRider } from "@/services/riderService";
+import { auth } from "@/config/firebase";
+import { updateProfile } from "firebase/auth";
+import type { Rider } from "@/types";
 
 const riderFormSchema = z.object({
   fullName: z.string().min(2, { message: "Name is required" }),
@@ -30,38 +34,68 @@ type RiderFormValues = z.infer<typeof riderFormSchema>;
 export function RiderSettingsForm() {
   const { currentUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const defaultValues: Partial<RiderFormValues> = {
-    fullName: currentUser?.name || "",
-    email: currentUser?.email || "",
-    phone: "", // We would fetch this from the rider profile
-  };
+  const [riderData, setRiderData] = useState<Rider | null>(null);
 
   const form = useForm<RiderFormValues>({
     resolver: zodResolver(riderFormSchema),
-    defaultValues,
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+    },
   });
+
+  useEffect(() => {
+    const loadRiderData = async () => {
+      if (currentUser?.id) {
+        try {
+          const rider = await getRiderById(currentUser.id);
+          if (rider) {
+            setRiderData(rider);
+            form.reset({
+              fullName: rider.fullName || currentUser.name || "",
+              email: rider.email || currentUser.email || "",
+              phone: rider.phone || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error loading rider data:", error);
+        }
+      }
+    };
+
+    loadRiderData();
+  }, [currentUser, form]);
 
   const onSubmit = async (values: RiderFormValues) => {
     setIsSubmitting(true);
     try {
-      // In a real app, we would update the user profile here
-      console.log("Updated profile:", values);
+      // Update Firebase Auth profile if needed
+      const firebaseUser = auth.currentUser;
+      if (firebaseUser && values.fullName !== firebaseUser.displayName) {
+        await updateProfile(firebaseUser, {
+          displayName: values.fullName,
+        });
+      }
+
+      // Update rider profile in Firestore
+      if (currentUser?.id) {
+        await updateRider(currentUser.id, {
+          fullName: values.fullName,
+          email: values.email,
+          phone: values.phone,
+          updatedAt: new Date().toISOString(),
+        });
+      }
       
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Profile updated",
+      toast.success("Profile updated", {
         description: "Your profile information has been updated successfully.",
       });
     } catch (error) {
       console.error("Error updating profile:", error);
       
-      toast({
-        title: "Update failed",
+      toast.error("Update failed", {
         description: "There was a problem updating your profile. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);

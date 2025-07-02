@@ -86,6 +86,31 @@ export class RiderFirestoreService {
 
   // Convert Firestore document to Rider type
   private static convertFromFirestore(firestoreRider: FirestoreRider): Rider {
+    // Valid ApplicationStage values
+    const validStages: ApplicationStage[] = [
+      'Applied', 'Docs Verified', 'Theory Test', 'Road Test', 
+      'Medical', 'ID Issued', 'Active'
+    ];
+    
+    // Validate and provide fallback for applicationStage
+    let applicationStage = firestoreRider.applicationStage as ApplicationStage;
+    if (!validStages.includes(applicationStage)) {
+      console.error(`Invalid applicationStage "${firestoreRider.applicationStage}" for rider ${firestoreRider.id}. Defaulting to "Applied".`);
+      applicationStage = 'Applied';
+    }
+    
+    // Valid TestStatus values
+    const validTestStatuses: TestStatus[] = ['Pending', 'Pass', 'Fail'];
+    
+    // Helper function to validate test status
+    const validateTestStatus = (status: string, field: string): TestStatus => {
+      if (!validTestStatuses.includes(status as TestStatus)) {
+        console.error(`Invalid ${field} status "${status}" for rider ${firestoreRider.id}. Defaulting to "Pending".`);
+        return 'Pending';
+      }
+      return status as TestStatus;
+    };
+    
     return {
       id: firestoreRider.id,
       fullName: firestoreRider.fullName,
@@ -94,11 +119,11 @@ export class RiderFirestoreService {
       email: firestoreRider.email,
       bikeType: firestoreRider.bikeType,
       visaNumber: firestoreRider.visaNumber,
-      applicationStage: firestoreRider.applicationStage as ApplicationStage,
+      applicationStage,
       testStatus: {
-        theory: firestoreRider.testStatus.theory as TestStatus,
-        road: firestoreRider.testStatus.road as TestStatus,
-        medical: firestoreRider.testStatus.medical as TestStatus
+        theory: validateTestStatus(firestoreRider.testStatus.theory, 'theory'),
+        road: validateTestStatus(firestoreRider.testStatus.road, 'road'),
+        medical: validateTestStatus(firestoreRider.testStatus.medical, 'medical')
       },
       joinDate: firestoreRider.joinDate,
       expectedStart: firestoreRider.expectedStart,

@@ -3,6 +3,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sonner toast styles */
+[data-sonner-toaster] {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+[data-sonner-toast] {
+  --normal-bg: hsl(var(--background));
+  --normal-border: hsl(var(--border));
+  --normal-text: hsl(var(--foreground));
+  --success-bg: #10b981;
+  --success-border: #059669;
+  --success-text: #ffffff;
+  --error-bg: #ef4444;
+  --error-border: #dc2626;
+  --error-text: #ffffff;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

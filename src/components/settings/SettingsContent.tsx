@@ -12,22 +12,21 @@ import { useAuth } from "@/hooks/use-auth";
 export function SettingsContent() {
   const { isAdmin, isOperations, isFinance, isRider } = useAuth();
 
-  // If rider, show expanded settings (personal, notifications, bikes view-only)
+  // If rider, show limited settings (personal info and notifications only)
   if (isRider()) {
     return (
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold mb-1">Settings</h1>
           <p className="text-muted-foreground">
-            Configure your preferences and view bike assignments
+            Manage your personal information and preferences
           </p>
         </div>
 
         <Tabs defaultValue="personal">
-          <TabsList className="grid w-full md:w-auto grid-cols-3">
-            <TabsTrigger value="personal">Personal</TabsTrigger>
+          <TabsList className="grid w-full md:w-auto grid-cols-2">
+            <TabsTrigger value="personal">Personal Info</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="bikes">My Bike</TabsTrigger>
           </TabsList>
           
           <TabsContent value="personal" className="space-y-6 mt-6">
@@ -37,27 +36,24 @@ export function SettingsContent() {
           <TabsContent value="notifications" className="space-y-6 mt-6">
             <NotificationSettings />
           </TabsContent>
-
-          <TabsContent value="bikes" className="space-y-6 mt-6">
-            <BikeSettings />
-          </TabsContent>
         </Tabs>
       </div>
     );
   }
 
-  // For admin, operations, and finance roles
-  const canAccessBudget = isAdmin() || isFinance();
-  const canAccessCategories = isAdmin() || isFinance(); // Allow finance to view/manage expense categories
-  const canAccessBikes = isAdmin() || isOperations() || isFinance(); // Allow finance to view bike assignments for cost tracking
-  const canAccessSync = isAdmin();
+  // Role-based access control for staff members
+  const canAccessBudget = isAdmin() || isFinance(); // Only Admin and Finance
+  const canAccessCategories = isAdmin(); // Only Admin can manage categories
+  const canAccessBikes = isAdmin() || isOperations(); // Only Admin and Operations
+  const canAccessApiKeys = isAdmin(); // Only Admin
+  const canAccessSync = isAdmin(); // Only Admin
 
   const getTabsCount = () => {
     let count = 1; // notifications always available
     if (canAccessBudget) count++;
     if (canAccessCategories) count++;
     if (canAccessBikes) count++;
-    if (isAdmin()) count++; // api
+    if (canAccessApiKeys) count++;
     if (canAccessSync) count++;
     return count;
   };
@@ -77,7 +73,7 @@ export function SettingsContent() {
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           {canAccessCategories && <TabsTrigger value="categories">Categories</TabsTrigger>}
           {canAccessBikes && <TabsTrigger value="bikes">Bikes</TabsTrigger>}
-          {isAdmin() && <TabsTrigger value="api">API Keys</TabsTrigger>}
+          {canAccessApiKeys && <TabsTrigger value="api">API Keys</TabsTrigger>}
           {canAccessSync && <TabsTrigger value="sync">Sync</TabsTrigger>}
         </TabsList>
         
@@ -103,7 +99,7 @@ export function SettingsContent() {
           </TabsContent>
         )}
         
-        {isAdmin() && (
+        {canAccessApiKeys && (
           <TabsContent value="api" className="space-y-6 mt-6">
             <ApiSettings />
           </TabsContent>

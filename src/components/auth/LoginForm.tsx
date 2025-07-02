@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 
 interface LoginFormProps {
@@ -20,10 +20,8 @@ export const LoginForm = ({ loginType }: LoginFormProps) => {
     e.preventDefault();
     
     if (!email || !password) {
-      toast({
-        title: "Missing information",
+      toast.error("Missing information", {
         description: "Please enter both email and password",
-        variant: "destructive",
       });
       return;
     }
@@ -31,14 +29,17 @@ export const LoginForm = ({ loginType }: LoginFormProps) => {
     setIsLoading(true);
     
     try {
-      await login(email, password);
+      const success = await login(email, password);
+      if (success) {
+        toast.success("Welcome back!", {
+          description: "Successfully logged in to Yellow Box",
+        });
+      }
       // Auth hook will handle navigation once authenticated
     } catch (error) {
       const err = error as { message?: string };
-      toast({
-        title: "Login failed",
+      toast.error("Login failed", {
         description: err.message || "Invalid email or password",
-        variant: "destructive",
       });
     } finally {
       setIsLoading(false);

@@ -15,7 +15,6 @@ YellowBox is a delivery rider management system built with React/TypeScript that
 - **Routing**: React Router v6
 - **Maps**: Google Maps API via @react-google-maps/api
 - **Forms**: React Hook Form + Zod validation
-- **Charts**: Recharts
 
 ## Development Commands
 

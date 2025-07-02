@@ -9,7 +9,9 @@ export const COLLECTIONS = {
   EXPENSES: "expenses",
   BUDGETS: "budgets",
   BIKES: "bikes",
-  NOTIFICATIONS: "notifications"
+  NOTIFICATIONS: "notifications",
+  BIKE_LOCATIONS: "bikeLocations",
+  DELIVERIES: "deliveries"
 } as const;
 
 // Firestore document interfaces with Firebase-specific fields
@@ -85,5 +87,5 @@ export interface FirestoreNotification {
   type: 'info' | 'warning' | 'error' | 'success';
   read: boolean;
   createdAt: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }

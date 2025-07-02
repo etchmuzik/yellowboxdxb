@@ -10,7 +10,7 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { User } from "../types";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export const useFirebaseAuth = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -60,10 +60,8 @@ export const useFirebaseAuth = () => {
         errorMessage = "Network error. Please check your connection.";
       }
       
-      toast({
-        title: "Login failed",
+      toast.error("Login failed", {
         description: errorMessage,
-        variant: "destructive",
       });
       
       setLoading(false);
@@ -105,10 +103,8 @@ export const useFirebaseAuth = () => {
         errorMessage = "Network error. Please check your connection.";
       }
       
-      toast({
-        title: "Registration failed",
+      toast.error("Registration failed", {
         description: errorMessage,
-        variant: "destructive",
       });
       
       setLoading(false);

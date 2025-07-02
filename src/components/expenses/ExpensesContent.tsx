@@ -9,12 +9,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SpendEvent, Rider } from "@/types";
 import { formatCurrency } from "@/utils/dataUtils";
 import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { RealExpenseForm } from "./RealExpenseForm";
 
 export function ExpensesContent() {
   const [activeTab, setActiveTab] = useState("all");
+  const [showAddExpense, setShowAddExpense] = useState(false);
   const { isAdmin, isOperations, isFinance } = useAuth();
   
-  const { data: expenses, isLoading: expensesLoading } = useQuery<SpendEvent[]>({
+  const { data: expenses, isLoading: expensesLoading, refetch: refetchExpenses } = useQuery<SpendEvent[]>({
     queryKey: ["expenses"],
     queryFn: getAllExpenses
   });
@@ -58,7 +63,27 @@ export function ExpensesContent() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Expenses</h1>
+        {(isAdmin || isOperations) && (
+          <Button onClick={() => setShowAddExpense(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Expense
+          </Button>
+        )}
       </div>
+      
+      <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Expense</DialogTitle>
+          </DialogHeader>
+          <RealExpenseForm 
+            onSuccess={() => {
+              setShowAddExpense(false);
+              refetchExpenses();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">

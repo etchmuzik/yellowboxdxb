@@ -1,40 +1,22 @@
-
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/utils/dataUtils";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { getAllExpenses } from "@/services/expenseService";
 import { SpendEvent } from "@/types";
 
-const COLORS = ["#E52629", "#1A1F2C", "#4CAF50", "#FFC107", "#9C27B0", "#00BCD4", "#795548"];
-
 export function SpendCharts() {
-  const isMobile = useIsMobile();
   const [expenses, setExpenses] = useState<SpendEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
         const data = await getAllExpenses();
-        setExpenses(data);
+        setExpenses(data || []);
       } catch (error) {
         console.error("Error fetching expenses:", error);
+        setError("Failed to load expense data");
       } finally {
         setLoading(false);
       }
@@ -46,21 +28,33 @@ export function SpendCharts() {
   // Calculate spend by category from real data
   const getSpendByCategory = () => {
     const categoryTotals: Record<string, number> = {};
-    expenses.forEach(expense => {
-      categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amount;
-    });
+    if (expenses && expenses.length > 0) {
+      expenses.forEach(expense => {
+        if (expense && expense.category && expense.amountAed) {
+          categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amountAed;
+        }
+      });
+    }
     return categoryTotals;
   };
 
   // Calculate daily spend from real data
   const getDailySpend = () => {
     const dailyTotals: Record<string, number> = {};
-    expenses.forEach(expense => {
-      const date = new Date(expense.date).toISOString().split('T')[0];
-      dailyTotals[date] = (dailyTotals[date] || 0) + expense.amount;
-    });
+    if (expenses && expenses.length > 0) {
+      expenses.forEach(expense => {
+        if (expense && expense.date && expense.amountAed) {
+          try {
+            const date = new Date(expense.date).toISOString().split('T')[0];
+            dailyTotals[date] = (dailyTotals[date] || 0) + expense.amountAed;
+          } catch (e) {
+            console.error("Invalid date:", expense.date);
+          }
+        }
+      });
+    }
 
-    // Convert to array format for charts
+    // Convert to array format for display
     return Object.entries(dailyTotals).map(([date, amount]) => ({
       date,
       amount
@@ -82,7 +76,7 @@ export function SpendCharts() {
         </Card>
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Daily Spend vs Budget</CardTitle>
+            <CardTitle>Daily Spend Trend</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] flex items-center justify-center">
@@ -93,125 +87,117 @@ export function SpendCharts() {
       </div>
     );
   }
-  
-  // Prepare data for Pie Chart
-  const categoryData = Object.entries(getSpendByCategory()).map(
-    ([name, value], index) => ({
-      name,
-      value,
-      color: COLORS[index % COLORS.length],
-    })
-  ).filter(item => item.value > 0);
-  
-  // Daily spend data
+
+  if (error) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
+        <Card className="lg:col-span-3">
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">{error}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const categoryData = getSpendByCategory();
   const dailySpendData = getDailySpend();
-  const currentMonthBudget = 50000; // May budget
-  const dailyBudget = dailySpendData.length > 0 ? currentMonthBudget / dailySpendData.length : 0;
-  
-  // Add budget line to daily spend data
-  const dailySpendWithBudget = dailySpendData.map(item => ({
-    ...item,
-    budget: dailyBudget,
-  }));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-      {/* Spend by Category */}
+      {/* Spend by Category - Simple Table View */}
       <Card className="lg:col-span-1">
         <CardHeader>
           <CardTitle>Spend by Category</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={isMobile ? 80 : 100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  nameKey="name"
-                  label={({ name, percent }) => 
-                    `${name}: ${(percent * 100).toFixed(0)}%`
-                  }
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  formatter={(value: number) => formatCurrency(value)} 
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            {categoryData.map((entry, index) => (
-              <div key={index} className="flex items-center text-sm">
-                <div
-                  className="w-3 h-3 rounded-full mr-1"
-                  style={{ backgroundColor: entry.color }}
-                />
-                <span>{entry.name}</span>
-              </div>
-            ))}
+          <div className="space-y-3">
+            {Object.entries(categoryData).length > 0 ? (
+              Object.entries(categoryData)
+                .sort((a, b) => b[1] - a[1])
+                .map(([category, amount]) => {
+                  const total = Object.values(categoryData).reduce((sum, val) => sum + val, 0);
+                  const percentage = total > 0 ? (amount / total) * 100 : 0;
+                  
+                  return (
+                    <div key={category} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium">{category}</span>
+                        <span className="text-muted-foreground">{formatCurrency(amount)}</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-primary h-2 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })
+            ) : (
+              <p className="text-center text-muted-foreground">No expense data available</p>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Daily Spend vs Budget */}
+      {/* Daily Spend Trend - Simple Table View */}
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle>Daily Spend vs Budget</CardTitle>
+          <CardTitle>Daily Spend Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={dailySpendWithBudget}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={(date) => {
-                    return new Date(date).getDate().toString();
-                  }}
-                />
-                <YAxis 
-                  tickFormatter={(value) => `${value.toLocaleString()}`} 
-                />
-                <Tooltip
-                  labelFormatter={(date) => {
-                    return new Date(date).toLocaleDateString('en-AE', {
-                      month: 'short',
-                      day: 'numeric'
-                    });
-                  }}
-                  formatter={(value: number) => [formatCurrency(value), ""]}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="amount"
-                  name="Daily Spend"
-                  stroke="#E52629"
-                  activeDot={{ r: 8 }}
-                  strokeWidth={2}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="budget"
-                  name="Daily Budget"
-                  stroke="#1A1F2C"
-                  strokeDasharray="5 5"
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <div className="space-y-2">
+            {dailySpendData.length > 0 ? (
+              <>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Total Spend</p>
+                    <p className="text-2xl font-bold">
+                      {formatCurrency(dailySpendData.reduce((sum, day) => sum + day.amount, 0))}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Daily Average</p>
+                    <p className="text-2xl font-bold">
+                      {formatCurrency(
+                        dailySpendData.length > 0 
+                          ? dailySpendData.reduce((sum, day) => sum + day.amount, 0) / dailySpendData.length
+                          : 0
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="max-h-[200px] overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2">Date</th>
+                        <th className="text-right py-2">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dailySpendData.slice(-10).reverse().map((day) => (
+                        <tr key={day.date} className="border-b">
+                          <td className="py-2">
+                            {new Date(day.date).toLocaleDateString('en-AE', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </td>
+                          <td className="text-right py-2 font-medium">
+                            {formatCurrency(day.amount)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <p className="text-center text-muted-foreground">No expense data available</p>
+            )}
           </div>
         </CardContent>
       </Card>

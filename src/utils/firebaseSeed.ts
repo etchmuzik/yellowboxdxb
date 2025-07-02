@@ -13,6 +13,6 @@ export const seedFirestore = async () => {
 };
 
 // The helper functions below are kept for reference but are no longer used
-async function seedCollection(collectionName: string, items: any[]) {
+async function seedCollection<T>(collectionName: string, items: T[]) {
   // Function has been disabled for production use
 }

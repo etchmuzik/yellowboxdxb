@@ -15,9 +15,17 @@ export type SpendCategory =
   | 'Visa Fees' 
   | 'RTA Tests' 
   | 'Medical' 
+  | 'Medical Test'
+  | 'Emirates ID'
+  | 'RTA Theory Test'
+  | 'RTA Road Test'
+  | 'Eye Test'
+  | 'Bike Maintenance'
   | 'Residency ID' 
   | 'Training' 
   | 'Uniform' 
+  | 'Insurance'
+  | 'Fuel'
   | 'Other';
 
 // Document types and status

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yellow Box - Debug Riders Database</title>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        button {
+            background: #FFC107;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover {
+            background: #ffb300;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .rider-list {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .rider-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background: #f9f9f9;
+        }
+        .rider-item:last-child {
+            border-bottom: none;
+        }
+        .rider-item strong {
+            color: #333;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🟡 Yellow Box - Debug Riders Database</h1>
+        
+        <div id="status" class="status info">Initializing Firebase...</div>
+        
+        <div id="userInfo" class="debug-section" style="display: none;">
+            <h3>Current User Info</h3>
+            <div id="userDetails"></div>
+        </div>
+
+        <div id="actions" style="display: none;">
+            <h3>Debug Actions</h3>
+            <button onclick="checkRiders()">Check All Riders</button>
+            <button onclick="checkUserPermissions()">Check My Permissions</button>
+            <button onclick="createSampleRider()">Create Sample Rider</button>
+            <button onclick="testExpenseQuery()">Test Expense Query</button>
+            <button onclick="checkFirestoreRules()">Check Firestore Access</button>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+        
+        <div id="ridersList" class="rider-list" style="display: none; margin-top: 20px;">
+            <h3 style="padding: 15px; margin: 0; background: #f0f0f0;">Riders in Database</h3>
+            <div id="ridersContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAy7LWZ6Ni0x2RiveXFEHaa6R0GYT63wVs",
+            authDomain: "yellowbox-8e0e6.firebaseapp.com",
+            projectId: "yellowbox-8e0e6",
+            storageBucket: "yellowbox-8e0e6.appspot.com",
+            messagingSenderId: "47222199157",
+            appId: "1:47222199157:web:c5d8e374f6a6054dd7b408"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function showResults(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            results.appendChild(div);
+        }
+
+        // Auth state observer
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                updateStatus(`Signed in as: ${user.email}`, 'success');
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('actions').style.display = 'block';
+                
+                // Show current user details
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.exists ? userDoc.data() : { role: 'Not found in users collection' };
+                
+                document.getElementById('userDetails').innerHTML = `
+                    <strong>Email:</strong> ${user.email}<br>
+                    <strong>UID:</strong> ${user.uid}<br>
+                    <strong>Role:</strong> ${userData.role || 'No role set'}<br>
+                    <strong>Email Verified:</strong> ${user.emailVerified ? 'Yes' : 'No'}
+                `;
+            } else {
+                updateStatus('Not signed in. Redirecting to login...', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            }
+        });
+
+        async function checkRiders() {
+            try {
+                showResults('Fetching riders from Firestore...', 'info');
+                
+                const snapshot = await db.collection('riders').get();
+                
+                if (snapshot.empty) {
+                    showResults('❌ No riders found in database!', 'error');
+                    showResults('This is why the dropdown is empty. You need to add riders first.', 'warning');
+                    return;
+                }
+
+                showResults(`✅ Found ${snapshot.size} riders in database`, 'success');
+                
+                const ridersList = document.getElementById('ridersList');
+                const ridersContent = document.getElementById('ridersContent');
+                ridersList.style.display = 'block';
+                ridersContent.innerHTML = '';
+                
+                snapshot.forEach((doc) => {
+                    const rider = doc.data();
+                    const riderDiv = document.createElement('div');
+                    riderDiv.className = 'rider-item';
+                    riderDiv.innerHTML = `
+                        <strong>ID:</strong> ${doc.id}<br>
+                        <strong>Name:</strong> ${rider.fullName || 'No name'}<br>
+                        <strong>Email:</strong> ${rider.email || 'No email'}<br>
+                        <strong>Phone:</strong> ${rider.phone || 'No phone'}<br>
+                        <strong>Stage:</strong> ${rider.applicationStage || 'No stage'}<br>
+                        <strong>Created:</strong> ${rider.createdAt ? new Date(rider.createdAt).toLocaleString() : 'Unknown'}
+                    `;
+                    ridersContent.appendChild(riderDiv);
+                });
+                
+                // Also log the raw data for debugging
+                console.log('All riders data:', snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                
+            } catch (error) {
+                showResults(`Error fetching riders: ${error.message}`, 'error');
+                console.error('Full error:', error);
+            }
+        }
+
+        async function checkUserPermissions() {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    showResults('No user logged in', 'error');
+                    return;
+                }
+
+                // Check user document
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                    showResults('❌ User document not found in Firestore', 'error');
+                    return;
+                }
+
+                const userData = userDoc.data();
+                showResults(`User role: ${userData.role}`, 'info');
+                
+                // Check if user can assign costs
+                const canAssignCosts = ['Admin', 'Finance'].includes(userData.role);
+                if (canAssignCosts) {
+                    showResults('✅ You have permission to assign costs', 'success');
+                } else {
+                    showResults('❌ You need Admin or Finance role to assign costs', 'warning');
+                }
+
+                // Try to read riders
+                try {
+                    const testRead = await db.collection('riders').limit(1).get();
+                    showResults('✅ Can read riders collection', 'success');
+                } catch (readError) {
+                    showResults('❌ Cannot read riders collection: ' + readError.message, 'error');
+                }
+
+            } catch (error) {
+                showResults(`Permission check error: ${error.message}`, 'error');
+            }
+        }
+
+        async function createSampleRider() {
+            try {
+                const sampleRider = {
+                    fullName: 'Test Rider ' + Date.now(),
+                    email: `test${Date.now()}@yellowbox.com`,
+                    phone: '+971501234567',
+                    nationality: 'Test',
+                    bikeType: 'Honda PCX',
+                    visaNumber: 'TEST-' + Date.now(),
+                    applicationStage: 'Applied',
+                    testStatus: {
+                        theory: 'Pending',
+                        road: 'Pending',
+                        medical: 'Pending'
+                    },
+                    joinDate: new Date().toISOString().split('T')[0],
+                    expectedStart: new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
+                    notes: 'Created by debug script',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: auth.currentUser.uid
+                };
+
+                const docRef = await db.collection('riders').add(sampleRider);
+                showResults(`✅ Created sample rider with ID: ${docRef.id}`, 'success');
+                
+                // Refresh riders list
+                await checkRiders();
+                
+            } catch (error) {
+                showResults(`Error creating rider: ${error.message}`, 'error');
+            }
+        }
+
+        async function testExpenseQuery() {
+            try {
+                // Test the exact query used in the expense form
+                showResults('Testing expense-related queries...', 'info');
+                
+                // Check expenses collection
+                const expensesSnapshot = await db.collection('expenses').limit(5).get();
+                showResults(`Found ${expensesSnapshot.size} expenses in database`, 'info');
+                
+                // Check if we can create an expense (dry run)
+                const testExpense = {
+                    riderId: 'test-rider-id',
+                    category: 'Visa Fees',
+                    amountAed: 100,
+                    date: new Date().toISOString(),
+                    description: 'Test expense',
+                    createdBy: auth.currentUser.uid
+                };
+                
+                showResults('Test expense object: ' + JSON.stringify(testExpense, null, 2), 'info');
+                
+                // Check SpendCategory values
+                const validCategories = ['Visa Fees', 'RTA Tests', 'Medical', 'Residency ID', 'Training', 'Uniform', 'Other'];
+                showResults('Valid categories in types: ' + validCategories.join(', '), 'info');
+                
+            } catch (error) {
+                showResults(`Expense query error: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkFirestoreRules() {
+            try {
+                showResults('Checking Firestore access permissions...', 'info');
+                
+                const collections = ['users', 'riders', 'expenses', 'budgets'];
+                
+                for (const collection of collections) {
+                    try {
+                        const snapshot = await db.collection(collection).limit(1).get();
+                        showResults(`✅ Can read ${collection} collection`, 'success');
+                    } catch (error) {
+                        showResults(`❌ Cannot read ${collection}: ${error.message}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                showResults(`Rules check error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check riders on load
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                setTimeout(() => {
+                    checkRiders();
+                    checkUserPermissions();
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

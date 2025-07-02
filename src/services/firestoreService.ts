@@ -12,7 +12,8 @@ import {
   orderBy, 
   limit,
   serverTimestamp,
-  Timestamp 
+  Timestamp,
+  QueryConstraint 
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { COLLECTIONS } from "@/config/firestore-schema";
@@ -49,7 +50,7 @@ export class FirestoreService {
 
   static async queryCollection<T>(
     collectionName: string, 
-    ...queryConstraints: any[]
+    ...queryConstraints: QueryConstraint[]
   ): Promise<T[]> {
     try {
       const q = query(collection(db, collectionName), ...queryConstraints);
@@ -80,10 +81,10 @@ export class FirestoreService {
     }
   }
 
-  static async updateDocument(
+  static async updateDocument<T>(
     collectionName: string, 
     docId: string, 
-    data: Partial<any>
+    data: Partial<T>
   ): Promise<void> {
     try {
       const docRef = doc(db, collectionName, docId);
@@ -107,10 +108,16 @@ export class FirestoreService {
   }
 
   // Helper function to convert Firestore timestamps to ISO strings
-  static timestampToISOString(timestamp: any): string {
-    if (timestamp?.toDate) {
+  static timestampToISOString(timestamp: Timestamp | Date | string | null | undefined): string {
+    if (timestamp instanceof Timestamp) {
       return timestamp.toDate().toISOString();
     }
-    return timestamp || new Date().toISOString();
+    if (timestamp instanceof Date) {
+      return timestamp.toISOString();
+    }
+    if (typeof timestamp === 'string') {
+      return timestamp;
+    }
+    return new Date().toISOString();
   }
 }

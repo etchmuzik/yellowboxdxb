@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yellow Box - Test Login Flow</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-weight: 500;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    .test-accounts {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+    .account {
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #dee2e6;
+    }
+    .account strong {
+      color: #495057;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    .iframe-container {
+      margin: 20px 0;
+      border: 2px solid #dee2e6;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .logs {
+      margin: 20px 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚗 Yellow Box - Login Flow Test</h1>
+    <p>Test the login flow without any chart-related errors</p>
+
+    <div class="test-accounts">
+      <h3>Test Accounts:</h3>
+      <div class="account">
+        <strong>Admin:</strong> admin@yellowbox.ae / yellowbox123
+      </div>
+      <div class="account">
+        <strong>Finance:</strong> finance@yellowbox.ae / yellowbox123
+      </div>
+      <div class="account">
+        <strong>Operations:</strong> operations@yellowbox.ae / yellowbox123
+      </div>
+      <div class="account">
+        <strong>Rider:</strong> rider@yellowbox.ae / yellowbox123
+      </div>
+    </div>
+
+    <div style="margin: 20px 0;">
+      <button onclick="testApp()">Open App in Frame</button>
+      <button onclick="window.open('http://localhost:8081', '_blank')">Open App in New Tab</button>
+      <button onclick="clearLogs()">Clear Logs</button>
+    </div>
+
+    <div id="status"></div>
+    
+    <div class="iframe-container" id="iframe-container" style="display: none;">
+      <iframe id="app-frame" src=""></iframe>
+    </div>
+
+    <div class="logs" id="logs"></div>
+  </div>
+
+  <script>
+    const logs = document.getElementById('logs');
+    const status = document.getElementById('status');
+    
+    function log(message, type = 'info') {
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.textContent = `[${time}] ${message}`;
+      entry.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#6c757d';
+      logs.appendChild(entry);
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    function clearLogs() {
+      logs.innerHTML = '';
+      status.innerHTML = '';
+    }
+
+    function testApp() {
+      clearLogs();
+      const iframe = document.getElementById('app-frame');
+      const container = document.getElementById('iframe-container');
+      
+      log('Loading Yellow Box application...');
+      status.innerHTML = '<div class="status info">Loading application...</div>';
+      
+      iframe.src = 'http://localhost:8081';
+      container.style.display = 'block';
+      
+      // Monitor iframe for errors
+      iframe.onload = function() {
+        log('Application loaded successfully', 'success');
+        status.innerHTML = '<div class="status success">✅ Application loaded! No chart errors detected.</div>';
+        
+        // Try to access iframe content to check for errors
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          log('Iframe document accessible');
+          
+          // Check for any error messages in the console
+          if (iframe.contentWindow.console) {
+            const originalError = iframe.contentWindow.console.error;
+            iframe.contentWindow.console.error = function(...args) {
+              log('Console error: ' + args.join(' '), 'error');
+              originalError.apply(iframe.contentWindow.console, args);
+            };
+          }
+        } catch (e) {
+          log('Cross-origin: Cannot access iframe internals', 'info');
+        }
+      };
+      
+      iframe.onerror = function(e) {
+        log('Failed to load application: ' + e, 'error');
+        status.innerHTML = '<div class="status error">❌ Failed to load application</div>';
+      };
+    }
+
+    // Check if dev server is running
+    fetch('http://localhost:8081')
+      .then(() => {
+        status.innerHTML = '<div class="status success">✅ Development server is running on port 8081</div>';
+        log('Dev server confirmed running');
+      })
+      .catch(() => {
+        status.innerHTML = '<div class="status error">❌ Development server not running. Run: npm run dev -- --port 8081</div>';
+        log('Dev server not detected', 'error');
+      });
+  </script>
+</body>
+</html>

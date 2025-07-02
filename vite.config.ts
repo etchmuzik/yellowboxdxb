@@ -32,11 +32,15 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           // Split code into chunks for better loading performance
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          firebase: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
-          ui: ['@/components/ui'],
+          'react-vendor': ['react', 'react-dom'],
+          'firebase-auth': ['firebase/app', 'firebase/auth'],
+          'firebase-db': ['firebase/firestore', 'firebase/storage', 'firebase/functions'],
+          'router': ['react-router-dom'],
+          'radix-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select', '@radix-ui/react-tabs', '@radix-ui/react-toast'],
+          'utils': ['date-fns', 'clsx', 'tailwind-merge'],
         }
       }
-    }
+    },
+    chunkSizeWarningLimit: 600
   }
 }));

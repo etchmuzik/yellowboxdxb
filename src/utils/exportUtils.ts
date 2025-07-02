@@ -286,42 +286,42 @@ const generateRiderProgressReport = (): string => {
 
 const generateTestResultsReport = (): string => {
   // Implementation for test results report
-  let csvContent = "Test Results Analysis Report\n\n";
+  const csvContent = "Test Results Analysis Report\n\n";
   return csvContent;
 };
 
 const generateRiderExpenseLogReport = (): string => {
   // Implementation for rider expense log report
-  let csvContent = "Rider Expense Log Report\n\n";
+  const csvContent = "Rider Expense Log Report\n\n";
   return csvContent;
 };
 
 const generateOnboardingTimelineReport = (): string => {
   // Implementation for onboarding timeline report
-  let csvContent = "Onboarding Timeline Report\n\n";
+  const csvContent = "Onboarding Timeline Report\n\n";
   return csvContent;
 };
 
 const generateDocumentComplianceReport = (): string => {
   // Implementation for document compliance report
-  let csvContent = "Document Compliance Report\n\n";
+  const csvContent = "Document Compliance Report\n\n";
   return csvContent;
 };
 
 const generateVisaStatusReport = (): string => {
   // Implementation for visa status report
-  let csvContent = "Visa Status Report\n\n";
+  const csvContent = "Visa Status Report\n\n";
   return csvContent;
 };
 
 const generateMedicalAuditReport = (): string => {
   // Implementation for medical audit report
-  let csvContent = "Medical Certificate Audit Report\n\n";
+  const csvContent = "Medical Certificate Audit Report\n\n";
   return csvContent;
 };
 
 const generateReceiptVerificationReport = (): string => {
   // Implementation for receipt verification report
-  let csvContent = "Receipt Verification Report\n\n";
+  const csvContent = "Receipt Verification Report\n\n";
   return csvContent;
 };

@@ -1,6 +1,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ApplicationStage } from "@/types";
+import { ApplicationStage, Bike } from "@/types";
+import { useEffect, useState } from "react";
+import { getBikeByRiderId } from "@/services/bikeService";
 
 interface RiderInfoCardProps {
   nationality: string;
@@ -25,6 +27,9 @@ export function RiderInfoCard({
   currentStageIndex,
   riderId
 }: RiderInfoCardProps) {
+  const [assignedBike, setAssignedBike] = useState<Bike | null>(null);
+  const [loadingBike, setLoadingBike] = useState(true);
+
   // Define application stages for the timeline
   const stages = [
     "Applied",
@@ -36,8 +41,23 @@ export function RiderInfoCard({
     "Active",
   ];
 
-  // TODO: Implement bike assignment from Firebase when bike management is ready
-  const assignedBike = null;
+  useEffect(() => {
+    const fetchAssignedBike = async () => {
+      try {
+        setLoadingBike(true);
+        const bike = await getBikeByRiderId(riderId);
+        setAssignedBike(bike);
+      } catch (error) {
+        console.error("Error fetching assigned bike:", error);
+      } finally {
+        setLoadingBike(false);
+      }
+    };
+
+    if (riderId) {
+      fetchAssignedBike();
+    }
+  }, [riderId]);
 
   return (
     <Card className="md:col-span-2">

@@ -17,19 +17,30 @@ import BikeTracker from "./pages/BikeTracker";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Visas from "./pages/Visas";
+import { Setup } from "./pages/Setup";
 import RequireAuth from "./components/auth/RequireAuth";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { initializeAppData } from "./utils/startupInit";
+import { useEffect } from "react";
 import "./App.css";
 
 const queryClient = new QueryClient();
 
 function App() {
+  // Initialize app data on startup
+  useEffect(() => {
+    initializeAppData();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="driver-expense-theme">
         <AuthProvider>
-          <BrowserRouter>
-            <Routes>
+          <ErrorBoundary>
+            <BrowserRouter>
+              <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/setup" element={<Setup />} />
               <Route
                 path="/"
                 element={
@@ -122,6 +133,7 @@ function App() {
             </Routes>
           </BrowserRouter>
           <Toaster />
+          </ErrorBoundary>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

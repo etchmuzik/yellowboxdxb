@@ -41,7 +41,14 @@ export function StageBadge({ stage, className, size = "default" }: StageBadgePro
     "Active": { bg: "bg-green-100", text: "text-green-800" },
   };
 
-  const { bg, text } = stageColors[stage];
+  // Provide fallback for unknown stages
+  const colorConfig = stageColors[stage] || { bg: "bg-gray-100", text: "text-gray-800" };
+  const { bg, text } = colorConfig;
+  
+  // Log warning if unknown stage is encountered
+  if (!stageColors[stage]) {
+    console.warn(`Unknown application stage: "${stage}". Using default colors.`);
+  }
 
   return (
     <div
