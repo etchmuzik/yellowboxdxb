@@ -10,6 +10,9 @@ export const getBikes = async (): Promise<Bike[]> => {
   return bikesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Bike));
 };
 
+// Alias for consistency with other services
+export const getAllBikes = getBikes;
+
 export const getBikeById = async (bikeId: string): Promise<Bike | null> => {
   const bikeDoc = await getDoc(doc(db, COLLECTION, bikeId));
   if (bikeDoc.exists()) {

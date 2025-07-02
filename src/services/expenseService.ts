@@ -29,3 +29,11 @@ export const approveExpense = async (expenseId: string): Promise<void> => {
 export const deleteExpense = async (expenseId: string): Promise<void> => {
   return await ExpenseFirestoreService.deleteExpense(expenseId);
 };
+
+export const getExpensesByStatus = async (status: 'pending' | 'approved' | 'rejected'): Promise<SpendEvent[]> => {
+  return await ExpenseFirestoreService.getExpensesByStatus(status);
+};
+
+export const rejectExpense = async (expenseId: string, reason: string): Promise<void> => {
+  return await ExpenseFirestoreService.rejectExpense(expenseId, reason);
+};

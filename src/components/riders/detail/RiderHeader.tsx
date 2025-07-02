@@ -13,7 +13,7 @@ import { AddExpenseForm } from "./AddExpenseForm";
 import { toast } from "@/components/ui/sonner";
 import { exportRiderData } from "@/utils/exportUtils";
 import { Rider, SpendEvent } from "@/types";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/use-auth";
 
 interface RiderHeaderProps {
   fullName: string;

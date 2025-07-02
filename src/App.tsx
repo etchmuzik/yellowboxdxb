@@ -18,7 +18,10 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Visas from "./pages/Visas";
 import { Setup } from "./pages/Setup";
+import FinanceDashboard from "./pages/FinanceDashboard";
+import RiderDashboard from "./pages/RiderDashboard";
 import RequireAuth from "./components/auth/RequireAuth";
+import RoleGuard from "./components/auth/RoleGuard";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { initializeAppData } from "./utils/startupInit";
 import { useEffect } from "react";
@@ -50,43 +53,67 @@ function App() {
                 }
               />
               <Route
+                path="/finance-dashboard"
+                element={
+                  <RoleGuard 
+                    feature="expenses" 
+                    category="navigation"
+                    allowedRoles={['Finance', 'Admin']}
+                  >
+                    <FinanceDashboard />
+                  </RoleGuard>
+                }
+              />
+              <Route
+                path="/rider-dashboard"
+                element={
+                  <RoleGuard 
+                    feature="dashboard" 
+                    category="navigation"
+                    allowedRoles={['Rider-Applicant']}
+                  >
+                    <RiderDashboard />
+                  </RoleGuard>
+                }
+              />
+              <Route
                 path="/reports"
                 element={
-                  <RequireAuth>
+                  <RoleGuard feature="reports" category="navigation">
                     <Reports />
-                  </RequireAuth>
+                  </RoleGuard>
                 }
               />
               <Route
                 path="/riders"
                 element={
-                  <RequireAuth>
+                  <RoleGuard feature="riders" category="navigation">
                     <Riders />
-                  </RequireAuth>
+                  </RoleGuard>
                 }
               />
               <Route
                 path="/riders/:riderId"
                 element={
-                  <RequireAuth>
+                  <RoleGuard feature="riders" category="navigation">
                     <RiderDetail />
-                  </RequireAuth>
+                  </RoleGuard>
                 }
               />
               <Route
                 path="/expenses"
                 element={
-                  <RequireAuth>
+                  <RoleGuard feature="expenses" category="navigation">
                     <Expenses />
-                  </RequireAuth>
+                  </RoleGuard>
                 }
               />
               <Route
                 path="/visas"
                 element={
-                  <RequireAuth>
+                  <RoleGuard feature="visas" category="navigation">
                     <Visas />
-                  </RequireAuth>
+                  </RoleGuard>
                 }
               />
               <Route
@@ -100,9 +127,9 @@ function App() {
               <Route
                 path="/activity"
                 element={
-                  <RequireAuth>
+                  <RoleGuard feature="activity" category="navigation">
                     <Activity />
-                  </RequireAuth>
+                  </RoleGuard>
                 }
               />
               <Route
@@ -116,9 +143,9 @@ function App() {
               <Route
                 path="/bike-tracker"
                 element={
-                  <RequireAuth>
+                  <RoleGuard feature="bikeTracker" category="navigation">
                     <BikeTracker />
-                  </RequireAuth>
+                  </RoleGuard>
                 }
               />
               <Route

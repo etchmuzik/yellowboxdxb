@@ -13,6 +13,8 @@ export const getBudgets = async (): Promise<Budget[]> => {
   }) as Budget);
 };
 
+export const getAllBudgets = getBudgets; // Alias for consistency
+
 export const getCurrentBudget = async (): Promise<Budget | null> => {
   const currentMonth = new Date().toISOString().slice(0, 7); // Format: YYYY-MM
   

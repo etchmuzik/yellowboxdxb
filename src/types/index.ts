@@ -70,27 +70,41 @@ export interface Rider {
 export type SpendEvent = {
   id: string;
   riderId: string;
+  riderName?: string; // Added for display purposes
   category: SpendCategory;
   amountAed: number;
   date: string; // ISO date string
   description: string;
   receiptUrl?: string;
+  status?: 'pending' | 'approved' | 'rejected'; // Added status field
+  rejectionReason?: string; // Added for rejected expenses
+  approvedAt?: string; // ISO date string
+  rejectedAt?: string; // ISO date string
+  createdAt?: string; // ISO date string
+  updatedAt?: string; // ISO date string
 }
 
 // Budget data type
 export interface Budget {
-  id: string; // Adding id property to the Budget interface
+  id: string;
   month: string; // Format: YYYY-MM
-  allocatedAed: number;
+  allocatedAed: number; // Deprecated, use totalBudget
   spentAed: number; // Calculated from SpendEvents
+  totalBudget: number; // Total budget for the month
+  categoryBudgets?: Record<SpendCategory, number>; // Budget allocation per category
+  createdAt?: string; // ISO date string
+  updatedAt?: string; // ISO date string
 }
+
+// User role type
+export type UserRole = 'Admin' | 'Operations' | 'Finance' | 'Rider-Applicant';
 
 // User data type
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'Admin' | 'Operations' | 'Finance' | 'Rider-Applicant';
+  role: UserRole;
   password?: string; // Added optional password field for mock testing
 }
 

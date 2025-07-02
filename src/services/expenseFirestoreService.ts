@@ -108,6 +108,34 @@ export class ExpenseFirestoreService {
     }
   }
 
+  static async getExpensesByStatus(status: 'pending' | 'approved' | 'rejected'): Promise<SpendEvent[]> {
+    try {
+      const expenses = await FirestoreService.getCollection<FirestoreExpense>(
+        COLLECTIONS.EXPENSES,
+        [{ field: 'status', operator: '==', value: status }],
+        { field: 'date', direction: 'desc' }
+      );
+      return expenses.map(expense => this.convertFromFirestore(expense));
+    } catch (error) {
+      console.error("Error getting expenses by status:", error);
+      throw error;
+    }
+  }
+
+  static async rejectExpense(expenseId: string, reason: string): Promise<void> {
+    try {
+      await FirestoreService.updateDocument(COLLECTIONS.EXPENSES, expenseId, {
+        status: 'rejected',
+        rejectionReason: reason,
+        rejectedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error rejecting expense:", error);
+      throw error;
+    }
+  }
+
   // Convert Firestore document to SpendEvent type
   private static convertFromFirestore(firestoreExpense: FirestoreExpense): SpendEvent {
     return {
