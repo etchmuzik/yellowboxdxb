@@ -1,0 +1,116 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        request.auth.token.role == 'Admin';
+    }
+    
+    function isOperations() {
+      return isAuthenticated() && 
+        request.auth.token.role == 'Operations';
+    }
+    
+    function isFinance() {
+      return isAuthenticated() && 
+        request.auth.token.role == 'Finance';
+    }
+    
+    function isRider() {
+      return isAuthenticated() && 
+        request.auth.token.role == 'Rider-Applicant';
+    }
+    
+    function canManageDocuments() {
+      return isAdmin() || isOperations();
+    }
+    
+    function canViewDocuments() {
+      return isAdmin() || isOperations() || isFinance();
+    }
+    
+    // Validate file types and sizes
+    function isValidDocumentType() {
+      return request.resource.contentType.matches('image/.*') ||
+             request.resource.contentType == 'application/pdf';
+    }
+    
+    function isValidFileSize() {
+      return request.resource.size < 10 * 1024 * 1024; // 10MB max
+    }
+    
+    // Documents folder - /documents/{riderId}/{fileName}
+    match /documents/{riderId}/{fileName} {
+      // Allow riders to upload their own documents
+      allow create: if isAuthenticated() && 
+        request.auth.uid == riderId &&
+        isValidDocumentType() &&
+        isValidFileSize();
+        
+      // Allow riders to read their own documents
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == riderId || canViewDocuments());
+        
+      // Only admins/operations can update or delete
+      allow update, delete: if canManageDocuments();
+    }
+    
+    // Expense receipts - /expenses/{expenseId}/{fileName}
+    match /expenses/{expenseId}/{fileName} {
+      // Allow authenticated users to upload receipts
+      allow create: if isAuthenticated() &&
+        isValidDocumentType() &&
+        isValidFileSize();
+        
+      // Allow users with expense management permissions to read
+      allow read: if isAuthenticated() &&
+        (canViewDocuments() || isRider());
+        
+      // Only admins/finance can update or delete
+      allow update, delete: if isAdmin() || isFinance();
+    }
+    
+    // Profile photos - /profiles/{userId}/{fileName}
+    match /profiles/{userId}/{fileName} {
+      // Users can upload their own profile photos
+      allow create, update: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        request.resource.contentType.matches('image/.*') &&
+        request.resource.size < 5 * 1024 * 1024; // 5MB max for profile photos
+        
+      // Anyone authenticated can view profile photos
+      allow read: if isAuthenticated();
+      
+      // Users can delete their own photos, admins can delete any
+      allow delete: if isAuthenticated() && 
+        (request.auth.uid == userId || isAdmin());
+    }
+    
+    // General app assets - /assets/{allPaths=**}
+    match /assets/{allPaths=**} {
+      // Only admins can manage app assets
+      allow write: if isAdmin();
+      
+      // Anyone can read app assets (logos, etc.)
+      allow read: if true;
+    }
+    
+    // Temporary uploads - /temp/{userId}/{fileName}
+    match /temp/{userId}/{fileName} {
+      // Users can manage their own temp files
+      allow read, write: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        isValidFileSize();
+    }
+    
+    // Deny all other paths by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
