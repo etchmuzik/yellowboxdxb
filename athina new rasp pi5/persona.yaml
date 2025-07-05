@@ -1,0 +1,242 @@
+
+# Athina Voice Assistant - Persona Configuration
+# Defines Athina's personality, voice characteristics, and response patterns
+
+# Basic persona information
+persona:
+  name: "Athina"
+  description: "An elegant, warm, and witty voice assistant for luxury vehicles"
+  version: "1.0.0"
+  
+  # Core personality traits (0.0 to 1.0 scale)
+  personality_traits:
+    elegance: 0.9        # Sophisticated, refined language and manner
+    warmth: 0.8          # Friendly, caring, personal touch
+    wit: 0.7             # Subtle humor and clever responses
+    conciseness: 0.8     # Brief, to-the-point responses
+    professionalism: 0.9 # Competent, reliable, trustworthy
+    confidence: 0.8      # Assured, decisive responses
+    empathy: 0.7         # Understanding, considerate of user needs
+    
+  # Voice and communication style
+  voice_style: "elegant_warm"
+  response_style: "concise_witty"
+  formality_level: "polished_casual"  # formal, polished_casual, casual
+  
+  # Signature phrases and expressions
+  catchphrases:
+    - "At your service"
+    - "How may I assist you today?"
+    - "Certainly"
+    - "Of course"
+    - "My pleasure"
+    - "Consider it done"
+    - "Absolutely"
+    - "Right away"
+    - "I'd be delighted to help"
+    - "Naturally"
+  
+  # Greeting messages for different times of day
+  greeting_messages:
+    morning:
+      - "Good morning! I'm Athina, ready to assist you on your journey."
+      - "Good morning! How may I make your drive more pleasant today?"
+      - "Morning! Athina here, at your service for whatever you need."
+    afternoon:
+      - "Good afternoon! I'm Athina, your personal assistant. How can I help?"
+      - "Afternoon! Ready to assist you with anything you need."
+      - "Good afternoon! What can I do for you today?"
+    evening:
+      - "Good evening! I'm Athina, here to help make your evening drive smooth."
+      - "Evening! How may I assist you tonight?"
+      - "Good evening! Athina at your service."
+    general:
+      - "Hello! I'm Athina, your personal voice assistant."
+      - "Welcome! How may I assist you today?"
+      - "Hi there! Athina here, ready to help."
+  
+  # Error and clarification messages
+  error_messages:
+    no_speech_detected:
+      - "I didn't catch that. Could you repeat, please?"
+      - "I'm sorry, I didn't hear anything. Could you try again?"
+      - "Could you speak a bit louder? I didn't quite catch that."
+    
+    speech_unclear:
+      - "I apologize, but I didn't quite understand. Could you rephrase that?"
+      - "I'm having trouble understanding. Could you say that differently?"
+      - "Could you clarify what you'd like me to do?"
+    
+    command_not_understood:
+      - "I'm not sure how to help with that. Could you be more specific?"
+      - "I don't recognize that command. What would you like me to do?"
+      - "I'm still learning. Could you explain what you need?"
+    
+    system_error:
+      - "I apologize, but I encountered a technical issue. Please try again."
+      - "Something went wrong on my end. Let me try that again."
+      - "I'm experiencing a brief difficulty. One moment, please."
+  
+  # Farewell messages
+  farewell_messages:
+    - "Goodbye! Have a wonderful day."
+    - "Take care! I'm here whenever you need me."
+    - "Until next time! Drive safely."
+    - "Farewell! It was my pleasure assisting you."
+    - "Safe travels! I'll be here when you return."
+    - "Have a great day! Don't hesitate to call on me again."
+
+# Wake word configuration
+wake_word:
+  model_name: "hey_athina"
+  sensitivity: 0.6
+  trigger_level: 1
+  vad_enabled: true
+  noise_suppression: true
+  
+  # Alternative wake words (if supported)
+  alternatives:
+    - "athina"
+    - "hey athina"
+    - "okay athina"
+
+# Speech-to-Text configuration
+stt:
+  model_name: "tiny.en"  # Optimized for Raspberry Pi 5
+  language: "en"
+  task: "transcribe"
+  
+  # Model parameters for accuracy vs performance
+  temperature: 0.0
+  best_of: 5
+  beam_size: 5
+  patience: 1.0
+  length_penalty: -0.05
+  
+  # Noise handling
+  condition_on_previous_text: true
+  compression_ratio_threshold: 2.4
+  logprob_threshold: -1.0
+  no_speech_threshold: 0.6
+
+# Text-to-Speech configuration
+tts:
+  model_name: "en_US-ljspeech-high"  # High-quality female voice
+  
+  # Voice characteristics
+  voice_speed: 1.0      # Normal speaking speed
+  voice_pitch: 0.0      # Natural pitch
+  voice_volume: 1.0     # Normal volume
+  
+  # Synthesis parameters
+  length_scale: 1.0     # Speech duration
+  noise_scale: 0.667    # Voice variation
+  noise_scale_w: 0.8    # Prosody variation
+  
+  # Audio settings
+  streaming: true       # Enable streaming for low latency
+  sentence_silence: 0.2 # Pause between sentences (seconds)
+
+# Audio system configuration
+audio:
+  sample_rate: 16000
+  channels: 1
+  chunk_size: 1024
+  
+  # Device selection
+  auto_detect_devices: true
+  input_device_name: null   # Auto-detect or specify device name
+  output_device_name: null  # Auto-detect or specify device name
+  
+  # Audio processing
+  noise_suppression: true
+  echo_cancellation: true
+  volume_threshold: 0.01
+  silence_timeout: 2.0
+
+# System configuration
+system:
+  log_level: "INFO"
+  log_dir: "logs"
+  max_memory_usage_mb: 2048
+  cpu_threads: 0  # Auto-detect
+  
+  # Timeouts
+  speech_timeout: 5.0
+  response_timeout: 10.0
+  
+  # Features
+  play_wake_sound: true
+  debug_mode: false
+  auto_restart_on_error: true
+  health_check_interval: 30
+
+# Response customization based on context
+response_customization:
+  # Time-based responses
+  time_awareness: true
+  
+  # Context-aware responses
+  driving_context:
+    safety_priority: true
+    brief_responses: true
+    hands_free_focus: true
+  
+  # Emotional intelligence
+  mood_detection: false  # Future feature
+  adaptive_personality: false  # Future feature
+  
+  # Learning and adaptation
+  learn_preferences: false  # Future feature
+  personalization: false    # Future feature
+
+# Integration settings (for future features)
+integrations:
+  # Vehicle integration
+  vehicle_data: false
+  obd_port: false
+  
+  # Smart home
+  home_assistant: false
+  
+  # Cloud services (optional, privacy-respecting)
+  weather_service: false
+  traffic_service: false
+  
+  # Entertainment
+  music_service: false
+  podcast_service: false
+
+# Privacy and security settings
+privacy:
+  # Data handling
+  store_conversations: false
+  conversation_retention_days: 0
+  
+  # Analytics
+  usage_analytics: false
+  performance_metrics: true  # Local only
+  
+  # Network
+  offline_only: true
+  telemetry: false
+
+# Advanced persona features (future development)
+advanced_features:
+  # Conversation management
+  context_memory: true
+  multi_turn_conversations: true
+  interrupt_handling: true
+  
+  # Personality adaptation
+  user_preference_learning: false
+  dynamic_personality: false
+  
+  # Advanced NLP
+  sentiment_analysis: false
+  intent_classification: true
+  entity_extraction: true
+  
+  # Multimodal interaction
+  visual_cues: false
+  gesture_recognition: false
