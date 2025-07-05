@@ -1,0 +1,83 @@
+
+# OpenAI Integration Configuration
+openai:
+  # Enable/disable OpenAI integration
+  enabled: true
+  
+  # API Configuration
+  api_key_env_var: "OPENAI_API_KEY"
+  base_url: "https://api.openai.com/v1"
+  timeout: 30
+  max_retries: 3
+  
+  # Model Configuration
+  models:
+    chat: "gpt-3.5-turbo"
+    chat_fallback: "gpt-3.5-turbo-instruct"
+    embedding: "text-embedding-ada-002"
+  
+  # Usage Limits and Controls
+  usage_limits:
+    max_tokens_per_request: 1000
+    max_requests_per_minute: 20
+    max_requests_per_hour: 100
+    daily_token_limit: 50000
+  
+  # Fallback Behavior
+  fallback:
+    # When to use OpenAI (online, always, never, smart)
+    mode: "smart"
+    
+    # Conditions for using OpenAI
+    use_for_complex_queries: true
+    use_for_general_knowledge: true
+    use_for_conversation: false
+    
+    # Timeout before falling back to local
+    network_timeout: 5
+    api_timeout: 10
+    
+    # Retry behavior
+    retry_on_failure: true
+    retry_delay: 1
+    
+    # Local processing confidence threshold
+    # If local confidence < threshold, try OpenAI
+    local_confidence_threshold: 0.7
+  
+  # Smart Routing Configuration
+  smart_routing:
+    # Keywords that trigger OpenAI usage
+    complex_keywords:
+      - "explain"
+      - "analyze"
+      - "compare"
+      - "research"
+      - "detailed"
+      - "comprehensive"
+      - "complex"
+      - "advanced"
+    
+    # Query length threshold (characters)
+    long_query_threshold: 100
+    
+    # Topics that should use OpenAI
+    openai_topics:
+      - "science"
+      - "history"
+      - "literature"
+      - "philosophy"
+      - "current events"
+      - "news"
+      - "research"
+  
+  # Response Enhancement
+  enhancement:
+    # Enhance local responses with OpenAI
+    enhance_local_responses: false
+    
+    # Add personality to responses
+    add_personality: true
+    
+    # Improve response quality
+    improve_quality: true

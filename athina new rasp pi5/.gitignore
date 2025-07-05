@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Audio test files
+*.wav
+*.mp3
+test_audio/
+
+# Model files (large binaries)
+models/
+*.bin
+*.onnx
+*.onnx.json
+*.pt
+*.pth
+
+# Config overrides
+configs/persona_custom.yaml
+configs/system_custom.yaml
+
+# Temporary files
+temp/
+tmp/
+.cache/
+
+# Credentials
+.env
+credentials/
+*.key
+*.pem
+
+# Jupyter
+.ipynb_checkpoints/
+
+# System
+*.pid
+*.lock
+
+# Archives
+*.zip
+*.tar.gz
+*.tar
+
+# Athina specific
+athina_assistant*.zip
+athina_research*.zip
