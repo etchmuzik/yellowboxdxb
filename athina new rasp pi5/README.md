@@ -1,200 +1,304 @@
-
 # Athina Voice Assistant
 
-A premium offline voice assistant designed for luxury vehicles, running on Raspberry Pi 5.
-
-## Overview
-
-Athina is a sophisticated, privacy-first voice assistant that operates entirely offline, ensuring functionality regardless of network connectivity. Built specifically for the automotive environment, it provides a natural, conversational interface with elegant, warm, and witty responses.
+An elegant, offline-first voice assistant optimized for Raspberry Pi 5 with optional OpenAI integration for enhanced capabilities.
 
 ## Features
 
-- **Completely Offline**: No internet connection required for core functionality
-- **Optimized for Raspberry Pi 5**: Leverages the full power of the latest Pi hardware
-- **Premium Voice Experience**: High-quality, natural-sounding female voice
-- **Automotive-Ready**: Designed for in-car noise conditions and usage patterns
-- **Privacy-First**: All processing happens locally on device
-- **Customizable Persona**: Configurable personality traits and responses
+- **Offline-First Design**: Works completely offline with local speech recognition and synthesis
+- **Wake Word Detection**: Customizable wake word using openWakeWord
+- **Fast Speech Recognition**: Whisper-based STT optimized for edge devices
+- **Natural Voice Synthesis**: High-quality TTS using Piper
+- **Intelligent Routing**: Smart decision-making between local and cloud processing
+- **Extensible Skills**: Easy-to-add custom skills and integrations
+- **Privacy-Focused**: Your data stays on your device unless you explicitly enable cloud features
 
 ## Architecture
 
-### Core Components
-
-- **Wake Word Detection**: openWakeWord for "Hey Athina" activation
-- **Speech-to-Text**: Whisper.cpp (tiny.en/base.en models) for accurate transcription
-- **Text-to-Speech**: Piper TTS for natural, low-latency voice synthesis
-- **Audio Management**: Intelligent microphone and speaker handling
-- **Configuration System**: YAML-based persona and system settings
-
-### Technology Stack
-
-- **Platform**: Raspberry Pi 5 (ARM64)
-- **Language**: Python 3.9+
-- **Audio**: PyAudio, SoundDevice
-- **AI Models**: Optimized for edge inference
-- **Service**: Systemd daemon integration
+```
+┌─────────────────┐
+│  Audio Manager  │ ← Microphone/Speaker
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│ Wake Word Det.  │ ← "Hey Athina"
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Speech to Text │ ← Whisper
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  NLP Router     │ ← Smart Decision
+└────┬───────┬────┘
+     │       │
+┌────▼───┐ ┌─▼──────┐
+│ Local  │ │ OpenAI │
+│Process │ │  API   │
+└────┬───┘ └─┬──────┘
+     │       │
+┌────▼───────▼────┐
+│ Text to Speech  │ ← Piper TTS
+└─────────────────┘
+```
 
 ## Quick Start
 
+### Prerequisites
+
+- Raspberry Pi 5 (or 4) with Raspberry Pi OS
+- Python 3.9 or higher
+- Microphone and speaker
+- 4GB+ RAM recommended
+
 ### Installation
 
+1. Clone the repository:
 ```bash
-# Clone the repository
-git clone https://github.com/athina/athina-assistant.git
-cd athina-assistant
+git clone https://github.com/yourusername/athina.git
+cd athina
+```
 
-# Install dependencies
+2. Create virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+3. Install dependencies:
+```bash
 pip install -r requirements.txt
-
-# Install the package
-pip install -e .
 ```
 
-### Configuration
-
+4. Install system dependencies:
 ```bash
-# Copy and customize the persona configuration
-cp configs/persona.yaml configs/persona_custom.yaml
-# Edit configs/persona_custom.yaml to customize Athina's personality
+# On Raspberry Pi OS
+sudo apt-get update
+sudo apt-get install -y \
+    portaudio19-dev \
+    python3-pyaudio \
+    libopenblas-dev \
+    liblapack-dev \
+    libatlas-base-dev \
+    espeak
 ```
 
-### Running
-
+5. Download models:
 ```bash
-# Run directly
-python -m athina.main
+python setup.py --download-models
+```
 
-# Or use the console script
-athina
+### Running Athina
 
-# Run as daemon (requires sudo for system service)
-sudo athina-daemon start
+1. Basic usage:
+```bash
+./start_athina.sh
+```
+
+2. With custom config:
+```bash
+python main.py --config configs/my_config.yaml
+```
+
+3. As a system service:
+```bash
+sudo cp athina.service /etc/systemd/system/
+sudo systemctl enable athina
+sudo systemctl start athina
 ```
 
 ## Configuration
 
-Athina's personality and behavior can be customized through YAML configuration files:
+### Basic Configuration
 
-- `configs/persona.yaml`: Core personality traits and voice settings
-- `configs/system.yaml`: Hardware and performance settings
-- `configs/logging.yaml`: Logging levels and output configuration
+Edit `configs/persona.yaml`:
 
-## Hardware Requirements
-
-### Minimum Requirements
-- Raspberry Pi 5 (4GB RAM recommended, 8GB for optimal performance)
-- High-quality USB microphone or HAT with microphone array
-- Speakers or audio output device
-- MicroSD card (32GB+, Class 10 or better)
-- Optional: NVMe SSD via PCIe for improved performance
-
-### Recommended Setup
-- Raspberry Pi 5 8GB
-- ReSpeaker 4-Mic Array HAT for enhanced audio capture
-- High-quality car audio integration
-- NVMe SSD for faster model loading and reduced latency
-
-## Development
-
-### Project Structure
-
-```
-athina_assistant/
-├── athina/                 # Main package
-│   ├── __init__.py
-│   ├── main.py            # Application entry point
-│   ├── config.py          # Configuration management
-│   ├── logging_cfg.py     # Logging setup
-│   ├── audio.py           # Audio device management
-│   ├── errors.py          # Custom exceptions
-│   ├── wake_word.py       # Wake word detection
-│   ├── speech_to_text.py  # STT processing
-│   ├── text_to_speech.py  # TTS synthesis
-│   ├── persona.py         # Personality engine
-│   └── daemon/            # System service
-│       ├── __init__.py
-│       ├── service.py     # Daemon implementation
-│       └── athina.service # Systemd service file
-├── configs/               # Configuration files
-├── tests/                # Test suite
-├── docs/                 # Documentation
-├── logs/                 # Log files
-├── setup.py              # Package setup
-├── requirements.txt      # Dependencies
-└── README.md            # This file
+```yaml
+persona:
+  name: "Athina"
+  personality_traits:
+    warmth: 0.8
+    wit: 0.7
+    conciseness: 0.8
 ```
 
-### Testing
+### Audio Configuration
 
+```yaml
+audio:
+  input_device_name: "USB Microphone"
+  output_device_name: "HDMI Audio"
+  volume_threshold: 0.02
+```
+
+### Wake Word Configuration
+
+```yaml
+wake_word:
+  model_name: "hey_athina"
+  sensitivity: 0.6  # Increase for easier detection
+```
+
+### OpenAI Integration (Optional)
+
+1. Set your API key:
 ```bash
-# Run tests
-pytest tests/
-
-# Run with coverage
-pytest --cov=athina tests/
+export OPENAI_API_KEY="your-api-key-here"
 ```
 
-### Code Style
+2. Configure in `configs/openai.yaml`:
+```yaml
+openai:
+  enabled: true
+  fallback:
+    mode: "smart"  # Use OpenAI for complex queries only
+```
 
-```bash
-# Format code
-black athina/
+## Custom Skills
 
-# Lint code
-flake8 athina/
+Create custom skills by adding them to the persona engine:
+
+```python
+# In a custom skills file
+async def weather_skill(user_input: str) -> str:
+    # Your weather logic here
+    return "The weather is sunny today!"
+
+# Register the skill
+persona_engine.register_skill(
+    name="weather",
+    patterns=[r"weather", r"temperature"],
+    handler=weather_skill
+)
 ```
 
 ## Performance Optimization
 
-Athina is optimized for the Raspberry Pi 5's ARM architecture:
+### For Raspberry Pi 5
 
-- **Model Selection**: Uses lightweight models (Whisper tiny.en, optimized Piper voices)
-- **Memory Management**: Efficient memory usage with ~2GB total footprint
-- **CPU Optimization**: Multi-threaded processing with ARM-specific optimizations
-- **Storage**: Supports NVMe SSD for faster model loading
+1. Enable GPU acceleration:
+```yaml
+system:
+  gpu_enabled: true
+```
+
+2. Use smaller models for faster response:
+```yaml
+stt:
+  model_name: "tiny.en"  # Fastest
+tts:
+  model_name: "en_US-lessac-medium"  # Good balance
+```
+
+3. Adjust chunk sizes:
+```yaml
+audio:
+  chunk_size: 2048  # Larger chunks for Pi 5
+```
+
+### Memory Management
+
+```yaml
+system:
+  max_memory_usage_mb: 1024  # Limit for Pi 4
+  model_cache_dir: "/tmp/models"  # Use RAM disk
+```
 
 ## Troubleshooting
 
-### Common Issues
+### No audio input detected
 
-1. **Audio Device Not Found**
-   - Check `arecord -l` and `aplay -l` for available devices
-   - Update audio device configuration in `configs/system.yaml`
-
-2. **High CPU Usage**
-   - Consider using smaller models (tiny.en instead of base.en)
-   - Check for background processes consuming resources
-
-3. **Wake Word Not Detected**
-   - Verify microphone is working with `arecord -d 5 test.wav`
-   - Adjust wake word sensitivity in configuration
-
-### Logs
-
-Check logs for detailed debugging information:
+1. Check devices:
 ```bash
-tail -f logs/athina.log
+python -c "from athina.audio import AudioManager; am = AudioManager(None); print(am.get_audio_devices())"
 ```
 
-## License
+2. Test microphone:
+```bash
+arecord -d 5 test.wav && aplay test.wav
+```
 
-MIT License - see LICENSE file for details.
+### Wake word not detecting
+
+1. Increase sensitivity:
+```yaml
+wake_word:
+  sensitivity: 0.7
+```
+
+2. Check audio levels:
+```bash
+./start_athina.sh --debug
+```
+
+### Slow responses
+
+1. Use smaller models:
+```yaml
+stt:
+  model_name: "tiny.en"
+```
+
+2. Disable unnecessary features:
+```yaml
+audio:
+  noise_suppression: false
+  echo_cancellation: false
+```
+
+## API Reference
+
+### Main Pipeline
+
+```python
+from athina import AthinaPipeline
+
+# Initialize
+pipeline = AthinaPipeline(config_path="configs/my_config.yaml")
+await pipeline.initialize()
+
+# Start listening
+await pipeline.start()
+
+# Health check
+health = await pipeline.health_check()
+```
+
+### Audio Manager
+
+```python
+from athina.audio import AudioManager
+
+audio = AudioManager(config)
+await audio.initialize()
+
+# Record speech
+audio_data = await audio.record_speech(timeout=5.0)
+
+# Play audio
+await audio.play_audio(audio_bytes)
+```
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- OpenWakeWord for wake word detection
+- Whisper for speech recognition
+- Piper for text-to-speech
+- The Raspberry Pi community
 
 ## Support
 
-For support and questions:
-- GitHub Issues: [Report bugs and request features](https://github.com/athina/athina-assistant/issues)
-- Documentation: [Full documentation](https://docs.athina.ai)
-- Community: [Discord server](https://discord.gg/athina)
-
----
-
-*Athina - Your elegant companion on the road.*
+For issues and questions:
+- GitHub Issues: [https://github.com/yourusername/athina/issues](https://github.com/yourusername/athina/issues)
+- Documentation: [https://athina.readthedocs.io](https://athina.readthedocs.io)
