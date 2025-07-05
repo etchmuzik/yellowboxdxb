@@ -1,0 +1,51 @@
+[Unit]
+Description=Athina Voice Assistant
+Documentation=https://github.com/etchmuzik/athina
+After=network.target sound.target
+
+[Service]
+Type=simple
+User=pi
+Group=audio
+WorkingDirectory=/home/pi/athina_assistant
+Environment="PATH=/home/pi/athina_assistant/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/home/pi/athina_assistant"
+Environment="ATHINA_CONFIG_PATH=/home/pi/athina_assistant/configs/persona.yaml"
+Environment="ATHINA_LOG_LEVEL=INFO"
+
+# Main command
+ExecStart=/home/pi/athina_assistant/venv/bin/python -m athina.main
+
+# Restart configuration
+Restart=always
+RestartSec=10
+StartLimitBurst=5
+StartLimitInterval=60
+
+# Resource limits
+MemoryLimit=2G
+CPUQuota=80%
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/pi/athina_assistant/logs /home/pi/athina_assistant/models
+
+# Audio permissions
+SupplementaryGroups=audio
+DeviceAllow=/dev/snd/* rw
+DeviceAllow=/dev/dsp rw
+DeviceAllow=/dev/audio rw
+
+# Nice level for audio priority
+Nice=-10
+
+# Output handling
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=athina
+
+[Install]
+WantedBy=multi-user.target
