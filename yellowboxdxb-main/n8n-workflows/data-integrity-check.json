@@ -1,0 +1,351 @@
+{
+  "name": "Yellow Box - Data Integrity Check",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "cronExpression": "0 0 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-integrity-check",
+      "name": "Daily Integrity Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/yellowbox-8e0e6/databases/(default)/documents",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "id": "fetch-all-collections",
+      "name": "Fetch All Collections",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 300],
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_API_CREDENTIAL_ID",
+          "name": "Google API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/yellowbox-8e0e6/databases/(default)/documents/riders",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "id": "fetch-riders-count",
+      "name": "Fetch Riders Count",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 200],
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_API_CREDENTIAL_ID",
+          "name": "Google API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/yellowbox-8e0e6/databases/(default)/documents/expenses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "id": "fetch-expenses-count",
+      "name": "Fetch Expenses Count",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 400],
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_API_CREDENTIAL_ID",
+          "name": "Google API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/yellowbox-8e0e6/databases/(default)/documents/documents",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "id": "fetch-documents-count",
+      "name": "Fetch Documents Count",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 500],
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_API_CREDENTIAL_ID",
+          "name": "Google API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate data integrity across all collections\nconst ridersData = $('Fetch Riders Count').first().json;\nconst expensesData = $('Fetch Expenses Count').first().json;\nconst documentsData = $('Fetch Documents Count').first().json;\n\n// Count records\nconst riderCount = ridersData.documents ? ridersData.documents.length : 0;\nconst expenseCount = expensesData.documents ? expensesData.documents.length : 0;\nconst documentCount = documentsData.documents ? documentsData.documents.length : 0;\nconst totalCollections = 3;\n\n// Perform integrity checks\nconst issues = [];\nlet status = 'healthy';\n\n// Check for orphaned expenses (expenses without valid rider)\nif (expensesData.documents && ridersData.documents) {\n  const riderIds = new Set(ridersData.documents.map(doc => doc.name.split('/').pop()));\n  const orphanedExpenses = expensesData.documents.filter(expense => {\n    const riderId = expense.fields?.riderId?.stringValue;\n    return riderId && !riderIds.has(riderId);\n  });\n  \n  if (orphanedExpenses.length > 0) {\n    issues.push(`${orphanedExpenses.length} orphaned expenses found`);\n    status = 'warning';\n  }\n}\n\n// Check for orphaned documents (documents without valid rider)\nif (documentsData.documents && ridersData.documents) {\n  const riderIds = new Set(ridersData.documents.map(doc => doc.name.split('/').pop()));\n  const orphanedDocuments = documentsData.documents.filter(document => {\n    const riderId = document.fields?.riderId?.stringValue;\n    return riderId && !riderIds.has(riderId);\n  });\n  \n  if (orphanedDocuments.length > 0) {\n    issues.push(`${orphanedDocuments.length} orphaned documents found`);\n    status = 'warning';\n  }\n}\n\n// Check for data consistency issues\nif (ridersData.documents) {\n  const ridersWithoutEmail = ridersData.documents.filter(rider => \n    !rider.fields?.email?.stringValue\n  );\n  \n  if (ridersWithoutEmail.length > 0) {\n    issues.push(`${ridersWithoutEmail.length} riders without email`);\n    status = 'warning';\n  }\n}\n\n// Check for expired documents\nif (documentsData.documents) {\n  const now = new Date();\n  const expiredDocuments = documentsData.documents.filter(document => {\n    const expiryDate = document.fields?.expiryDate?.timestampValue;\n    return expiryDate && new Date(expiryDate) < now;\n  });\n  \n  if (expiredDocuments.length > 0) {\n    issues.push(`${expiredDocuments.length} expired documents`);\n  }\n}\n\n// Determine overall status\nif (riderCount === 0 && expenseCount === 0 && documentCount === 0) {\n  status = 'critical';\n  issues.push('No data found in any collection');\n} else if (issues.length > 3) {\n  status = 'critical';\n}\n\nconst notes = issues.length > 0 ? issues.join('; ') : 'All integrity checks passed';\n\nreturn [{\n  json: {\n    totalCollections: totalCollections,\n    riderRecords: riderCount,\n    expenseRecords: expenseCount,\n    documentRecords: documentCount,\n    status: status,\n    notes: notes,\n    timestamp: new Date().toISOString(),\n    issuesFound: issues.length\n  }\n}];"
+      },
+      "id": "validate-data-integrity",
+      "name": "Validate Data Integrity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Data_Integrity_Log",
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "A",
+              "fieldValue": "={{ $json.totalCollections }}"
+            },
+            {
+              "fieldId": "B",
+              "fieldValue": "={{ $json.riderRecords }}"
+            },
+            {
+              "fieldId": "C",
+              "fieldValue": "={{ $json.expenseRecords }}"
+            },
+            {
+              "fieldId": "D",
+              "fieldValue": "={{ $json.documentRecords }}"
+            },
+            {
+              "fieldId": "E",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "F",
+              "fieldValue": "={{ $json.notes }}"
+            },
+            {
+              "fieldId": "G",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        }
+      },
+      "id": "log-validation-results",
+      "name": "Log Validation Results",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 300],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "critical-condition",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "critical",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "warning-condition",
+              "leftValue": "={{ $json.issuesFound }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "check-critical-issues",
+      "name": "Check Critical Issues",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.emailjs.com/api/v1.0/email/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "service_id",
+              "value": "YOUR_EMAILJS_SERVICE_ID"
+            },
+            {
+              "name": "template_id",
+              "value": "YOUR_EMAILJS_INTEGRITY_TEMPLATE_ID"
+            },
+            {
+              "name": "user_id",
+              "value": "YOUR_EMAILJS_USER_ID"
+            },
+            {
+              "name": "template_params",
+              "value": "={{ { \"total_collections\": $json.totalCollections, \"rider_records\": $json.riderRecords, \"expense_records\": $json.expenseRecords, \"document_records\": $json.documentRecords, \"status\": $json.status, \"notes\": $json.notes, \"timestamp\": $json.timestamp, \"issues_found\": $json.issuesFound } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-integrity-alert",
+      "name": "Send Integrity Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1340, 200]
+    }
+  ],
+  "connections": {
+    "Daily Integrity Check": {
+      "main": [
+        [
+          {
+            "node": "Fetch All Collections",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Riders Count",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Expenses Count",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Documents Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Riders Count": {
+      "main": [
+        [
+          {
+            "node": "Validate Data Integrity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Expenses Count": {
+      "main": [
+        [
+          {
+            "node": "Validate Data Integrity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Documents Count": {
+      "main": [
+        [
+          {
+            "node": "Validate Data Integrity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Data Integrity": {
+      "main": [
+        [
+          {
+            "node": "Log Validation Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Validation Results": {
+      "main": [
+        [
+          {
+            "node": "Check Critical Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Critical Issues": {
+      "main": [
+        [
+          {
+            "node": "Send Integrity Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "4",
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "yellowbox"
+    }
+  ]
+}

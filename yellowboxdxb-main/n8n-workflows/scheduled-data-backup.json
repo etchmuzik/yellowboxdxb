@@ -1,0 +1,448 @@
+{
+  "name": "Yellow Box - Scheduled Data Backup",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/yellowbox-8e0e6/databases/(default)/documents/riders",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "id": "fetch-riders",
+      "name": "Fetch Riders",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 200],
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_API_CREDENTIAL_ID",
+          "name": "Google API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/yellowbox-8e0e6/databases/(default)/documents/expenses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "id": "fetch-expenses",
+      "name": "Fetch Expenses",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 400],
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_API_CREDENTIAL_ID",
+          "name": "Google API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/yellowbox-8e0e6/databases/(default)/documents/documents",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "id": "fetch-documents",
+      "name": "Fetch Documents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 600],
+      "credentials": {
+        "googleApi": {
+          "id": "YOUR_GOOGLE_API_CREDENTIAL_ID",
+          "name": "Google API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "clear",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Riders_Backup"
+      },
+      "id": "clear-riders-backup",
+      "name": "Clear Riders Backup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [680, 200],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "clear",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Expenses_Backup"
+      },
+      "id": "clear-expenses-backup",
+      "name": "Clear Expenses Backup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [680, 400],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "clear",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Documents_Backup"
+      },
+      "id": "clear-documents-backup",
+      "name": "Clear Documents Backup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [680, 600],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process Firestore riders data for Google Sheets\nconst riders = $input.all()[0].json.documents || [];\nconst processedRiders = riders.map(doc => {\n  const fields = doc.fields || {};\n  return {\n    id: doc.name.split('/').pop(),\n    name: fields.name?.stringValue || '',\n    email: fields.email?.stringValue || '',\n    phone: fields.phone?.stringValue || '',\n    status: fields.status?.stringValue || '',\n    visaNumber: fields.visaNumber?.stringValue || '',\n    licenseNumber: fields.licenseNumber?.stringValue || '',\n    createdAt: fields.createdAt?.timestampValue || '',\n    updatedAt: fields.updatedAt?.timestampValue || ''\n  };\n});\n\nreturn processedRiders.map(rider => ({ json: rider }));"
+      },
+      "id": "process-riders-data",
+      "name": "Process Riders Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process Firestore expenses data for Google Sheets\nconst expenses = $input.all()[0].json.documents || [];\nconst processedExpenses = expenses.map(doc => {\n  const fields = doc.fields || {};\n  return {\n    id: doc.name.split('/').pop(),\n    riderId: fields.riderId?.stringValue || '',\n    amount: fields.amount?.doubleValue || fields.amount?.integerValue || '',\n    category: fields.category?.stringValue || '',\n    description: fields.description?.stringValue || '',\n    receiptUrl: fields.receiptUrl?.stringValue || '',\n    status: fields.status?.stringValue || '',\n    createdAt: fields.createdAt?.timestampValue || '',\n    approvedAt: fields.approvedAt?.timestampValue || ''\n  };\n});\n\nreturn processedExpenses.map(expense => ({ json: expense }));"
+      },
+      "id": "process-expenses-data",
+      "name": "Process Expenses Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process Firestore documents data for Google Sheets\nconst documents = $input.all()[0].json.documents || [];\nconst processedDocuments = documents.map(doc => {\n  const fields = doc.fields || {};\n  return {\n    id: doc.name.split('/').pop(),\n    riderId: fields.riderId?.stringValue || '',\n    type: fields.type?.stringValue || '',\n    status: fields.status?.stringValue || '',\n    fileUrl: fields.fileUrl?.stringValue || '',\n    expiryDate: fields.expiryDate?.timestampValue || '',\n    verifiedBy: fields.verifiedBy?.stringValue || '',\n    createdAt: fields.createdAt?.timestampValue || '',\n    updatedAt: fields.updatedAt?.timestampValue || ''\n  };\n});\n\nreturn processedDocuments.map(document => ({ json: document }));"
+      },
+      "id": "process-documents-data",
+      "name": "Process Documents Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 600]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Riders_Backup",
+        "dataMode": "autoMapInputData",
+        "options": {}
+      },
+      "id": "backup-riders-data",
+      "name": "Backup Riders Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1120, 200],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Expenses_Backup",
+        "dataMode": "autoMapInputData",
+        "options": {}
+      },
+      "id": "backup-expenses-data",
+      "name": "Backup Expenses Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1120, 400],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Documents_Backup",
+        "dataMode": "autoMapInputData",
+        "options": {}
+      },
+      "id": "backup-documents-data",
+      "name": "Backup Documents Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1120, 600],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Backup_Log",
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "A",
+              "fieldValue": "Complete Backup"
+            },
+            {
+              "fieldId": "B",
+              "fieldValue": "={{ $('Backup Riders Data').itemMatching(0).$json.length || 0 }} riders, {{ $('Backup Expenses Data').itemMatching(0).$json.length || 0 }} expenses, {{ $('Backup Documents Data').itemMatching(0).$json.length || 0 }} documents"
+            },
+            {
+              "fieldId": "C",
+              "fieldValue": "success"
+            },
+            {
+              "fieldId": "D",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "log-backup-activity",
+      "name": "Log Backup Activity",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1340, 400],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Riders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Expenses",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Riders": {
+      "main": [
+        [
+          {
+            "node": "Clear Riders Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Expenses": {
+      "main": [
+        [
+          {
+            "node": "Clear Expenses Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Documents": {
+      "main": [
+        [
+          {
+            "node": "Clear Documents Backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Riders Backup": {
+      "main": [
+        [
+          {
+            "node": "Process Riders Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Expenses Backup": {
+      "main": [
+        [
+          {
+            "node": "Process Expenses Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Documents Backup": {
+      "main": [
+        [
+          {
+            "node": "Process Documents Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Riders Data": {
+      "main": [
+        [
+          {
+            "node": "Backup Riders Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Expenses Data": {
+      "main": [
+        [
+          {
+            "node": "Backup Expenses Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Documents Data": {
+      "main": [
+        [
+          {
+            "node": "Backup Documents Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backup Riders Data": {
+      "main": [
+        [
+          {
+            "node": "Log Backup Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backup Expenses Data": {
+      "main": [
+        [
+          {
+            "node": "Log Backup Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backup Documents Data": {
+      "main": [
+        [
+          {
+            "node": "Log Backup Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "2",
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "yellowbox"
+    }
+  ]
+}

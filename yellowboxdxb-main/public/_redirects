@@ -1,0 +1,2 @@
+# Redirect www to non-www
+https://www.yellowboxdxb.com/* https://yellowboxdxb.com/:splat 301\!

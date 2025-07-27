@@ -1,0 +1,46 @@
+#\!/bin/bash
+
+DOMAIN="yellowboxdxb.com"
+PROJECT="yellowbox-8e0e6"
+
+echo "🌐 Setting up custom domain: $DOMAIN"
+echo ""
+echo "This process requires manual steps in Firebase Console."
+echo ""
+echo "📋 STEP-BY-STEP INSTRUCTIONS:"
+echo ""
+echo "1. Open Firebase Console:"
+echo "   https://console.firebase.google.com/project/$PROJECT/hosting/sites"
+echo ""
+echo "2. Click on 'Add custom domain' button"
+echo ""
+echo "3. Enter your domain: $DOMAIN"
+echo ""
+echo "4. Add these DNS records to your domain provider:"
+echo ""
+echo "   Type  Name  Value"
+echo "   ----  ----  -----"
+echo "   A     @     151.101.1.195"
+echo "   A     @     151.101.65.195"
+echo "   TXT   @     google-site-verification=<verification-code>"
+echo ""
+echo "5. For www subdomain (optional):"
+echo "   CNAME www   $PROJECT.web.app"
+echo ""
+echo "6. DNS propagation can take up to 48 hours"
+echo ""
+echo "🔍 Current domain status:"
+echo "   - Firebase URL: https://$PROJECT.web.app ✅"
+echo "   - Custom domain: https://$DOMAIN (pending setup)"
+echo ""
+echo "📱 While waiting, create a redirect from www to non-www:"
+cat > public/_redirects << 'REDIRECTS'
+# Redirect www to non-www
+https://www.yellowboxdxb.com/* https://yellowboxdxb.com/:splat 301\!
+REDIRECTS
+
+echo "✅ Redirect rules created in public/_redirects"
+echo ""
+echo "🔐 SSL Certificate:"
+echo "   Firebase automatically provisions SSL certificates"
+echo "   This process takes 24-48 hours after DNS verification"

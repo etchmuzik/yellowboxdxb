@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "README Generator",
+  "description": "Creates a README.md file with instructions for using the pre-save hook, test runner hook, and documentation updater hook",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "README.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "# Yellow Box Development Hooks\n\nThis project uses several automated hooks to improve code quality and development workflow. Below are instructions for using each hook.\n\n## 1. Pre-Save Code Quality Check\n\n**Purpose:** Ensures code quality before saving files by running ESLint, checking for console.logs, and validating spec structure.\n\n**When it runs:** Automatically triggers when you modify and save JavaScript or TypeScript files.\n\n**How to use it:**\n- Simply save your JS/TS files as normal\n- The hook will analyze your code and provide feedback\n- Address any issues identified before committing\n\n**Benefits:**\n- Catches code quality issues early\n- Prevents console.log statements from being committed\n- Ensures consistent spec structure\n- Improves overall code quality\n\n## 2. Automatic Test Runner\n\n**Purpose:** Automatically runs relevant tests when code changes to ensure changes don't break existing functionality.\n\n**When it runs:** Triggers after you make significant changes to code files.\n\n**How to use it:**\n- Make your code changes as normal\n- The hook will identify which tests are relevant to your changes\n- Review test results and fix any failures\n- Consider adding tests if coverage is insufficient\n\n**Benefits:**\n- Immediate feedback on code changes\n- Prevents breaking existing functionality\n- Encourages test-driven development\n- Saves time by running only relevant tests\n\n## 3. Documentation Updater\n\n**Purpose:** Keeps documentation in sync with code changes, particularly for specifications, types, and configuration files.\n\n**When it runs:** Triggers when you modify type definitions, specifications, or configuration files.\n\n**How to use it:**\n- Update your code as normal\n- The hook will identify documentation that needs updating\n- Follow the suggestions to update related documentation\n- Ensure documentation remains accurate and comprehensive\n\n**Benefits:**\n- Maintains up-to-date documentation\n- Improves developer experience\n- Reduces onboarding time for new team members\n- Ensures API documentation stays current\n\n## Getting Started\n\nThese hooks are automatically enabled for this project. No additional setup is required. Simply work on your code as normal, and the hooks will provide assistance when appropriate.\n\nIf you have any questions or issues with these hooks, please contact the development team."
+  }
+}

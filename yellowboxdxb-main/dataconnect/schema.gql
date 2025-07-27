@@ -1,0 +1,351 @@
+"""
+The application stage of a rider.
+This is based on the stages outlined in `rider-management/tasks.md`.
+"""
+enum ApplicationStage {
+  APPLIED
+  DOCUMENT_VERIFICATION
+  THEORY_TEST
+  ROAD_TEST
+  MEDICAL
+  ID_ISSUED
+  ACTIVE
+  REJECTED
+}
+
+"""
+The category of an expense, based on the requirements in
+`expense-management/requirements.md`.
+"""
+enum ExpenseCategory {
+  VISA_FEES
+  RTA_TESTS
+  MEDICAL
+  RESIDENCY_ID
+  TRAINING
+  UNIFORM
+  OTHER
+}
+
+"""The approval status of an expense."""
+enum ApprovalStatus { PENDING, APPROVED, REJECTED }
+
+"""The status of a company bike."""
+enum BikeStatus { AVAILABLE, ASSIGNED, MAINTENANCE }
+
+"""The type of a historical event for a bike."""
+enum BikeEventType { ASSIGNED, UNASSIGNED, MAINTENANCE_START, MAINTENANCE_END }
+
+"""Represents a historical event in a bike's lifecycle."""
+type BikeEvent {
+  id: ID!
+  eventType: BikeEventType!
+  timestamp: Timestamp!
+  """The rider involved in the event, if applicable."""
+  rider: Rider
+  notes: String
+}
+
+"""Represents a company bike."""
+type Bike {
+  id: ID!
+  model: String!
+  registrationNumber: String!
+  status: BikeStatus!
+  """A chronological history of all assignment and maintenance events for this bike."""
+  history: [BikeEvent!]!
+}
+
+"""
+Represents the status of a rider's tests.
+"""
+type TestStatus {
+  theory: String
+  road: String
+}
+
+"""The type of document uploaded by a rider."""
+enum DocumentType { PASSPORT, VISA, TEST_CERTIFICATE, MEDICAL_CERT, EMIRATES_ID }
+
+"""Represents a document uploaded by a rider."""
+type RiderDocument {
+  documentUrl: String!
+  documentType: DocumentType!
+  verified: Boolean!
+  uploadedAt: Timestamp!
+  expiryDate: Timestamp
+}
+
+"""
+Represents a rider in the system. The fields are derived from the
+implementation plan in `rider-management/tasks.md`.
+"""
+type Rider {
+  id: ID!
+  fullName: String!
+  email: String!
+  phone: String!
+  nationality: String
+  bikeType: String
+  visaNumber: String
+  applicationStage: ApplicationStage!
+  joinDate: Timestamp!
+  testStatus: TestStatus!
+  """The company bike assigned to this rider, if any."""
+  bike: Bike
+  """A list of all documents associated with this rider."""
+  documents: [RiderDocument!]!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  """
+  A list of all expenses associated with this rider.
+  This field is resolved by the `Rider.expenses` resolver.
+  """
+  expenses: [Expense!]!
+}
+
+"""Represents a single expense record submitted by or for a rider."""
+type Expense {
+  id: ID!
+  amount: Float!
+  category: ExpenseCategory!
+  status: ApprovalStatus!
+  description: String
+  receiptUrl: String
+  rejectionReason: String
+  """The rider associated with this expense."""
+  rider: Rider!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+"""A summary of expenses for a single category."""
+type CategorySummary {
+  category: ExpenseCategory!
+  totalAmount: Float!
+  expenseCount: Int!
+}
+
+"""A summary of all expenses, broken down by category."""
+type FinancialSummary {
+  totalExpenses: Float!
+  totalExpenseCount: Int!
+  categorySummaries: [CategorySummary!]!
+}
+
+"""A summary of the current status of all bikes in the fleet."""
+type BikeStatusSummary {
+  totalCount: Int!
+  availableCount: Int!
+  assignedCount: Int!
+  maintenanceCount: Int!
+}
+
+"""Represents a single event in a rider's activity history."""
+union RiderActivityItem = Expense | BikeEvent
+
+"""
+Input for creating a new rider.
+"""
+input CreateRiderInput {
+  fullName: String!
+  email: String!
+  phone: String!
+  nationality: String
+  bikeType: String
+  visaNumber: String
+}
+
+"""Input for creating a new bike."""
+input CreateBikeInput {
+  model: String!
+  registrationNumber: String!
+}
+
+"""Input for deleting a bike."""
+input DeleteBikeInput {
+  bikeId: ID!
+}
+
+"""Input for creating a new expense."""
+input CreateExpenseInput {
+  riderId: ID!
+  amount: Float!
+  category: ExpenseCategory!
+  description: String
+  receiptUrl: String
+}
+
+"""Input for updating an expense's status."""
+input UpdateExpenseStatusInput {
+  id: ID!
+  status: ApprovalStatus!
+  """A reason is required when an expense is rejected."""
+  rejectionReason: String
+}
+
+"""Input for adding a new document to a rider's profile."""
+input AddRiderDocumentInput {
+  riderId: ID!
+  documentUrl: String!
+  documentType: DocumentType!
+  expiryDate: Timestamp
+}
+
+"""Input for verifying a rider's document."""
+input VerifyRiderDocumentInput {
+  riderId: ID!
+  documentUrl: String!
+  isVerified: Boolean!
+}
+
+"""Input for assigning a bike to a rider."""
+input AssignBikeToRiderInput {
+  riderId: ID!
+  bikeId: ID!
+}
+
+"""Input for deleting a rider."""
+input DeleteRiderInput {
+  riderId: ID!
+}
+
+"""Input for unassigning a bike from a rider."""
+input UnassignBikeFromRiderInput {
+  riderId: ID!
+}
+
+"""Input for updating a bike's status."""
+input UpdateBikeStatusInput {
+  bikeId: ID!
+  status: BikeStatus!
+}
+
+"""Input for updating a rider's test status. Fields are optional."""
+input UpdateTestStatusInput {
+  theory: String
+  road: String
+}
+
+"""Input for updating a rider's status. Fields are optional."""
+input UpdateRiderStatusInput {
+  riderId: ID!
+  applicationStage: ApplicationStage
+  testStatus: UpdateTestStatusInput
+}
+
+
+type Mutation {
+  """
+  Creates a new rider document in Firestore.
+  """
+  createRider(rider: CreateRiderInput!): Rider
+
+  """
+  Creates a new bike record in the system.
+  The initial status will be set to AVAILABLE.
+  """
+  createBike(bike: CreateBikeInput!): Bike
+
+  """
+  Creates a new expense document in Firestore.
+  The initial status will be set to PENDING.
+  """
+  createExpense(expense: CreateExpenseInput!): Expense
+
+  """
+  Updates the status of an expense (e.g., to approve or reject it).
+  A rejectionReason must be provided if the status is REJECTED.
+  """
+  updateExpenseStatus(expense: UpdateExpenseStatusInput!): Expense
+
+  """
+  Adds a new document to a rider's profile.
+  """
+  addRiderDocument(document: AddRiderDocumentInput!): Rider
+
+  """
+  Updates the verification status of a specific rider document.
+  This is used by the Operations team to approve or reject documents.
+  """
+  verifyRiderDocument(verification: VerifyRiderDocumentInput!): Rider
+
+  """
+  Updates a rider's application stage and/or their test status.
+  This is the primary tool for the Operations team to manage rider progression.
+  """
+  updateRiderStatus(status: UpdateRiderStatusInput!): Rider
+
+  """
+  Assigns a bike to a rider, updating both records transactionally.
+  """
+  assignBikeToRider(assignment: AssignBikeToRiderInput!): Rider
+
+  """
+  Unassigns a bike from a rider, making the bike available again.
+  """
+  unassignBikeFromRider(unassignment: UnassignBikeFromRiderInput!): Rider
+
+  """
+  Updates the status of a bike (e.g., to place it in maintenance).
+  A bike cannot be updated if it is currently assigned to a rider.
+  """
+  updateBikeStatus(statusUpdate: UpdateBikeStatusInput!): Bike
+
+  """
+  Deletes a bike from the system.
+  A bike cannot be deleted if it is currently assigned to a rider.
+  """
+  deleteBike(deletion: DeleteBikeInput!): Bike
+
+  """
+  Deletes a rider from the system.
+  If the rider has a bike assigned, the bike will be made available.
+  """
+  deleteRider(deletion: DeleteRiderInput!): Rider
+}
+
+type Query {
+  """
+  Lists all riders, with an optional filter for their application stage.
+  """
+  riders(applicationStage: ApplicationStage): [Rider!]!
+
+  """
+  Lists all expenses, with optional filters for rider, category, and status.
+  """
+  expenses(
+    riderId: ID, category: ExpenseCategory, status: ApprovalStatus
+  ): [Expense!]!
+
+  """
+  Generates a financial summary report of all expenses, with an
+  optional date range filter.
+  """
+  financialReport(startDate: Timestamp, endDate: Timestamp): FinancialSummary
+
+  """
+  Lists all company bikes, with an optional filter for their status.
+  """
+  bikes(status: BikeStatus): [Bike!]!
+
+  """
+  Finds all active riders who do not currently have a bike assigned.
+  """
+  unassignedActiveRiders: [Rider!]!
+
+  """
+  Gets a single rider by their unique ID, including all their details.
+  """
+  rider(id: ID!): Rider
+
+  """
+  Gets a summary of the current status of all bikes, categorized by status.
+  """
+  bikeStatusSummary: BikeStatusSummary!
+
+  """
+  Finds active riders who have documents expiring within a given number of days.
+  """
+  ridersWithExpiringDocuments(daysUntilExpiry: Int!): [Rider!]!
+}

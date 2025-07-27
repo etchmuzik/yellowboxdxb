@@ -1,0 +1,213 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Bootstrap mode flag - IMPORTANT: Set to false after creating first admin
+    // This allows initial setup when no admins exist yet
+    // SECURITY WARNING: Must be disabled in production after setup
+    function isBootstrapMode() {
+      let ENABLE_BOOTSTRAP = false; // Change to true only for initial setup
+      return ENABLE_BOOTSTRAP;
+    }
+    
+    // Import helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // This function now reads the role directly from the user's ID token.
+    function hasRole(role) {
+      return isAuthenticated() && request.auth.token.role == role;
+    }
+    
+    // Enhanced role checks with bootstrap support
+    function hasRoleOrBootstrap(role) {
+      return hasRole(role) || isBootstrapMode();
+    }
+    
+    function isAdminOrOperations() {
+      return hasRole('Admin') || hasRole('Operations');
+    }
+    
+    function isAdminOrFinance() {
+      return hasRole('Admin') || hasRole('Finance');
+    }
+    
+    function hasAnyRole(roles) {
+      return isAuthenticated() && request.auth.token.role in roles;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function canAssignCosts() {
+      return hasRole('Admin') || hasRole('Finance');
+    }
+    
+    // ===== USER COLLECTION =====
+    match /users/{userId} {
+      // Users can read their own document, admins can read all
+      allow read: if hasRoleOrBootstrap('Admin') || 
+                     (isAuthenticated() && request.auth.uid == userId);
+      
+      // Allow user creation during bootstrap mode or by admin
+      allow create: if hasRoleOrBootstrap('Admin') || isBootstrapMode();
+      
+      // Allow updates by admin or self (but not role changes by self)
+      allow update: if hasRoleOrBootstrap('Admin') || 
+                      (isAuthenticated() && 
+                       request.auth.uid == userId && 
+                       (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])));
+      
+      // Only admins can delete users
+      allow delete: if hasRoleOrBootstrap('Admin');
+    }
+    
+    // ===== RIDERS COLLECTION =====
+    match /riders/{riderId} {
+      // Read access for admins/ops or rider-applicants viewing their own profile
+      allow read: if hasRole('Admin') || hasRole('Operations') || hasRole('Finance') ||
+                    (hasRole('Rider-Applicant') && resource.data.userId == request.auth.uid);
+      
+      // Create access for admins/operations
+      allow create: if hasRoleOrBootstrap('Admin') || hasRole('Admin') || hasRole('Operations');
+      
+      // Update access for admins/operations, or riders updating their own non-critical fields
+      allow update: if hasRoleOrBootstrap('Admin') || hasRole('Admin') || hasRole('Operations') ||
+                      (hasRole('Rider-Applicant') && 
+                       resource.data.userId == request.auth.uid &&
+                       !request.resource.data.diff(resource.data).affectedKeys().hasAny(['applicationStage', 'status', 'userId']));
+      
+      // Delete access for admins only
+      allow delete: if hasRoleOrBootstrap('Admin') || hasRole('Admin');
+    }
+    
+    // ===== EXPENSES COLLECTION =====
+    match /expenses/{expenseId} {
+      // Read access: Finance/Admin can read all, others can read their own
+      allow read: if hasRole('Admin') || hasRole('Finance') ||
+                    (isAuthenticated() && resource.data.riderId == request.auth.uid);
+      
+      // Create: Anyone authenticated can submit expenses
+      allow create: if isAuthenticated() && 
+                      request.resource.data.riderId == request.auth.uid &&
+                      request.resource.data.status == 'pending';
+      
+      // Update: Finance/Admin can approve/reject, riders can update their pending expenses
+      allow update: if hasRole('Admin') || hasRole('Finance') ||
+                      (isAuthenticated() && 
+                       resource.data.riderId == request.auth.uid &&
+                       resource.data.status == 'pending' &&
+                       request.resource.data.status == 'pending');
+      
+      // Delete: Admin only
+      allow delete: if hasRole('Admin');
+    }
+    
+    // ===== RIDER_DOCUMENTS COLLECTION =====
+    match /rider_documents/{documentId} {
+      // Read access for admins/ops or the rider who owns the document
+      allow read: if hasRole('Admin') || hasRole('Operations') ||
+                    (isAuthenticated() && resource.data.riderId == request.auth.uid);
+      
+      // Create/Update: Admins/Ops or the rider themselves
+      allow create, update: if hasRole('Admin') || hasRole('Operations') ||
+                              (isAuthenticated() && request.resource.data.riderId == request.auth.uid);
+      
+      // Delete: Admin only
+      allow delete: if hasRole('Admin');
+    }
+    
+    // ===== BIKES COLLECTION =====
+    match /bikes/{bikeId} {
+      // Everyone can read bike information
+      allow read: if isAuthenticated();
+      
+      // Only admins and operations can manage bikes
+      allow create, update: if hasRole('Admin') || hasRole('Operations');
+      allow delete: if hasRole('Admin');
+    }
+    
+    // ===== LOCATIONS COLLECTION =====
+    match /locations/{locationId} {
+      // Admins and operations can read all locations
+      allow read: if hasRole('Admin') || hasRole('Operations');
+      
+      // Riders can create their own location updates
+      allow create: if isAuthenticated() && 
+                      request.resource.data.riderId == request.auth.uid;
+      
+      // No updates allowed (immutable)
+      allow update: if false;
+      
+      // Admin can delete
+      allow delete: if hasRole('Admin');
+    }
+    
+    // ===== BUDGETS COLLECTION =====
+    match /budgets/{budgetId} {
+      // Finance and Admin can read
+      allow read: if hasRole('Admin') || hasRole('Finance');
+      
+      // Finance and Admin can manage
+      allow create, update: if hasRole('Admin') || hasRole('Finance');
+      allow delete: if hasRole('Admin');
+    }
+    
+    // ===== NOTIFICATIONS COLLECTION =====
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isAuthenticated() && 
+                    (resource.data.userId == request.auth.uid || hasRole('Admin'));
+      
+      // System creates notifications (via Cloud Functions ideally)
+      allow create: if hasRole('Admin') || hasRole('Operations') || hasRole('Finance');
+      
+      // Users can mark their own as read
+      allow update: if isAuthenticated() && 
+                      resource.data.userId == request.auth.uid &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+      
+      // Users can delete their own, admin can delete any
+      allow delete: if hasRole('Admin') || 
+                      (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+    
+    // ===== VISA MANAGEMENT COLLECTION =====
+    match /visa-management/{visaId} {
+      allow read: if hasRole('Admin') || hasRole('Operations') || hasRole('Finance');
+      allow create, update: if hasRole('Admin') || hasRole('Operations');
+      allow delete: if hasRole('Admin');
+    }
+    
+    // ===== SECURITY EVENTS (Audit Logging) =====
+    match /security_events/{eventId} {
+      // Only admins can read security events
+      allow read: if hasRole('Admin');
+      // Security events should only be created by Cloud Functions
+      allow create, update, delete: if false;
+    }
+    
+    // ===== USER SESSIONS =====
+    match /user_sessions/{sessionId} {
+      // Users can read their own sessions, admins can read all
+      allow read: if hasRole('Admin') || 
+                    (isAuthenticated() && resource.data.userId == request.auth.uid);
+      // Sessions should be managed by auth system/Cloud Functions
+      allow create, update, delete: if false;
+    }
+    
+    // ===== ACTIVITIES COLLECTION =====
+    match /activities/{activityId} {
+      allow read: if hasRole('Admin') || hasRole('Operations');
+      allow create: if hasRole('Admin') || hasRole('Operations') || hasRole('Finance');
+      allow update, delete: if hasRole('Admin');
+    }
+    
+    // ===== SYSTEM CONFIG =====
+    match /system_config/{configId} {
+      allow read: if isAuthenticated();
+      allow write: if hasRole('Admin');
+    }
+  }
+}

@@ -1,0 +1,103 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function getUserRole() {
+      return getUserData().role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'Admin';
+    }
+    
+    function isOperations() {
+      return isAuthenticated() && getUserRole() == 'Operations';
+    }
+    
+    function isFinance() {
+      return isAuthenticated() && getUserRole() == 'Finance';
+    }
+    
+    function isRider() {
+      return isAuthenticated() && getUserRole() == 'Rider-Applicant';
+    }
+    
+    function isStaff() {
+      return isAuthenticated() && getUserRole() in ['Admin', 'Operations', 'Finance'];
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isStaff());
+      allow create: if true; // Allow user creation during signup
+      allow update: if isAdmin() || (isAuthenticated() && request.auth.uid == userId);
+      allow delete: if isAdmin();
+    }
+    
+    // Riders collection - Finance needs read access
+    match /riders/{riderId} {
+      allow read: if isStaff(); // Admin, Operations, AND Finance can read
+      allow create: if isAdmin() || isOperations();
+      allow update: if isAdmin() || isOperations();
+      allow delete: if isAdmin();
+    }
+    
+    // Expenses collection - Finance needs read access
+    match /expenses/{expenseId} {
+      allow read: if isStaff(); // Admin, Operations, AND Finance can read
+      allow create: if isAdmin() || isOperations();
+      allow update: if isStaff(); // All staff can update (for approvals)
+      allow delete: if isAdmin();
+    }
+    
+    // Documents collection
+    match /documents/{documentId} {
+      allow read: if isStaff();
+      allow write: if isAdmin() || isOperations();
+    }
+    
+    // Bikes collection
+    match /bikes/{bikeId} {
+      allow read: if isStaff();
+      allow write: if isAdmin() || isOperations();
+    }
+    
+    // Locations collection (GPS tracking)
+    match /locations/{locationId} {
+      allow read: if isAdmin() || isOperations();
+      allow write: if isAuthenticated();
+    }
+    
+    // Budgets collection
+    match /budgets/{budgetId} {
+      allow read: if isStaff();
+      allow write: if isAdmin() || isFinance();
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Visa management collection
+    match /visa-management/{visaId} {
+      allow read: if isStaff();
+      allow write: if isAdmin() || isFinance();
+    }
+    
+    // Activity logs
+    match /activity/{activityId} {
+      allow read: if isStaff();
+      allow write: if isAuthenticated();
+    }
+  }
+}

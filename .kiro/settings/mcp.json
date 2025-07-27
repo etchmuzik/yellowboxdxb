@@ -1,0 +1,76 @@
+{
+  "mcpServers": {
+    "n8n-mcp": {
+      "command": "npx",
+      "args": [
+        "n8n-mcp"
+      ],
+      "env": {
+        "MCP_MODE": "stdio",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true",
+        "N8N_API_URL": "https://n8n.srv924607.hstgr.cloud/",
+        "N8N_API_KEY": "YOUR_N8N_API_KEY_HERE"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "tools_documentation",
+        "search_nodes",
+        "get_node_essentials",
+        "n8n_create_workflow",
+        "n8n_list_workflows",
+        "n8n_get_workflow",
+        "n8n_get_workflow_structure",
+        "n8n_health_check",
+        "n8n_update_full_workflow",
+        "n8n_diagnostic",
+        "n8n_get_workflow_details",
+        "n8n_update_partial_workflow",
+        "n8n_validate_workflow",
+        "search_node_properties",
+        "get_node_info"
+      ]
+    },
+    "actors-mcp-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@apify/actors-mcp-server",
+        "--actors",
+        "code_crafter/apollo-io-scraper,streamers/youtube-comments-scraper,compass/crawler-google-places,streamers/youtube-scraper,clockworks/tiktok-scraper,apify/instagram-scraper,apify/web-scraper,topaz_sharingan/Youtube-Transcript-Scraper-1,apidojo/tweet-scraper,apify/facebook-ads-scraper,harvestapi/linkedin-profile-search",
+        "--enable-adding-actors"
+      ],
+      "env": {
+        "APIFY_TOKEN": "YOUR_APIFY_TOKEN_HERE"
+      },
+      "disabled": false,
+      "autoApprove": []
+    },
+    "MCP_DOCKER": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "alpine/socat",
+        "STDIO",
+        "TCP:host.docker.internal:8811"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "curl",
+        "fetch"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/etch"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

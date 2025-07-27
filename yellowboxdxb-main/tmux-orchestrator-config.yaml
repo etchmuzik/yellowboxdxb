@@ -1,0 +1,320 @@
+# Yellow Box - Tmux Orchestrator Configuration
+# This configuration sets up a complete development and automation environment
+
+session_name: "yellowbox-automation"
+description: "Yellow Box Fleet Management - Complete Automation Environment"
+
+# Global environment variables
+environment:
+  PROJECT_NAME: "Yellow Box"
+  NODE_ENV: "development"
+  N8N_PORT: "5678"
+  FIREBASE_PROJECT: "yellowbox-8e0e6"
+
+# Pre-session setup commands
+pre_commands:
+  - echo "🚀 Setting up Yellow Box Automation Environment..."
+  - echo "📋 Project: Yellow Box Fleet Management System"
+
+# Post-session cleanup commands
+post_commands:
+  - echo "🧹 Cleaning up Yellow Box automation session..."
+  - pkill -f "n8n" || true
+  - echo "✅ Cleanup completed"
+
+# Window configurations
+windows:
+  # Main development window
+  - name: "main"
+    description: "Main development and monitoring"
+    layout: "main-horizontal"
+    panes:
+      - name: "project-overview"
+        commands:
+          - clear
+          - echo "🎯 Yellow Box Automation Dashboard"
+          - echo "=================================="
+          - echo ""
+          - echo "📊 System Status:"
+          - echo "- Project: Yellow Box Fleet Management"
+          - echo "- Environment: Development"
+          - echo "- n8n Port: 5678"
+          - echo ""
+          - echo "🔗 Quick Links:"
+          - echo "- n8n Interface: http://localhost:5678"
+          - echo "- Firebase Console: https://console.firebase.google.com/project/yellowbox-8e0e6"
+          - echo "- Google Sheets: (configure in setup)"
+          - echo ""
+          - echo "📚 Available Commands:"
+          - echo "- ./setup-credentials.sh - Configure credentials"
+          - echo "- ./import-workflows.sh - Import workflow guide"
+          - echo "- ./monitor-workflows.sh - Monitor system status"
+          - echo ""
+          - echo "Ready for automation setup! 🚀"
+      
+      - name: "system-monitor"
+        commands:
+          - clear
+          - echo "📊 System Monitor"
+          - echo "================"
+          - watch -n 5 'echo "🕐 $(date)"; echo ""; ps aux | grep -E "(n8n|node)" | grep -v grep || echo "No n8n processes running"; echo ""; echo "📈 Memory Usage:"; free -h | head -2; echo ""; echo "💾 Disk Usage:"; df -h | head -2'
+
+  # n8n automation window
+  - name: "n8n"
+    description: "n8n automation server and logs"
+    layout: "even-horizontal"
+    panes:
+      - name: "n8n-server"
+        commands:
+          - clear
+          - echo "🤖 n8n Automation Server"
+          - echo "========================"
+          - echo ""
+          - echo "Starting n8n server..."
+          - echo "Access at: http://localhost:5678"
+          - echo ""
+          - sleep 2
+          - n8n start
+      
+      - name: "n8n-logs"
+        commands:
+          - clear
+          - echo "📋 n8n Server Logs"
+          - echo "=================="
+          - echo ""
+          - echo "Waiting for n8n to start..."
+          - sleep 5
+          - tail -f n8n.log 2>/dev/null || echo "n8n.log not found yet. Logs will appear here once n8n starts."
+
+  # Firebase and backend services
+  - name: "firebase"
+    description: "Firebase services and functions"
+    layout: "main-vertical"
+    panes:
+      - name: "firebase-emulator"
+        commands:
+          - clear
+          - echo "🔥 Firebase Local Development"
+          - echo "============================"
+          - echo ""
+          - echo "Available commands:"
+          - echo "- firebase emulators:start - Start Firebase emulators"
+          - echo "- firebase deploy --only functions - Deploy functions"
+          - echo "- firebase deploy --only hosting - Deploy hosting"
+          - echo ""
+          - echo "Current project: $(firebase use --current 2>/dev/null || echo 'Not set')"
+          - echo ""
+      
+      - name: "functions-dev"
+        commands:
+          - clear
+          - echo "⚡ Firebase Functions Development"
+          - echo "================================"
+          - echo ""
+          - cd functions 2>/dev/null || echo "Functions directory not found"
+          - echo "Available commands:"
+          - echo "- npm run serve - Serve functions locally"
+          - echo "- npm run deploy - Deploy functions"
+          - echo "- npm run logs - View function logs"
+          - echo ""
+
+  # Google Sheets and data management
+  - name: "data"
+    description: "Data management and Google Sheets integration"
+    layout: "even-vertical"
+    panes:
+      - name: "sheets-setup"
+        commands:
+          - clear
+          - echo "📊 Google Sheets Integration"
+          - echo "==========================="
+          - echo ""
+          - echo "Setup checklist:"
+          - echo "□ Create Google Cloud project"
+          - echo "□ Enable Google Sheets API"
+          - echo "□ Create service account"
+          - echo "□ Download service account JSON"
+          - echo "□ Create Google Spreadsheet"
+          - echo "□ Share sheet with service account"
+          - echo ""
+          - echo "Run: ./setup-credentials.sh for guided setup"
+          - echo ""
+      
+      - name: "data-monitor"
+        commands:
+          - clear
+          - echo "📈 Data Synchronization Monitor"
+          - echo "=============================="
+          - echo ""
+          - echo "This pane will show data sync status"
+          - echo "Configure your Google Sheets first"
+          - echo ""
+          - echo "Commands:"
+          - echo "- ./monitor-workflows.sh - Check workflow status"
+          - echo ""
+
+  # Development and testing
+  - name: "dev"
+    description: "Development tools and testing"
+    layout: "main-horizontal"
+    panes:
+      - name: "app-dev"
+        commands:
+          - clear
+          - echo "⚛️ Yellow Box App Development"
+          - echo "============================"
+          - echo ""
+          - echo "Available commands:"
+          - echo "- npm run dev - Start development server"
+          - echo "- npm run build - Build for production"
+          - echo "- npm run test - Run tests"
+          - echo "- npm run lint - Run linting"
+          - echo ""
+          - echo "Current directory: $(pwd)"
+          - echo ""
+      
+      - name: "testing"
+        commands:
+          - clear
+          - echo "🧪 Testing and Quality Assurance"
+          - echo "================================"
+          - echo ""
+          - echo "Test automation workflows:"
+          - echo "1. Test n8n workflows individually"
+          - echo "2. Test Google Sheets integration"
+          - echo "3. Test Firebase functions"
+          - echo "4. Test end-to-end automation"
+          - echo ""
+          - echo "Run tests with: npm test"
+          - echo ""
+
+  # Automation management
+  - name: "automation"
+    description: "Automation workflow management"
+    layout: "even-horizontal"
+    panes:
+      - name: "workflow-status"
+        commands:
+          - clear
+          - echo "🔄 Workflow Management"
+          - echo "====================="
+          - echo ""
+          - echo "Workflow Status:"
+          - echo "- Real-time Data Sync: e91V8Vqp3fxl80PS"
+          - echo "- Scheduled Data Backup: mpchfdzgAVmAVlVU"
+          - echo "- Health Monitoring: yz8EHQamhw1mb8Sx"
+          - echo "- Data Integrity Check: LGoTcdR0z8xMHYSW"
+          - echo ""
+          - echo "Commands:"
+          - echo "- ./import-workflows.sh - Import workflows"
+          - echo "- ./monitor-workflows.sh - Monitor status"
+          - echo ""
+      
+      - name: "automation-logs"
+        commands:
+          - clear
+          - echo "📋 Automation Logs"
+          - echo "=================="
+          - echo ""
+          - echo "Monitoring automation activity..."
+          - echo "Logs will appear here once workflows are active"
+          - echo ""
+
+# Startup sequence
+startup_sequence:
+  - window: "main"
+    pane: "project-overview"
+  - delay: 2
+  - window: "n8n"
+    pane: "n8n-server"
+  - delay: 5
+  - window: "main"
+    pane: "system-monitor"
+
+# Hotkeys for quick navigation
+hotkeys:
+  - key: "M"
+    description: "Switch to main dashboard"
+    action: "select-window -t main"
+  
+  - key: "N"
+    description: "Switch to n8n window"
+    action: "select-window -t n8n"
+  
+  - key: "F"
+    description: "Switch to Firebase window"
+    action: "select-window -t firebase"
+  
+  - key: "D"
+    description: "Switch to data management"
+    action: "select-window -t data"
+  
+  - key: "A"
+    description: "Switch to automation management"
+    action: "select-window -t automation"
+
+# Custom commands
+custom_commands:
+  setup:
+    description: "Run complete automation setup"
+    command: "./setup-credentials.sh"
+  
+  import:
+    description: "Show workflow import guide"
+    command: "./import-workflows.sh"
+  
+  monitor:
+    description: "Monitor workflow status"
+    command: "./monitor-workflows.sh"
+  
+  deploy:
+    description: "Deploy automation system"
+    command: "./scripts/deploy-automation.sh"
+  
+  status:
+    description: "Show system status"
+    command: |
+      echo "🎯 Yellow Box Automation Status"
+      echo "=============================="
+      echo ""
+      echo "n8n Status: $(pgrep -f 'n8n' > /dev/null && echo '✅ Running' || echo '❌ Not running')"
+      echo "Firebase Project: $(firebase use --current 2>/dev/null || echo 'Not configured')"
+      echo "Node.js Version: $(node --version)"
+      echo "npm Version: $(npm --version)"
+      echo ""
+      echo "🔗 Quick Links:"
+      echo "- n8n: http://localhost:5678"
+      echo "- Firebase Console: https://console.firebase.google.com/project/yellowbox-8e0e6"
+      echo ""
+
+# Session notes and documentation
+notes: |
+  Yellow Box Automation Environment
+  ================================
+  
+  This tmux session provides a complete development environment for the
+  Yellow Box fleet management automation system.
+  
+  Key Components:
+  - n8n automation server
+  - Firebase functions and hosting
+  - Google Sheets integration
+  - Real-time monitoring
+  - Development tools
+  
+  Quick Start:
+  1. Run custom command 'setup' to configure credentials
+  2. Import workflows using 'import' command
+  3. Monitor system with 'monitor' command
+  
+  Hotkeys:
+  - Prefix + M: Main dashboard
+  - Prefix + N: n8n automation
+  - Prefix + F: Firebase services
+  - Prefix + D: Data management
+  - Prefix + A: Automation management
+  
+  For detailed documentation, see:
+  - QUICK_START_AUTOMATION.md
+  - CREDENTIAL_SETUP_GUIDE.md
+  - N8N_AUTOMATION_SETUP.md

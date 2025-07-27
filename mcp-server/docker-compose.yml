@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mcp-server:
+    build: .
+    container_name: yellowbox-mcp-server
+    ports:
+      - "3001:3001"  # MCP Server
+      - "3002:3002"  # Metrics (if enabled)
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      # CORS Configuration
+      - CORS_ORIGIN=http://localhost:5173,http://localhost:8080,https://yellowboxdxb.web.app
+      # Firebase Configuration (replace with actual values)
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
+      # N8N Configuration
+      - N8N_WEBHOOK_URL=http://n8n:5678/webhook/yellowbox-sync
+      - N8N_API_KEY=${N8N_API_KEY}
+      # Redis Configuration
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    networks:
+      - yellowbox-network
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+
+  redis:
+    image: redis:7-alpine
+    container_name: yellowbox-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - yellowbox-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Optional: N8N for local development
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: yellowbox-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=yellowbox
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://n8n:5678/
+      - GENERIC_TIMEZONE=UTC
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - yellowbox-network
+    restart: unless-stopped
+
+networks:
+  yellowbox-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  n8n-data:

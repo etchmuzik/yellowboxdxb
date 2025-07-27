@@ -1,0 +1,332 @@
+{
+  "name": "Yellow Box - Real-time Data Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "yellowbox-sync",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "yellowbox-sync"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "rider-condition",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "rider",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "rider-router",
+      "name": "Rider Router",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "expense-condition",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "expense",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "expense-router",
+      "name": "Expense Router",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "appendOrUpdate",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Riders",
+        "columnToMatchOn": "A",
+        "valueToMatchOn": "={{ $json.data.id }}",
+        "options": {
+          "useAppend": true
+        },
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "A",
+              "fieldValue": "={{ $json.data.id }}"
+            },
+            {
+              "fieldId": "B",
+              "fieldValue": "={{ $json.data.name }}"
+            },
+            {
+              "fieldId": "C",
+              "fieldValue": "={{ $json.data.email }}"
+            },
+            {
+              "fieldId": "D",
+              "fieldValue": "={{ $json.data.phone }}"
+            },
+            {
+              "fieldId": "E",
+              "fieldValue": "={{ $json.data.status }}"
+            },
+            {
+              "fieldId": "F",
+              "fieldValue": "={{ $json.data.visaNumber }}"
+            },
+            {
+              "fieldId": "G",
+              "fieldValue": "={{ $json.data.licenseNumber }}"
+            },
+            {
+              "fieldId": "H",
+              "fieldValue": "={{ $json.data.createdAt }}"
+            },
+            {
+              "fieldId": "I",
+              "fieldValue": "={{ $json.data.updatedAt || new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "sync-rider-data",
+      "name": "Sync Rider Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [680, 200],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "appendOrUpdate",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Expenses",
+        "columnToMatchOn": "A",
+        "valueToMatchOn": "={{ $json.data.id }}",
+        "options": {
+          "useAppend": true
+        },
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "A",
+              "fieldValue": "={{ $json.data.id }}"
+            },
+            {
+              "fieldId": "B",
+              "fieldValue": "={{ $json.data.riderId }}"
+            },
+            {
+              "fieldId": "C",
+              "fieldValue": "={{ $json.data.amount }}"
+            },
+            {
+              "fieldId": "D",
+              "fieldValue": "={{ $json.data.category }}"
+            },
+            {
+              "fieldId": "E",
+              "fieldValue": "={{ $json.data.description }}"
+            },
+            {
+              "fieldId": "F",
+              "fieldValue": "={{ $json.data.receiptUrl }}"
+            },
+            {
+              "fieldId": "G",
+              "fieldValue": "={{ $json.data.status }}"
+            },
+            {
+              "fieldId": "H",
+              "fieldValue": "={{ $json.data.createdAt }}"
+            },
+            {
+              "fieldId": "I",
+              "fieldValue": "={{ $json.data.approvedAt }}"
+            }
+          ]
+        }
+      },
+      "id": "sync-expense-data",
+      "name": "Sync Expense Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [680, 400],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Sync_Log",
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "A",
+              "fieldValue": "={{ $json.type }}"
+            },
+            {
+              "fieldId": "B",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "C",
+              "fieldValue": "={{ $json.action }}"
+            },
+            {
+              "fieldId": "D",
+              "fieldValue": "success"
+            },
+            {
+              "fieldId": "E",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "log-sync-activity",
+      "name": "Log Sync Activity",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 300],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Rider Router",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Expense Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rider Router": {
+      "main": [
+        [
+          {
+            "node": "Sync Rider Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expense Router": {
+      "main": [
+        [
+          {
+            "node": "Sync Expense Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync Rider Data": {
+      "main": [
+        [
+          {
+            "node": "Log Sync Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync Expense Data": {
+      "main": [
+        [
+          {
+            "node": "Log Sync Activity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "1",
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "yellowbox"
+    }
+  ]
+}

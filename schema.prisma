@@ -1,0 +1,352 @@
+// YellowBox Fleet Management System Schema
+
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/yellowbox-fleet/app/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          UserRole  @default(RIDER_APPLICANT)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  rider         Rider?
+  expenses      Expense[]
+  notifications Notification[]
+  budgets       Budget[]
+  visaManagement VisaManagement[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Rider {
+  id               String         @id @default(cuid())
+  userId           String         @unique
+  employeeId       String?        @unique
+  fullName         String
+  phone            String
+  emergencyContact String?
+  address          String?
+  dateOfBirth      DateTime?
+  nationality      String?
+  passportNumber   String?
+  visaStatus       VisaStatus     @default(PENDING)
+  applicationStage ApplicationStage @default(APPLIED)
+  testStatus       Json?          // {theory: boolean, road: boolean, medical: boolean}
+  assignedBikeId   String?
+  status           RiderStatus    @default(ACTIVE)
+  joinDate         DateTime?
+  terminationDate  DateTime?
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedBike     Bike?          @relation(fields: [assignedBikeId], references: [id])
+  documents        Document[]
+  expenses         Expense[]
+  locations        Location[]
+
+  @@map("riders")
+}
+
+model Bike {
+  id           String      @id @default(cuid())
+  bikeNumber   String      @unique
+  model        String
+  licensePlate String?     @unique
+  purchaseDate DateTime?
+  condition    BikeCondition @default(GOOD)
+  status       BikeStatus  @default(AVAILABLE)
+  lastService  DateTime?
+  nextService  DateTime?
+  gpsTrackerId String?
+  assignedTo   String?
+  notes        String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  riders       Rider[]
+
+  @@map("bikes")
+}
+
+model Expense {
+  id           String         @id @default(cuid())
+  riderId      String
+  userId       String
+  category     ExpenseCategory
+  description  String
+  amount       Decimal        @db.Decimal(10, 2)
+  date         DateTime
+  receiptUrl   String?
+  status       ExpenseStatus  @default(PENDING)
+  approvedBy   String?
+  approvedAt   DateTime?
+  rejectedBy   String?
+  rejectedAt   DateTime?
+  rejectionReason String?
+  notes        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  rider        Rider          @relation(fields: [riderId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id])
+
+  @@map("expenses")
+}
+
+model Document {
+  id           String         @id @default(cuid())
+  riderId      String
+  type         DocumentType
+  name         String
+  url          String
+  expiryDate   DateTime?
+  status       DocumentStatus @default(PENDING)
+  verifiedBy   String?
+  verifiedAt   DateTime?
+  notes        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  rider        Rider          @relation(fields: [riderId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+model Location {
+  id           String    @id @default(cuid())
+  riderId      String
+  latitude     Float
+  longitude    Float
+  address      String?
+  district     String?
+  speed        Float?
+  battery      Int?
+  timestamp    DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+
+  rider        Rider     @relation(fields: [riderId], references: [id], onDelete: Cascade)
+
+  @@map("locations")
+}
+
+model Budget {
+  id           String      @id @default(cuid())
+  userId       String
+  category     ExpenseCategory
+  amount       Decimal     @db.Decimal(10, 2)
+  period       BudgetPeriod @default(MONTHLY)
+  startDate    DateTime
+  endDate      DateTime
+  spent        Decimal     @db.Decimal(10, 2) @default(0)
+  status       BudgetStatus @default(ACTIVE)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id])
+
+  @@map("budgets")
+}
+
+model Notification {
+  id           String             @id @default(cuid())
+  userId       String
+  title        String
+  message      String
+  type         NotificationType   @default(INFO)
+  read         Boolean            @default(false)
+  actionUrl    String?
+  createdAt    DateTime           @default(now())
+
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model VisaManagement {
+  id               String         @id @default(cuid())
+  userId           String
+  riderName        String
+  passportNumber   String
+  visaType         String
+  applicationDate  DateTime
+  status           VisaStatus     @default(PENDING)
+  expectedDate     DateTime?
+  completedDate    DateTime?
+  cost             Decimal?       @db.Decimal(10, 2)
+  agency           String?
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  user             User           @relation(fields: [userId], references: [id])
+
+  @@map("visa_management")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  OPERATIONS
+  FINANCE
+  RIDER_APPLICANT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum VisaStatus {
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum ApplicationStage {
+  APPLIED
+  TRAINING
+  VISA
+  JOINED
+  TERMINATED
+}
+
+enum RiderStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+  TERMINATED
+}
+
+enum BikeCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  MAINTENANCE_REQUIRED
+}
+
+enum BikeStatus {
+  AVAILABLE
+  ASSIGNED
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum ExpenseCategory {
+  FUEL
+  MAINTENANCE
+  INSURANCE
+  REGISTRATION
+  PARKING
+  FINES
+  FOOD
+  ACCOMMODATION
+  MEDICAL
+  TRAINING
+  VISA
+  OTHER
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+}
+
+enum DocumentType {
+  PASSPORT
+  VISA
+  DRIVING_LICENSE
+  EMIRATES_ID
+  MEDICAL_CERTIFICATE
+  TRAINING_CERTIFICATE
+  CONTRACT
+  BANK_DETAILS
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  VERIFIED
+  EXPIRED
+  REJECTED
+}
+
+enum BudgetPeriod {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum BudgetStatus {
+  ACTIVE
+  COMPLETED
+  EXCEEDED
+  CANCELLED
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  SUCCESS
+  ERROR
+  URGENT
+}

@@ -1,0 +1,230 @@
+{
+  "meta": {
+    "instanceId": "e2f3a4b5-c6d7-8901-mnop-234567890123"
+  },
+  "name": "Advanced Workflow Creator with Templates",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f3a4b5c6-d7e8-9012-opqr-345678901234",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Workflow templates\nconst templates = {\n  webhook: {\n    name: 'Webhook to Database',\n    nodes: [\n      {\n        \"parameters\": {\n          \"path\": \"webhook-endpoint\",\n          \"responseMode\": \"onReceived\",\n          \"responseData\": \"firstEntryJson\",\n          \"responsePropertyName\": \"data\"\n        },\n        \"id\": \"webhook-node-id\",\n        \"name\": \"Webhook\",\n        \"type\": \"n8n-nodes-base.webhook\",\n        \"typeVersion\": 1.1,\n        \"position\": [250, 300],\n        \"webhookId\": \"unique-webhook-id\"\n      },\n      {\n        \"parameters\": {\n          \"operation\": \"insert\",\n          \"table\": \"{{table_name}}\",\n          \"columns\": \"={{columns}}\"\n        },\n        \"id\": \"postgres-node-id\",\n        \"name\": \"Insert to Database\",\n        \"type\": \"n8n-nodes-base.postgres\",\n        \"typeVersion\": 2.4,\n        \"position\": [450, 300]\n      }\n    ],\n    connections: {\n      \"Webhook\": {\n        \"main\": [[{\"node\": \"Insert to Database\", \"type\": \"main\", \"index\": 0}]]\n      }\n    }\n  },\n  \n  emailAutomation: {\n    name: 'Email Automation',\n    nodes: [\n      {\n        \"parameters\": {\n          \"rule\": {\n            \"interval\": [{\"field\": \"hours\", \"hoursInterval\": 1}]\n          }\n        },\n        \"id\": \"schedule-node-id\",\n        \"name\": \"Schedule Trigger\",\n        \"type\": \"n8n-nodes-base.scheduleTrigger\",\n        \"typeVersion\": 1.1,\n        \"position\": [250, 300]\n      },\n      {\n        \"parameters\": {\n          \"resource\": \"message\",\n          \"operation\": \"getAll\",\n          \"returnAll\": false,\n          \"limit\": 10,\n          \"filters\": {\n            \"receivedAfter\": \"={{$now.minus(1, 'hour').toISO()}}\"\n          }\n        },\n        \"id\": \"gmail-node-id\",\n        \"name\": \"Get Emails\",\n        \"type\": \"n8n-nodes-base.gmail\",\n        \"typeVersion\": 2,\n        \"position\": [450, 300]\n      }\n    ],\n    connections: {\n      \"Schedule Trigger\": {\n        \"main\": [[{\"node\": \"Get Emails\", \"type\": \"main\", \"index\": 0}]]\n      }\n    }\n  },\n  \n  apiIntegration: {\n    name: 'API Integration',\n    nodes: [\n      {\n        \"parameters\": {},\n        \"id\": \"manual-trigger-id\",\n        \"name\": \"Manual Trigger\",\n        \"type\": \"n8n-nodes-base.manualTrigger\",\n        \"typeVersion\": 1,\n        \"position\": [250, 300]\n      },\n      {\n        \"parameters\": {\n          \"method\": \"GET\",\n          \"url\": \"https://api.example.com/data\",\n          \"authentication\": \"genericCredentialType\",\n          \"genericAuthType\": \"httpHeaderAuth\",\n          \"options\": {}\n        },\n        \"id\": \"http-request-id\",\n        \"name\": \"API Call\",\n        \"type\": \"n8n-nodes-base.httpRequest\",\n        \"typeVersion\": 4.2,\n        \"position\": [450, 300]\n      },\n      {\n        \"parameters\": {\n          \"mode\": \"runOnceForEachItem\",\n          \"jsCode\": \"// Process API response\\nconst item = $input.item.json;\\nreturn {\\n  processed: true,\\n  originalData: item,\\n  timestamp: new Date().toISOString()\\n};\"\n        },\n        \"id\": \"code-node-id\",\n        \"name\": \"Process Data\",\n        \"type\": \"n8n-nodes-base.code\",\n        \"typeVersion\": 2,\n        \"position\": [650, 300]\n      }\n    ],\n    connections: {\n      \"Manual Trigger\": {\n        \"main\": [[{\"node\": \"API Call\", \"type\": \"main\", \"index\": 0}]]\n      },\n      \"API Call\": {\n        \"main\": [[{\"node\": \"Process Data\", \"type\": \"main\", \"index\": 0}]]\n      }\n    }\n  }\n};\n\n// Get input parameters\nconst templateType = $input.first()?.json?.template || 'custom';\nconst workflowName = $input.first()?.json?.workflowName;\nconst customNodes = $input.first()?.json?.nodes;\nconst customConnections = $input.first()?.json?.connections;\nconst workflowTags = $input.first()?.json?.tags || [];\nconst isActive = $input.first()?.json?.active || false;\n\n// Generate UUID\nconst generateUUID = () => {\n  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {\n    const r = Math.random() * 16 | 0;\n    const v = c == 'x' ? r : (r & 0x3 | 0x8);\n    return v.toString(16);\n  });\n};\n\n// Regenerate IDs for template nodes\nconst regenerateNodeIds = (nodes) => {\n  const idMap = {};\n  return nodes.map(node => {\n    const newId = generateUUID();\n    idMap[node.id] = newId;\n    return { ...node, id: newId };\n  });\n};\n\n// Select template or use custom\nlet selectedTemplate;\nif (templateType === 'custom' || !templates[templateType]) {\n  selectedTemplate = {\n    name: workflowName || 'Custom Workflow',\n    nodes: customNodes || [{\n      \"parameters\": {},\n      \"id\": generateUUID(),\n      \"name\": \"Manual Trigger\",\n      \"type\": \"n8n-nodes-base.manualTrigger\",\n      \"typeVersion\": 1,\n      \"position\": [250, 300]\n    }],\n    connections: customConnections || {}\n  };\n} else {\n  selectedTemplate = templates[templateType];\n  selectedTemplate.nodes = regenerateNodeIds(selectedTemplate.nodes);\n}\n\n// Create workflow object\nconst workflow = {\n  \"name\": workflowName || selectedTemplate.name + ' - ' + new Date().toLocaleDateString(),\n  \"nodes\": selectedTemplate.nodes,\n  \"connections\": selectedTemplate.connections,\n  \"active\": isActive,\n  \"settings\": {\n    \"executionOrder\": \"v1\",\n    \"saveManualExecutions\": true,\n    \"callerPolicy\": \"workflowsFromSameOwner\",\n    \"errorWorkflow\": \"\",\n    \"saveExecutionProgress\": true,\n    \"saveDataSuccessExecution\": \"all\",\n    \"saveDataErrorExecution\": \"all\",\n    \"executionTimeout\": -1,\n    \"timezone\": \"UTC\"\n  },\n  \"staticData\": null,\n  \"tags\": [...workflowTags, templateType !== 'custom' ? templateType : ''].filter(Boolean),\n  \"triggerCount\": 0,\n  \"updatedAt\": new Date().toISOString(),\n  \"versionId\": generateUUID()\n};\n\nreturn {\n  workflow: workflow,\n  template: templateType,\n  availableTemplates: Object.keys(templates),\n  apiUrl: $env.N8N_BASE_URL || 'http://localhost:5678',\n  apiKey: $env.N8N_API_KEY || ''\n};"
+      },
+      "id": "a4b5c6d7-e8f9-0123-pqrs-456789012345",
+      "name": "Select Template & Build Workflow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.apiUrl }}/api/v1/workflows",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "={{ $json.apiKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.workflow) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "b5c6d7e8-f9a0-1234-qrst-567890123456",
+      "name": "Create Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c6d7e8f9-a0b1-2345-rstu-678901234567",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 201,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d7e8f9a0-b1c2-3456-stuv-789012345678",
+      "name": "Check Creation Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $node[\"Select Template & Build Workflow\"].json.apiUrl }}/api/v1/workflows/{{ $json.body.id }}/activate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "={{ $node[\"Select Template & Build Workflow\"].json.apiKey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e8f9a0b1-c2d3-4567-tuvw-890123456789",
+      "name": "Activate Workflow (Optional)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 200],
+      "executeOnce": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process successful response\nconst response = $input.first().json;\nconst workflowData = response.body;\nconst templateUsed = $node[\"Select Template & Build Workflow\"].json.template;\n\nreturn {\n  success: true,\n  message: `Workflow created successfully using ${templateUsed} template`,\n  workflow: {\n    id: workflowData.id,\n    name: workflowData.name,\n    url: `${$node[\"Select Template & Build Workflow\"].json.apiUrl}/workflow/${workflowData.id}`,\n    active: workflowData.active,\n    nodeCount: workflowData.nodes.length,\n    tags: workflowData.tags,\n    createdAt: workflowData.createdAt,\n    updatedAt: workflowData.updatedAt\n  },\n  template: {\n    used: templateUsed,\n    available: $node[\"Select Template & Build Workflow\"].json.availableTemplates\n  },\n  nextSteps: [\n    `Open workflow: ${$node[\"Select Template & Build Workflow\"].json.apiUrl}/workflow/${workflowData.id}`,\n    'Configure credentials for any nodes that require them',\n    'Test the workflow with sample data',\n    'Activate the workflow when ready'\n  ]\n};"
+      },
+      "id": "f9a0b1c2-d3e4-5678-uvwx-901234567890",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 250]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle error\nconst response = $input.first().json;\nconst error = response.body || response;\nconst statusCode = response.statusCode;\n\n// Common error messages and solutions\nconst errorSolutions = {\n  401: {\n    issue: 'Authentication failed',\n    solutions: [\n      'Check if N8N_API_KEY environment variable is set',\n      'Verify the API key is correct and active',\n      'Ensure API access is enabled in n8n settings'\n    ]\n  },\n  400: {\n    issue: 'Invalid workflow data',\n    solutions: [\n      'Check workflow JSON structure',\n      'Ensure all node types are valid',\n      'Verify node connections reference existing nodes',\n      'Check for duplicate node IDs'\n    ]\n  },\n  403: {\n    issue: 'Permission denied',\n    solutions: [\n      'Verify API key has workflow creation permissions',\n      'Check if workflow creation is allowed for your user role'\n    ]\n  },\n  500: {\n    issue: 'Server error',\n    solutions: [\n      'Check n8n server logs',\n      'Verify n8n instance is running properly',\n      'Check database connectivity'\n    ]\n  }\n};\n\nconst errorInfo = errorSolutions[statusCode] || {\n  issue: 'Unknown error',\n  solutions: ['Check the error details below']\n};\n\nreturn {\n  success: false,\n  error: {\n    statusCode: statusCode,\n    issue: errorInfo.issue,\n    message: error.message || error.error || 'Workflow creation failed',\n    details: error\n  },\n  troubleshooting: {\n    possibleSolutions: errorInfo.solutions,\n    checkList: [\n      'API URL: ' + ($node[\"Select Template & Build Workflow\"].json.apiUrl || 'Not set'),\n      'API Key: ' + ($node[\"Select Template & Build Workflow\"].json.apiKey ? 'Set' : 'Not set'),\n      'Template used: ' + $node[\"Select Template & Build Workflow\"].json.template\n    ]\n  },\n  requestData: {\n    workflow: $node[\"Select Template & Build Workflow\"].json.workflow\n  }\n};"
+      },
+      "id": "a0b1c2d3-e4f5-6789-vwxy-012345678901",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 350]
+    },
+    {
+      "parameters": {
+        "content": "## Advanced Workflow Creator with Templates\n\n### Available Templates:\n1. **webhook** - Webhook to Database workflow\n2. **emailAutomation** - Scheduled email processing\n3. **apiIntegration** - API data processing pipeline\n4. **custom** - Create from scratch or provide your own nodes\n\n### Input Parameters:\n```json\n{\n  \"template\": \"webhook\",  // or \"emailAutomation\", \"apiIntegration\", \"custom\"\n  \"workflowName\": \"My Workflow Name\",\n  \"active\": false,\n  \"tags\": [\"automated\", \"template\"],\n  \n  // For custom workflows:\n  \"nodes\": [...],\n  \"connections\": {...}\n}\n```\n\n### Features:\n- Pre-built workflow templates\n- Automatic ID generation\n- Template customization\n- Error handling with solutions\n- Optional workflow activation\n\n### Environment Variables:\n- `N8N_BASE_URL` - Your n8n instance URL\n- `N8N_API_KEY` - Your API key",
+        "height": 464.6328125,
+        "width": 583.6171875,
+        "color": 7
+      },
+      "id": "b1c2d3e4-f5a6-7890-wxyz-123456789012",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, 100]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Select Template & Build Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Template & Build Workflow": {
+      "main": [
+        [
+          {
+            "node": "Create Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Workflow": {
+      "main": [
+        [
+          {
+            "node": "Check Creation Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Creation Status": {
+      "main": [
+        [
+          {
+            "node": "Activate Workflow (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activate Workflow (Optional)": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "executionTimeout": -1,
+    "timezone": "UTC"
+  },
+  "versionId": "c2d3e4f5-a6b7-8901-yzab-234567890123",
+  "id": "",
+  "tags": []
+}

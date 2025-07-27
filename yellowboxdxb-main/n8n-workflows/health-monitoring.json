@@ -1,0 +1,339 @@
+{
+  "name": "Yellow Box - Health Monitoring",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "schedule-health-check",
+      "name": "Schedule Health Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://yellowbox-8e0e6.web.app",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "check-app-health",
+      "name": "Check App Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process health check response\nconst response = $input.first();\nconst statusCode = response.json.$statusCode || 0;\nconst responseTime = response.json.$responseTime || 0;\nconst timestamp = new Date().toISOString();\n\n// Determine health status\nlet status = 'healthy';\nif (statusCode >= 500) {\n  status = 'critical';\n} else if (statusCode >= 400) {\n  status = 'warning';\n} else if (responseTime > 5000) {\n  status = 'slow';\n}\n\nreturn [{\n  json: {\n    url: 'https://yellowbox-8e0e6.web.app',\n    statusCode: statusCode,\n    responseTime: responseTime,\n    status: status,\n    timestamp: timestamp\n  }\n}];"
+      },
+      "id": "process-health-data",
+      "name": "Process Health Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Health_Log",
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "A",
+              "fieldValue": "={{ $json.url }}"
+            },
+            {
+              "fieldId": "B",
+              "fieldValue": "={{ $json.statusCode }}"
+            },
+            {
+              "fieldId": "C",
+              "fieldValue": "={{ $json.responseTime }}"
+            },
+            {
+              "fieldId": "D",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "E",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        }
+      },
+      "id": "log-health-status",
+      "name": "Log Health Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 300],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "critical-condition",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "critical",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "check-critical-status",
+      "name": "Check Critical Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.emailjs.com/api/v1.0/email/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "service_id",
+              "value": "YOUR_EMAILJS_SERVICE_ID"
+            },
+            {
+              "name": "template_id",
+              "value": "YOUR_EMAILJS_TEMPLATE_ID"
+            },
+            {
+              "name": "user_id",
+              "value": "YOUR_EMAILJS_USER_ID"
+            },
+            {
+              "name": "template_params",
+              "value": "={{ { \"app_url\": $json.url, \"status_code\": $json.statusCode, \"response_time\": $json.responseTime, \"status\": $json.status, \"timestamp\": $json.timestamp } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-alert-email",
+      "name": "Send Alert Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://yellowbox-8e0e6.web.app/api/health",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "check-api-health",
+      "name": "Check API Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process API health check response\nconst response = $input.first();\nconst statusCode = response.json.$statusCode || 0;\nconst responseTime = response.json.$responseTime || 0;\nconst timestamp = new Date().toISOString();\nconst apiData = response.json || {};\n\n// Determine API health status\nlet status = 'healthy';\nif (statusCode >= 500) {\n  status = 'critical';\n} else if (statusCode >= 400) {\n  status = 'warning';\n} else if (responseTime > 3000) {\n  status = 'slow';\n} else if (apiData.status === 'error') {\n  status = 'warning';\n}\n\nreturn [{\n  json: {\n    url: 'https://yellowbox-8e0e6.web.app/api/health',\n    statusCode: statusCode,\n    responseTime: responseTime,\n    status: status,\n    timestamp: timestamp,\n    apiStatus: apiData.status || 'unknown',\n    services: apiData.services || {}\n  }\n}];"
+      },
+      "id": "process-api-health-data",
+      "name": "Process API Health Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 500]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": "YOUR_GOOGLE_SHEET_ID",
+        "sheetName": "Health_Log",
+        "dataMode": "define",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "A",
+              "fieldValue": "={{ $json.url }}"
+            },
+            {
+              "fieldId": "B",
+              "fieldValue": "={{ $json.statusCode }}"
+            },
+            {
+              "fieldId": "C",
+              "fieldValue": "={{ $json.responseTime }}"
+            },
+            {
+              "fieldId": "D",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "E",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        }
+      },
+      "id": "log-api-health-status",
+      "name": "Log API Health Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 500],
+      "credentials": {
+        "googleSheetsApi": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YellowBox Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Health Check": {
+      "main": [
+        [
+          {
+            "node": "Check App Health",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check API Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check App Health": {
+      "main": [
+        [
+          {
+            "node": "Process Health Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Health Data": {
+      "main": [
+        [
+          {
+            "node": "Log Health Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Health Status": {
+      "main": [
+        [
+          {
+            "node": "Check Critical Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Critical Status": {
+      "main": [
+        [
+          {
+            "node": "Send Alert Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check API Health": {
+      "main": [
+        [
+          {
+            "node": "Process API Health Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process API Health Data": {
+      "main": [
+        [
+          {
+            "node": "Log API Health Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "3",
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "yellowbox"
+    }
+  ]
+}

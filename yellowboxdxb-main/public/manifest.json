@@ -1,0 +1,37 @@
+{
+  "name": "Yellow Box Fleet Management",
+  "short_name": "Yellow Box",
+  "description": "Fleet management system for delivery riders in Dubai",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FFD700",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Submit Expense",
+      "url": "/expenses/new",
+      "description": "Quickly submit a new expense"
+    },
+    {
+      "name": "View Dashboard",
+      "url": "/dashboard",
+      "description": "View your dashboard"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "yellowbox-8e0e6-service"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "yellowbox-8e0e6-database"
+      cloudSql:
+        instanceId: "yellowbox-8e0e6-instance"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

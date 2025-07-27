@@ -1,0 +1,480 @@
+{
+  "meta": {
+    "instanceId": "2b4ab318d4f8eba10155f5eb0f51c5f5d883c3a9b9a506cad7c0e0c2f2c8874e"
+  },
+  "name": "YellowBox Real-time Data Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "yellowbox-sync",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "yellowbox-sync-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process incoming webhook data\nconst payload = $input.first().json;\nconsole.log('Received webhook payload:', JSON.stringify(payload, null, 2));\n\n// Extract the operation type and data\nconst operation = payload.operation || 'unknown';\nconst data = payload.data || {};\nconst timestamp = new Date().toISOString();\n\n// Add processing metadata\ndata.processed_at = timestamp;\ndata.operation_type = operation;\ndata.webhook_id = payload.webhookId || 'unknown';\n\n// Log the operation\nconsole.log(`Processing ${operation} operation:`, data);\n\nreturn {\n  json: {\n    operation,\n    data,\n    timestamp,\n    processed: true\n  }\n};"
+      },
+      "id": "b2c3d4e5-f6g7-8901-bcde-f23456789012",
+      "name": "Process Webhook Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c3d4e5f6-g7h8-9012-cdef-345678901234",
+              "leftValue": "={{ $json.operation }}",
+              "rightValue": "rider_added",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c3d4e5f6-g7h8-9012-cdef-345678901234",
+      "name": "Check Operation Type",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1N8N_GOOGLE_SHEETS_YELLOWBOX_RIDERS_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Riders",
+          "mode": "name"
+        },
+        "columnToMatchOn": "id",
+        "valueInputMode": "defineBelow",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.data.id }}"
+            },
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.data.name }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $json.data.email }}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $json.data.phone }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.data.status }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $json.data.createdAt }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-h8i9-0123-defg-456789012345",
+      "name": "Update Riders Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [900, 200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-oauth-credential",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "e5f6g7h8-i9j0-1234-efgh-567890123456",
+              "leftValue": "={{ $json.operation }}",
+              "rightValue": "expense_submitted",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e5f6g7h8-i9j0-1234-efgh-567890123456",
+      "name": "Check Expense Operation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 500]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1N8N_GOOGLE_SHEETS_YELLOWBOX_EXPENSES_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Expenses",
+          "mode": "name"
+        },
+        "columnToMatchOn": "id",
+        "valueInputMode": "defineBelow",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.data.id }}"
+            },
+            {
+              "fieldId": "rider_id",
+              "fieldValue": "={{ $json.data.riderId }}"
+            },
+            {
+              "fieldId": "type",
+              "fieldValue": "={{ $json.data.type }}"
+            },
+            {
+              "fieldId": "amount",
+              "fieldValue": "={{ $json.data.amount }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.data.status }}"
+            },
+            {
+              "fieldId": "submitted_at",
+              "fieldValue": "={{ $json.data.submittedAt }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f6g7h8i9-j0k1-2345-fghi-678901234567",
+      "name": "Update Expenses Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [900, 500],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-oauth-credential",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "g7h8i9j0-k1l2-3456-ghij-789012345678",
+              "leftValue": "={{ $json.operation }}",
+              "rightValue": "bike_assigned",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "g7h8i9j0-k1l2-3456-ghij-789012345678",
+      "name": "Check Bike Operation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 700]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1N8N_GOOGLE_SHEETS_YELLOWBOX_BIKES_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Bikes",
+          "mode": "name"
+        },
+        "columnToMatchOn": "id",
+        "valueInputMode": "defineBelow",
+        "fieldsUi": {
+          "values": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.data.id }}"
+            },
+            {
+              "fieldId": "rider_id",
+              "fieldValue": "={{ $json.data.riderId }}"
+            },
+            {
+              "fieldId": "bike_number",
+              "fieldValue": "={{ $json.data.bikeNumber }}"
+            },
+            {
+              "fieldId": "assigned_at",
+              "fieldValue": "={{ $json.data.assignedAt }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.data.status }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "h8i9j0k1-l2m3-4567-hijk-890123456789",
+      "name": "Update Bikes Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [900, 700],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-oauth-credential",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log successful operation\nconst operation = $input.first().json.operation;\nconst data = $input.first().json.data;\nconst timestamp = new Date().toISOString();\n\nconsole.log(`Successfully processed ${operation} operation at ${timestamp}`);\nconsole.log('Data processed:', JSON.stringify(data, null, 2));\n\n// Return success response\nreturn {\n  json: {\n    success: true,\n    operation,\n    timestamp,\n    message: `${operation} operation completed successfully`\n  }\n};"
+      },
+      "id": "i9j0k1l2-m3n4-5678-ijkl-901234567890",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle unknown operation types\nconst payload = $input.first().json;\nconst timestamp = new Date().toISOString();\n\nconsole.log('Unknown operation type received:', payload.operation);\nconsole.log('Full payload:', JSON.stringify(payload, null, 2));\n\n// Log to a general tracking sheet or handle as needed\nreturn {\n  json: {\n    success: false,\n    operation: payload.operation || 'unknown',\n    timestamp,\n    message: `Unknown operation type: ${payload.operation}`,\n    data: payload.data\n  }\n};"
+      },
+      "id": "j0k1l2m3-n4o5-6789-jklm-012345678901",
+      "name": "Handle Unknown Operation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 900]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"Webhook processed successfully\", \"operation\": $json.operation, \"timestamp\": $json.timestamp } }}"
+      },
+      "id": "k1l2m3n4-o5p6-7890-klmn-123456789012",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1340, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Webhook Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Webhook Data": {
+      "main": [
+        [
+          {
+            "node": "Check Operation Type",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Expense Operation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Bike Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Operation Type": {
+      "main": [
+        [
+          {
+            "node": "Update Riders Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Unknown Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Expense Operation": {
+      "main": [
+        [
+          {
+            "node": "Update Expenses Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Check Bike Operation": {
+      "main": [
+        [
+          {
+            "node": "Update Bikes Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Update Riders Sheet": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Expenses Sheet": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Bikes Sheet": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Success": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Unknown Operation": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "executionTimeout": -1,
+    "timezone": "UTC"
+  },
+  "versionId": "sm5RUQQwjr2cR4mB",
+  "id": "sm5RUQQwjr2cR4mB",
+  "tags": []
+}

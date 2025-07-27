@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "yellowbox-8e0e6",
+    "production": "yellowbox-8e0e6",
+    "staging": "yellowbox-staging",
+    "development": "yellowbox-dev"
+  },
+  "targets": {
+    "yellowbox-8e0e6": {
+      "hosting": {
+        "production": [
+          "yellowbox-8e0e6"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

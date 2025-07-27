@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "instanceId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+  },
+  "name": "Create New n8n Workflow via API",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f1e2d3c4-b5a6-9780-cdef-012345678901",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get workflow configuration from input\nconst workflowName = $input.first()?.json?.workflowName || 'New Workflow ' + new Date().toISOString();\nconst workflowDescription = $input.first()?.json?.description || 'Created via API';\nconst workflowNodes = $input.first()?.json?.nodes || [];\nconst workflowConnections = $input.first()?.json?.connections || {};\nconst isActive = $input.first()?.json?.active || false;\n\n// Generate unique IDs for the workflow\nconst generateUUID = () => {\n  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {\n    const r = Math.random() * 16 | 0;\n    const v = c == 'x' ? r : (r & 0x3 | 0x8);\n    return v.toString(16);\n  });\n};\n\n// Default workflow structure if no nodes provided\nconst defaultNodes = [\n  {\n    \"parameters\": {},\n    \"id\": generateUUID(),\n    \"name\": \"Manual Trigger\",\n    \"type\": \"n8n-nodes-base.manualTrigger\",\n    \"typeVersion\": 1,\n    \"position\": [250, 300]\n  }\n];\n\n// Create workflow object\nconst workflow = {\n  \"name\": workflowName,\n  \"nodes\": workflowNodes.length > 0 ? workflowNodes : defaultNodes,\n  \"connections\": workflowConnections,\n  \"active\": isActive,\n  \"settings\": {\n    \"executionOrder\": \"v1\",\n    \"saveManualExecutions\": true,\n    \"callerPolicy\": \"workflowsFromSameOwner\",\n    \"errorWorkflow\": \"\",\n    \"saveExecutionProgress\": true,\n    \"saveDataSuccessExecution\": \"all\",\n    \"saveDataErrorExecution\": \"all\",\n    \"executionTimeout\": -1,\n    \"timezone\": \"UTC\"\n  },\n  \"staticData\": null,\n  \"tags\": [],\n  \"triggerCount\": 0,\n  \"updatedAt\": new Date().toISOString(),\n  \"versionId\": generateUUID()\n};\n\n// Add optional fields if provided\nif ($input.first()?.json?.tags) {\n  workflow.tags = $input.first().json.tags;\n}\n\nif ($input.first()?.json?.settings) {\n  workflow.settings = { ...workflow.settings, ...$input.first().json.settings };\n}\n\nreturn {\n  workflow: workflow,\n  apiUrl: $env.N8N_BASE_URL || 'http://localhost:5678',\n  apiKey: $env.N8N_API_KEY || ''\n};"
+      },
+      "id": "a2b3c4d5-e6f7-8901-bcde-234567890123",
+      "name": "Prepare Workflow Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.apiUrl }}/api/v1/workflows",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "={{ $json.apiKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.workflow) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "b3c4d5e6-f7a8-9012-cdef-345678901234",
+      "name": "Create Workflow via API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c4d5e6f7-a8b9-0123-defg-456789012345",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d5e6f7a8-b9c0-1234-efgh-567890123456",
+      "name": "Check Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract workflow information\nconst response = $input.first().json;\nconst workflowData = response.body;\n\nreturn {\n  success: true,\n  message: 'Workflow created successfully',\n  workflowId: workflowData.id,\n  workflowName: workflowData.name,\n  workflowUrl: `${$node[\"Prepare Workflow Data\"].json.apiUrl}/workflow/${workflowData.id}`,\n  isActive: workflowData.active,\n  createdAt: workflowData.createdAt,\n  updatedAt: workflowData.updatedAt,\n  fullResponse: workflowData\n};"
+      },
+      "id": "e6f7a8b9-c0d1-2345-fghi-678901234567",
+      "name": "Format Success Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 250]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle error response\nconst response = $input.first().json;\nconst error = response.body || response;\n\nreturn {\n  success: false,\n  message: 'Failed to create workflow',\n  error: {\n    statusCode: response.statusCode || 'Unknown',\n    message: error.message || error.error || 'Unknown error',\n    details: error\n  },\n  troubleshooting: {\n    checkApiKey: 'Ensure N8N_API_KEY environment variable is set correctly',\n    checkUrl: 'Verify N8N_BASE_URL is correct (default: http://localhost:5678)',\n    checkPermissions: 'Ensure API key has permission to create workflows',\n    checkWorkflowData: 'Verify workflow JSON structure is valid'\n  }\n};"
+      },
+      "id": "f7a8b9c0-d1e2-3456-ghij-789012345678",
+      "name": "Format Error Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 350]
+    },
+    {
+      "parameters": {
+        "content": "## Create New n8n Workflow via API\n\nThis workflow creates a new n8n workflow using the n8n API.\n\n### Input Parameters (Optional):\n- `workflowName`: Name of the new workflow\n- `description`: Workflow description\n- `nodes`: Array of node objects\n- `connections`: Connection object\n- `active`: Boolean to set workflow active state\n- `tags`: Array of tags\n- `settings`: Additional workflow settings\n\n### Environment Variables Required:\n- `N8N_BASE_URL`: Your n8n instance URL (default: http://localhost:5678)\n- `N8N_API_KEY`: Your n8n API key\n\n### Example Input:\n```json\n{\n  \"workflowName\": \"My New Workflow\",\n  \"description\": \"This workflow does X\",\n  \"active\": false,\n  \"tags\": [\"automated\", \"api-created\"],\n  \"nodes\": [\n    {\n      \"parameters\": {},\n      \"id\": \"unique-id-here\",\n      \"name\": \"Manual Trigger\",\n      \"type\": \"n8n-nodes-base.manualTrigger\",\n      \"typeVersion\": 1,\n      \"position\": [250, 300]\n    }\n  ],\n  \"connections\": {}\n}\n```",
+        "height": 464.6328125,
+        "width": 583.6171875,
+        "color": 7
+      },
+      "id": "a8b9c0d1-e2f3-4567-hijk-890123456789",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, 100]
+    },
+    {
+      "parameters": {
+        "content": "## Success Response Example:\n```json\n{\n  \"success\": true,\n  \"message\": \"Workflow created successfully\",\n  \"workflowId\": \"abc123\",\n  \"workflowName\": \"My New Workflow\",\n  \"workflowUrl\": \"http://localhost:5678/workflow/abc123\",\n  \"isActive\": false,\n  \"createdAt\": \"2024-01-01T12:00:00.000Z\",\n  \"updatedAt\": \"2024-01-01T12:00:00.000Z\",\n  \"fullResponse\": { ... }\n}\n```",
+        "height": 239.6328125,
+        "width": 418.3515625,
+        "color": 4
+      },
+      "id": "b9c0d1e2-f3a4-5678-ijkl-901234567890",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1250, 180]
+    },
+    {
+      "parameters": {
+        "content": "## Error Response Example:\n```json\n{\n  \"success\": false,\n  \"message\": \"Failed to create workflow\",\n  \"error\": {\n    \"statusCode\": 401,\n    \"message\": \"Unauthorized\",\n    \"details\": { ... }\n  },\n  \"troubleshooting\": {\n    \"checkApiKey\": \"...\",\n    \"checkUrl\": \"...\",\n    \"checkPermissions\": \"...\",\n    \"checkWorkflowData\": \"...\"\n  }\n}\n```",
+        "height": 279.6328125,
+        "width": 418.3515625,
+        "color": 6
+      },
+      "id": "c0d1e2f3-a4b5-6789-jklm-012345678901",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1250, 440]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare Workflow Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Workflow Data": {
+      "main": [
+        [
+          {
+            "node": "Create Workflow via API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Workflow via API": {
+      "main": [
+        [
+          {
+            "node": "Check Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Success": {
+      "main": [
+        [
+          {
+            "node": "Format Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "executionTimeout": -1,
+    "timezone": "UTC"
+  },
+  "versionId": "d1e2f3a4-b5c6-7890-klmn-123456789012",
+  "id": "",
+  "tags": []
+}
