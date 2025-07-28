@@ -72,7 +72,7 @@ function App() {
                     <Route
                       path="/admin"
                       element={
-                        <RequireAuth roles={["admin"]}>
+                        <RequireAuth roles={["Admin"]}>
                           <AdminDashboard />
                         </RequireAuth>
                       }
@@ -88,7 +88,7 @@ function App() {
                     <Route
                       path="/bike-tracker"
                       element={
-                        <RequireAuth roles={["admin", "operations"]}>
+                        <RequireAuth roles={["Admin", "Operations"]}>
                           <BikeTracker />
                         </RequireAuth>
                       }
@@ -96,7 +96,7 @@ function App() {
                     <Route
                       path="/finance"
                       element={
-                        <RequireAuth roles={["finance", "admin"]}>
+                        <RequireAuth roles={["Finance", "Admin"]}>
                           <FinanceDashboard />
                         </RequireAuth>
                       }
@@ -104,7 +104,7 @@ function App() {
                     <Route
                       path="/budget"
                       element={
-                        <RequireAuth roles={["finance", "admin"]}>
+                        <RequireAuth roles={["Finance", "Admin"]}>
                           <Budget />
                         </RequireAuth>
                       }
@@ -112,7 +112,7 @@ function App() {
                     <Route
                       path="/operations"
                       element={
-                        <RequireAuth roles={["operations", "admin"]}>
+                        <RequireAuth roles={["Operations", "Admin"]}>
                           <OperationsDashboard />
                         </RequireAuth>
                       }
@@ -120,7 +120,7 @@ function App() {
                     <Route
                       path="/visas"
                       element={
-                        <RequireAuth roles={["admin", "operations"]}>
+                        <RequireAuth roles={["Admin", "Operations"]}>
                           <Visas />
                         </RequireAuth>
                       }
@@ -128,7 +128,7 @@ function App() {
                     <Route
                       path="/documents"
                       element={
-                        <RequireAuth roles={["admin", "operations"]}>
+                        <RequireAuth roles={["Admin", "Operations"]}>
                           <Documents />
                         </RequireAuth>
                       }
@@ -136,7 +136,7 @@ function App() {
                     <Route
                       path="/rider"
                       element={
-                        <RequireAuth roles={["rider-applicant"]}>
+                        <RequireAuth roles={["Rider-Applicant"]}>
                           <RiderDashboard />
                         </RequireAuth>
                       }
@@ -144,7 +144,7 @@ function App() {
                     <Route
                       path="/analytics"
                       element={
-                        <RequireAuth roles={["admin", "finance"]}>
+                        <RequireAuth roles={["Admin", "Finance"]}>
                           <Analytics />
                         </RequireAuth>
                       }
@@ -152,7 +152,7 @@ function App() {
                     <Route
                       path="/reports"
                       element={
-                        <RequireAuth roles={["admin", "finance", "operations"]}>
+                        <RequireAuth roles={["Admin", "Finance", "Operations"]}>
                           <Reports />
                         </RequireAuth>
                       }
@@ -184,7 +184,7 @@ function App() {
                     <Route
                       path="/simple-test"
                       element={
-                        <RequireAuth roles={["admin"]}>
+                        <RequireAuth roles={["Admin"]}>
                           <SimpleTest />
                         </RequireAuth>
                       }
@@ -192,7 +192,7 @@ function App() {
                     <Route
                       path="/riders-debug"
                       element={
-                        <RequireAuth roles={["admin"]}>
+                        <RequireAuth roles={["Admin"]}>
                           <RidersDebug />
                         </RequireAuth>
                       }

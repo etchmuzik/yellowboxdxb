@@ -19,24 +19,8 @@ const RequireAuth = ({ children, fallbackPath, roles }: RequireAuthProps) => {
     if (!loading && !isAuthenticated) {
       // Redirect to login page if not authenticated
       navigate('/login', { state: { from: location } });
-    } else if (!loading && isAuthenticated && currentUser && fallbackPath) {
-      // If user is authenticated but on a generic protected route,
-      // redirect to their role-specific dashboard
-      const isGenericRoute = location.pathname === '/' || location.pathname === '';
-      if (isGenericRoute) {
-        const roleRedirects: Record<UserRole, string> = {
-          'Admin': '/',
-          'Operations': '/operations-dashboard',
-          'Finance': '/finance-dashboard',
-          'Rider-Applicant': '/rider-dashboard'
-        };
-        const targetPath = roleRedirects[currentUser.role] || fallbackPath;
-        if (targetPath !== location.pathname) {
-          navigate(targetPath, { replace: true });
-        }
-      }
     }
-  }, [isAuthenticated, loading, location, navigate, currentUser, fallbackPath]);
+  }, [isAuthenticated, loading, location, navigate]);
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -54,10 +38,9 @@ const RequireAuth = ({ children, fallbackPath, roles }: RequireAuthProps) => {
 
   // Check role-based access if roles are specified
   if (roles && roles.length > 0 && currentUser) {
-    const userRole = currentUser.role?.toLowerCase();
-    const allowedRoles = roles.map(role => role.toLowerCase());
+    const userRole = currentUser.role;
     
-    if (!allowedRoles.includes(userRole)) {
+    if (!roles.includes(userRole)) {
       return (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
