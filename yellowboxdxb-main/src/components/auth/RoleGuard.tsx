@@ -60,13 +60,13 @@ export default function RoleGuard({
   if (!currentUser || !effectiveAllowedRoles.includes(currentUser.role)) {
     // User is authenticated but doesn't have the right role
     const roleRedirects: Record<UserRole, string> = {
-      'Admin': '/',
-      'Operations': '/operations-dashboard',
-      'Finance': '/finance-dashboard',
-      'Rider-Applicant': '/rider-dashboard'
+      'Admin': '/admin',
+      'Operations': '/operations',
+      'Finance': '/finance',
+      'Rider-Applicant': '/rider'
     };
 
-    const targetPath = redirectTo || roleRedirects[currentUser.role] || '/';
+    const targetPath = redirectTo || roleRedirects[currentUser.role] || '/admin';
     return <Navigate to={targetPath} replace />;
   }
 

@@ -44,10 +44,9 @@ const queryClient = new QueryClient();
 
 function App() {
   useEffect(() => {
-    // Temporarily commented out to debug white page issue
-    // initializeAppData();
-    // setupGlobalErrorHandlers();
-
+    // Re-enable initialization after fixing auth issues
+    initializeAppData();
+    setupGlobalErrorHandlers();
   }, []);
 
   return (
@@ -63,11 +62,7 @@ function App() {
                     <Route path="/setup" element={<Setup />} />
                     <Route
                       path="/"
-                      element={
-                        <RequireAuth>
-                          <Index />
-                        </RequireAuth>
-                      }
+                      element={<Index />}
                     />
                     <Route
                       path="/admin"
@@ -79,11 +74,19 @@ function App() {
                     />
                     <Route
                       path="/riders"
-                      element={<Riders />}
+                      element={
+                        <RequireAuth roles={["Admin", "Operations"]}>
+                          <Riders />
+                        </RequireAuth>
+                      }
                     />
                     <Route
                       path="/expenses"
-                      element={<Expenses />}
+                      element={
+                        <RequireAuth roles={["Admin", "Finance", "Rider-Applicant"]}>
+                          <Expenses />
+                        </RequireAuth>
+                      }
                     />
                     <Route
                       path="/bike-tracker"

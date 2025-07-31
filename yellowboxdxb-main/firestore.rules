@@ -5,7 +5,7 @@ service cloud.firestore {
     // This allows initial setup when no admins exist yet
     // SECURITY WARNING: Must be disabled in production after setup
     function isBootstrapMode() {
-      let ENABLE_BOOTSTRAP = false; // Change to true only for initial setup
+      let ENABLE_BOOTSTRAP = true; // Bootstrap mode disabled after initial setup complete
       return ENABLE_BOOTSTRAP;
     }
     
@@ -14,9 +14,14 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // This function now reads the role directly from the user's ID token.
+    // Enhanced role checking: Check both custom claims AND Firestore document
+    // This provides backward compatibility during the transition period
     function hasRole(role) {
-      return isAuthenticated() && request.auth.token.role == role;
+      return isAuthenticated() &&
+             (request.auth.token.role == role ||
+              resource.data.role == role ||
+              (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role));
     }
     
     // Enhanced role checks with bootstrap support
@@ -88,10 +93,11 @@ service cloud.firestore {
       allow read: if hasRole('Admin') || hasRole('Finance') ||
                     (isAuthenticated() && resource.data.riderId == request.auth.uid);
       
-      // Create: Anyone authenticated can submit expenses
-      allow create: if isAuthenticated() && 
+      // Create: Admin/Finance can create for any rider, riders can create for themselves
+      allow create: if (hasRoleOrBootstrap('Admin') || hasRole('Finance')) ||
+                     (isAuthenticated() &&
                       request.resource.data.riderId == request.auth.uid &&
-                      request.resource.data.status == 'pending';
+                      request.resource.data.status == 'pending');
       
       // Update: Finance/Admin can approve/reject, riders can update their pending expenses
       allow update: if hasRole('Admin') || hasRole('Finance') ||

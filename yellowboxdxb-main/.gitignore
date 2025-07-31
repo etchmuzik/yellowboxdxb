@@ -42,3 +42,4 @@ yellow-box-*.html
 # Dev build
 dev-dist/
 EOF < /dev/null
+.vercel

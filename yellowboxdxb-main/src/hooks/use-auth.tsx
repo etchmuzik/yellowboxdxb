@@ -9,6 +9,18 @@ import { AuthContext, AuthContextType } from "../contexts/auth-context";
 import { getRoleChecker } from "../utils/auth-utils";
 import { useFirebaseAuth } from "./use-firebase-auth";
 
+// Helper function to normalize role names
+const normalizeRole = (role: string): User['role'] => {
+  const normalizedRole = role?.toLowerCase();
+  switch (normalizedRole) {
+    case 'admin': return 'Admin';
+    case 'operations': return 'Operations';
+    case 'finance': return 'Finance';
+    case 'rider-applicant': return 'Rider-Applicant';
+    default: return role as User['role'];
+  }
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -28,12 +40,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
           
           if (userDoc.exists()) {
-            const userData = userDoc.data() as User;
+            const userData = userDoc.data();
+            
+            // Ensure the user data matches our User interface
+            const user: User = {
+              id: userData.id || firebaseUser.uid,
+              email: userData.email || firebaseUser.email || '',
+              name: userData.name || userData.displayName || '',
+              role: normalizeRole(userData.role)
+            };
             
             // Get fresh token with claims
             await firebaseUser.getIdToken(true);
             
-            setCurrentUser(userData);
+            setCurrentUser(user);
             setIsAuthenticated(true);
           } else {
             // User document doesn't exist in Firestore

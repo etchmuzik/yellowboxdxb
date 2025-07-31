@@ -1,164 +1,131 @@
-# Custom Domain Setup Guide - yellowboxdxb.com
+# 🌐 Custom Domain Setup Guide - www.yellowboxdxb.com
 
-## Current Status
-🔄 **Domain Verification in Progress**
+## 📋 **Overview**
+Setting up www.yellowboxdxb.com to point to your Firebase Hosting project (yellowbox-8e0e6.web.app).
 
-Firebase is requesting you to remove the following DNS record to verify domain ownership:
+## 🎯 **Required DNS Changes**
 
+### ✅ **Step 1: ADD New CNAME Record**
 ```
-Record Type: A
-Domain: yellowboxdxb.com
-Value: 185.158.133.1
-```
-
-## Step-by-Step Setup Process
-
-### 1. Remove Current DNS Record
-**Action Required**: Go to your DNS provider and remove the A record:
-- **Type**: A
-- **Name**: @ (or yellowboxdxb.com)
-- **Value**: 185.158.133.1
-
-### 2. Wait for DNS Propagation
-After removing the record:
-- Wait 5-10 minutes for DNS changes to propagate
-- You can check DNS propagation at: https://dnschecker.org
-
-### 3. Verify Domain in Firebase Console
-1. Go to [Firebase Console](https://console.firebase.google.com/project/yellowbox-8e0e6/hosting/main)
-2. Navigate to Hosting → Custom domains
-3. Click "Verify" next to yellowboxdxb.com
-4. Firebase should confirm domain ownership
-
-### 4. Add Firebase DNS Records
-Once verified, Firebase will provide you with DNS records to add:
-
-**Expected Records** (Firebase will provide exact values):
-```
-Type: A
-Name: yellowboxdxb.com (or @)
-Value: [Firebase IP addresses - usually multiple]
-
-Type: A  
-Name: www
-Value: [Firebase IP addresses - usually multiple]
+Record Type: CNAME
+Name: www (or www.yellowboxdxb.com)
+Value: yellowbox-8e0e6.web.app
+TTL: 300 (or Auto)
 ```
 
-### 5. Configure DNS at Your Provider
-Add the Firebase-provided A records to your DNS settings:
+### ❌ **Step 2: REMOVE Old CNAME Record**
+```
+Record Type: CNAME
+Name: www (or www.yellowboxdxb.com) 
+Value: yellowboxdxb.com
+```
 
-#### For Most DNS Providers:
-1. Log into your domain registrar/DNS provider
-2. Go to DNS management
-3. Add the A records provided by Firebase
-4. Save changes
+## 🔧 **DNS Provider Instructions**
 
-#### Common DNS Providers:
-- **Cloudflare**: DNS → Records → Add record
-- **GoDaddy**: DNS Management → Add Record
-- **Namecheap**: Advanced DNS → Add New Record
-- **Google Domains**: DNS → Custom records
+### For Cloudflare:
+1. Login to Cloudflare dashboard
+2. Select your domain: yellowboxdxb.com
+3. Go to DNS > Records
+4. **Delete** existing CNAME record: www → yellowboxdxb.com
+5. **Add** new CNAME record: www → yellowbox-8e0e6.web.app
+6. Set Proxy status to "DNS only" (gray cloud)
 
-### 6. SSL Certificate Setup
-Firebase automatically provisions SSL certificates once DNS is configured:
-- This process can take 24-48 hours
-- You'll see "Provisioning" status in Firebase Console
-- Once complete, your site will be available at https://yellowboxdxb.com
+### For GoDaddy:
+1. Login to GoDaddy account
+2. Go to My Products > DNS
+3. Find and **delete** CNAME record: www → yellowboxdxb.com
+4. **Add** new CNAME record: www → yellowbox-8e0e6.web.app
 
-## Verification Commands
+### For Namecheap:
+1. Login to Namecheap account
+2. Go to Domain List > Manage
+3. Advanced DNS tab
+4. **Delete** existing CNAME record for www
+5. **Add** new CNAME record: www → yellowbox-8e0e6.web.app
 
-### Check Current DNS Status
+### For Other Providers:
+1. Access your DNS management panel
+2. Look for DNS Records or Zone File
+3. Remove the www CNAME pointing to yellowboxdxb.com
+4. Add new www CNAME pointing to yellowbox-8e0e6.web.app
+
+## ⏱️ **Propagation Time**
+- DNS changes can take 5 minutes to 48 hours to propagate
+- Most changes are visible within 15-30 minutes
+- Use online DNS checkers to verify propagation
+
+## 🔍 **Verification Steps**
+
+### 1. Check DNS Propagation
 ```bash
-# Check current A records
-dig yellowboxdxb.com A
+# Check CNAME record
+nslookup www.yellowboxdxb.com
 
-# Check if the old record is removed
-nslookup yellowboxdxb.com
-
-# Check DNS propagation
-dig @8.8.8.8 yellowboxdxb.com A
+# Should return:
+# www.yellowboxdxb.com canonical name = yellowbox-8e0e6.web.app
 ```
 
-### Firebase Domain Status
-```bash
-# Check Firebase hosting status
-firebase hosting:sites:list --project yellowbox-8e0e6
+### 2. Online DNS Checkers
+- https://dnschecker.org/
+- https://www.whatsmydns.net/
+- Search for: www.yellowboxdxb.com (CNAME)
 
-# Check domain configuration
-firebase hosting:sites:get yellowbox-8e0e6 --project yellowbox-8e0e6
-```
+### 3. Test Domain Access
+After propagation, test:
+- http://www.yellowboxdxb.com
+- https://www.yellowboxdxb.com
 
-## Troubleshooting
+## 🚨 **Common Issues**
 
-### If Domain Verification Fails
-1. **Double-check DNS removal**: Ensure the A record (185.158.133.1) is completely removed
-2. **Clear DNS cache**: 
-   ```bash
-   # On macOS
-   sudo dscacheutil -flushcache
-   
-   # On Windows
-   ipconfig /flushdns
-   ```
-3. **Wait longer**: DNS propagation can take up to 24 hours
-4. **Check with multiple DNS checkers**: Use different tools to verify removal
+### Issue 1: "ACME Challenge Failed"
+**Cause**: Old DNS records still present
+**Solution**: Ensure old CNAME is completely removed
 
-### If SSL Certificate Fails
-1. **Verify DNS records**: Ensure Firebase A records are correctly added
-2. **Check domain status**: Look for any errors in Firebase Console
-3. **Wait**: SSL provisioning can take 24-48 hours
-4. **Contact Firebase Support**: If issues persist after 48 hours
+### Issue 2: "SSL Certificate Pending"
+**Cause**: DNS not fully propagated
+**Solution**: Wait 24-48 hours for full propagation
 
-## Expected Timeline
+### Issue 3: "Domain Not Verified"
+**Cause**: CNAME pointing to wrong target
+**Solution**: Verify CNAME points to yellowbox-8e0e6.web.app
 
-| Step | Duration | Status |
-|------|----------|---------|
-| Remove DNS record | Immediate | ⏳ In Progress |
-| DNS propagation | 5-60 minutes | ⏳ Pending |
-| Domain verification | 1-5 minutes | ⏳ Pending |
-| Add Firebase DNS | Immediate | ⏳ Pending |
-| DNS propagation | 5-60 minutes | ⏳ Pending |
-| SSL certificate | 24-48 hours | ⏳ Pending |
+## 📞 **Support Checklist**
 
-## Post-Setup Verification
+Before contacting DNS provider support:
+- [ ] Confirmed current DNS records
+- [ ] Attempted to delete old CNAME
+- [ ] Added new CNAME with correct target
+- [ ] Waited at least 30 minutes for propagation
+- [ ] Tested with DNS checker tools
 
-Once complete, verify your setup:
+## 🎉 **Success Indicators**
 
-```bash
-# Test HTTP redirect to HTTPS
-curl -I http://yellowboxdxb.com
+You'll know it's working when:
+1. ✅ DNS checker shows: www.yellowboxdxb.com → yellowbox-8e0e6.web.app
+2. ✅ Firebase Console shows "Connected" status
+3. ✅ SSL certificate is issued automatically
+4. ✅ www.yellowboxdxb.com loads your Yellow Box app
+5. ✅ Automatic redirect from HTTP to HTTPS
 
-# Test HTTPS access
-curl -I https://yellowboxdxb.com
+## 🔄 **Next Steps After Success**
 
-# Test www redirect
-curl -I https://www.yellowboxdxb.com
-```
+1. **Update all references** to use www.yellowboxdxb.com
+2. **Test all functionality** on the new domain
+3. **Update any API endpoints** if needed
+4. **Inform users** of the new domain
+5. **Set up monitoring** for the custom domain
 
-## Firebase Console Links
+## 📱 **Mobile & PWA Considerations**
 
-- **Project Console**: https://console.firebase.google.com/project/yellowbox-8e0e6
-- **Hosting Dashboard**: https://console.firebase.google.com/project/yellowbox-8e0e6/hosting/main
-- **Custom Domains**: https://console.firebase.google.com/project/yellowbox-8e0e6/hosting/main/custom-domains
-
-## Next Steps After Domain Setup
-
-1. **Update Environment Variables**: Update any hardcoded URLs in your app
-2. **Update Social Media Links**: Update any external references
-3. **Set up Redirects**: Configure any necessary URL redirects
-4. **Update Documentation**: Update all documentation with new domain
-5. **Test All Features**: Ensure all functionality works with custom domain
-
-## Support
-
-If you encounter issues:
-1. Check Firebase Console for error messages
-2. Verify DNS settings with your provider
-3. Use online DNS checking tools
-4. Contact Firebase Support if needed
+After domain setup:
+- Update PWA manifest if needed
+- Test mobile app functionality
+- Verify push notifications still work
+- Update any hardcoded URLs in the app
 
 ---
 
-**Last Updated**: January 2025
-**Domain**: yellowboxdxb.com
-**Firebase Project**: yellowbox-8e0e6
+**Need Help?** 
+- Check your DNS provider's documentation
+- Use online DNS tools to verify changes
+- Wait for full propagation before troubleshooting
