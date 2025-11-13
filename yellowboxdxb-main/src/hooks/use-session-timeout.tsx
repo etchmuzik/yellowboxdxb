@@ -3,7 +3,6 @@ import { useAuth } from './use-auth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { logAuthActivity } from '@/services/activityService';
-import { auth } from '@/config/firebase';
 
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 const WARNING_TIME = 5 * 60 * 1000; // 5 minutes before timeout

@@ -19,8 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save, User } from "lucide-react";
 import { getRiderById, updateRider } from "@/services/riderService";
-import { auth } from "@/config/firebase";
-import { updateProfile } from "firebase/auth";
+import { supabase } from "@/config/supabase";
 import type { Rider } from "@/types";
 
 const riderFormSchema = z.object({
@@ -70,15 +69,17 @@ export function RiderSettingsForm() {
   const onSubmit = async (values: RiderFormValues) => {
     setIsSubmitting(true);
     try {
-      // Update Firebase Auth profile if needed
-      const firebaseUser = auth.currentUser;
-      if (firebaseUser && values.fullName !== firebaseUser.displayName) {
-        await updateProfile(firebaseUser, {
-          displayName: values.fullName,
+      // Update Supabase Auth profile metadata if needed
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && values.fullName !== user.user_metadata?.full_name) {
+        await supabase.auth.updateUser({
+          data: {
+            full_name: values.fullName,
+          }
         });
       }
 
-      // Update rider profile in Firestore
+      // Update rider profile in Supabase
       if (currentUser?.id) {
         await updateRider(currentUser.id, {
           fullName: values.fullName,

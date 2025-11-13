@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowUp, ArrowDown, Users, CheckCircle, TrendingUp, DollarSign } from "lucide-react";
 import { formatCurrency } from "@/utils/dataUtils";
 import { cn } from "@/lib/utils";
-import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
-import { db } from "@/config/firebase";
+import { supabase } from "@/config/supabase";
 
 interface StatCardProps {
   label: string;
@@ -67,76 +66,76 @@ export function DashboardStats() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      
+
       // Get date ranges
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
-      // Fetch riders data
-      const ridersSnapshot = await getDocs(collection(db, 'riders'));
-      const riders = ridersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      
+      // Fetch all riders data from Supabase
+      const { data: riders, error: ridersError } = await supabase
+        .from('riders')
+        .select('*');
+
+      if (ridersError) throw ridersError;
+
       // Calculate metrics
-      const activeRiders = riders.filter(r => r.status === 'active').length;
-      const activeRidersLastMonth = riders.filter(r => 
-        r.status === 'active' && 
-        r.activatedAt?.toDate() <= endOfLastMonth
-      ).length;
-      
+      const activeRiders = riders?.filter(r => r.status === 'active').length || 0;
+      const activeRidersLastMonth = riders?.filter(r =>
+        r.status === 'active' &&
+        r.activated_at && new Date(r.activated_at) <= endOfLastMonth
+      ).length || 0;
+
       // New applicants this month
-      const newApplicantsQuery = query(
-        collection(db, 'riders'),
-        where('applicationDate', '>=', Timestamp.fromDate(startOfMonth))
-      );
-      const newApplicantsSnapshot = await getDocs(newApplicantsQuery);
-      const newApplicants = newApplicantsSnapshot.size;
-      
+      const { count: newApplicants } = await supabase
+        .from('riders')
+        .select('*', { count: 'exact', head: true })
+        .gte('application_date', startOfMonth.toISOString());
+
       // New applicants last month
-      const lastMonthApplicantsQuery = query(
-        collection(db, 'riders'),
-        where('applicationDate', '>=', Timestamp.fromDate(startOfLastMonth)),
-        where('applicationDate', '<', Timestamp.fromDate(startOfMonth))
-      );
-      const lastMonthApplicantsSnapshot = await getDocs(lastMonthApplicantsQuery);
-      const lastMonthApplicants = lastMonthApplicantsSnapshot.size;
-      
+      const { count: lastMonthApplicants } = await supabase
+        .from('riders')
+        .select('*', { count: 'exact', head: true })
+        .gte('application_date', startOfLastMonth.toISOString())
+        .lt('application_date', startOfMonth.toISOString());
+
       // Tests passed (riders who completed training)
-      const testsPassedThisMonth = riders.filter(r => 
-        r.trainingCompleted && 
-        r.trainingCompletedAt?.toDate() >= startOfMonth
-      ).length;
-      
-      const testsPassedLastMonth = riders.filter(r => 
-        r.trainingCompleted && 
-        r.trainingCompletedAt?.toDate() >= startOfLastMonth &&
-        r.trainingCompletedAt?.toDate() < startOfMonth
-      ).length;
-      
+      const testsPassedThisMonth = riders?.filter(r =>
+        r.training_completed &&
+        r.training_completed_at && new Date(r.training_completed_at) >= startOfMonth
+      ).length || 0;
+
+      const testsPassedLastMonth = riders?.filter(r =>
+        r.training_completed &&
+        r.training_completed_at &&
+        new Date(r.training_completed_at) >= startOfLastMonth &&
+        new Date(r.training_completed_at) < startOfMonth
+      ).length || 0;
+
       // Monthly expenses
-      const expensesQuery = query(
-        collection(db, 'expenses'),
-        where('submittedAt', '>=', Timestamp.fromDate(startOfMonth)),
-        where('status', '==', 'approved')
-      );
-      const expensesSnapshot = await getDocs(expensesQuery);
-      const monthlyExpenses = expensesSnapshot.docs.reduce((sum, doc) => 
-        sum + (doc.data().amount || 0), 0
-      );
-      
+      const { data: monthlyExpensesData } = await supabase
+        .from('expenses')
+        .select('amount')
+        .gte('submitted_at', startOfMonth.toISOString())
+        .eq('status', 'approved');
+
+      const monthlyExpenses = monthlyExpensesData?.reduce((sum, exp) =>
+        sum + (exp.amount || 0), 0
+      ) || 0;
+
       // Last month expenses
-      const lastMonthExpensesQuery = query(
-        collection(db, 'expenses'),
-        where('submittedAt', '>=', Timestamp.fromDate(startOfLastMonth)),
-        where('submittedAt', '<', Timestamp.fromDate(startOfMonth)),
-        where('status', '==', 'approved')
-      );
-      const lastMonthExpensesSnapshot = await getDocs(lastMonthExpensesQuery);
-      const lastMonthExpenses = lastMonthExpensesSnapshot.docs.reduce((sum, doc) => 
-        sum + (doc.data().amount || 0), 0
-      );
-      
+      const { data: lastMonthExpensesData } = await supabase
+        .from('expenses')
+        .select('amount')
+        .gte('submitted_at', startOfLastMonth.toISOString())
+        .lt('submitted_at', startOfMonth.toISOString())
+        .eq('status', 'approved');
+
+      const lastMonthExpenses = lastMonthExpensesData?.reduce((sum, exp) =>
+        sum + (exp.amount || 0), 0
+      ) || 0;
+
       // Calculate percentage changes
       const calculateChange = (current: number, previous: number) => {
         if (previous === 0) return current > 0 ? 100 : 0;
@@ -145,8 +144,8 @@ export function DashboardStats() {
 
       setStats({
         newApplicants: {
-          value: newApplicants,
-          change: calculateChange(newApplicants, lastMonthApplicants)
+          value: newApplicants || 0,
+          change: calculateChange(newApplicants || 0, lastMonthApplicants || 0)
         },
         testsPassed: {
           value: testsPassedThisMonth,

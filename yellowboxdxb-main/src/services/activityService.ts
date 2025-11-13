@@ -1,6 +1,4 @@
-import { collection, query, orderBy, limit, getDocs, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { db } from '../config/firebase';
-import { auth } from '../config/firebase';
+import { supabase } from '@/config/supabase';
 
 // Define metadata types for better type safety
 export interface ActivityMetadata {
@@ -45,20 +43,28 @@ export type ActivityType =
 
 export const getRecentActivities = async (limitCount: number = 20): Promise<Activity[]> => {
   try {
-    const activitiesRef = collection(db, 'activities');
-    const q = query(activitiesRef, orderBy('timestamp', 'desc'), limit(limitCount));
-    const snapshot = await getDocs(q);
-    
-    return snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        timestamp: data.timestamp instanceof Timestamp 
-          ? data.timestamp.toDate().toISOString() 
-          : data.timestamp
-      } as Activity;
-    });
+    const { data, error } = await supabase
+      .from('activity_logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(limitCount);
+
+    if (error) throw error;
+
+    return (data || []).map(activity => ({
+      id: activity.id,
+      type: activity.type,
+      action: activity.action,
+      description: activity.description,
+      timestamp: activity.timestamp,
+      userId: activity.user_id,
+      userEmail: activity.user_email,
+      userName: activity.user_name,
+      targetId: activity.target_id,
+      targetType: activity.target_type,
+      metadata: activity.metadata,
+      ipAddress: activity.ip_address
+    }));
   } catch (error) {
     console.error('Error fetching activities:', error);
     return [];
@@ -73,27 +79,31 @@ export const logActivity = async (
   metadata?: ActivityMetadata
 ): Promise<void> => {
   try {
-    const currentUser = auth.currentUser;
-    const userEmail = currentUser?.email || 'system';
-    
-    // Get user display name from local storage or auth
-    const userName = currentUser?.displayName || 
-      localStorage.getItem('userDisplayName') || 
+    const { data: { user } } = await supabase.auth.getUser();
+    const userEmail = user?.email || 'system';
+
+    // Get user display name from metadata or fallback
+    const userName = user?.user_metadata?.full_name ||
+      localStorage.getItem('userDisplayName') ||
       userEmail;
 
-    await addDoc(collection(db, 'activities'), {
-      type,
-      action,
-      description,
-      timestamp: serverTimestamp(),
-      userId: currentUser?.uid || 'system',
-      userEmail,
-      userName,
-      targetId: metadata?.targetId,
-      targetType: metadata?.targetType,
-      metadata: metadata || {},
-      ipAddress: 'web-client' // In production, get from request headers
-    });
+    const { error } = await supabase
+      .from('activity_logs')
+      .insert({
+        type,
+        action,
+        description,
+        timestamp: new Date().toISOString(),
+        user_id: user?.id || 'system',
+        user_email: userEmail,
+        user_name: userName,
+        target_id: metadata?.targetId,
+        target_type: metadata?.targetType,
+        metadata: metadata || {},
+        ip_address: 'web-client' // In production, get from request headers
+      });
+
+    if (error) throw error;
   } catch (error) {
     console.error('Error logging activity:', error);
     // Don't throw - logging should not break the app
@@ -206,26 +216,29 @@ export const getActivitiesByType = async (
   limitCount: number = 50
 ): Promise<Activity[]> => {
   try {
-    const activitiesRef = collection(db, 'activities');
-    const q = query(
-      activitiesRef, 
-      orderBy('timestamp', 'desc'), 
-      limit(limitCount)
-    );
-    const snapshot = await getDocs(q);
-    
-    return snapshot.docs
-      .map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          timestamp: data.timestamp instanceof Timestamp 
-            ? data.timestamp.toDate().toISOString() 
-            : data.timestamp
-        } as Activity;
-      })
-      .filter(activity => activity.type === type);
+    const { data, error } = await supabase
+      .from('activity_logs')
+      .select('*')
+      .eq('type', type)
+      .order('timestamp', { ascending: false })
+      .limit(limitCount);
+
+    if (error) throw error;
+
+    return (data || []).map(activity => ({
+      id: activity.id,
+      type: activity.type,
+      action: activity.action,
+      description: activity.description,
+      timestamp: activity.timestamp,
+      userId: activity.user_id,
+      userEmail: activity.user_email,
+      userName: activity.user_name,
+      targetId: activity.target_id,
+      targetType: activity.target_type,
+      metadata: activity.metadata,
+      ipAddress: activity.ip_address
+    }));
   } catch (error) {
     console.error('Error fetching activities by type:', error);
     return [];
@@ -238,26 +251,29 @@ export const getUserActivities = async (
   limitCount: number = 50
 ): Promise<Activity[]> => {
   try {
-    const activitiesRef = collection(db, 'activities');
-    const q = query(
-      activitiesRef, 
-      orderBy('timestamp', 'desc'), 
-      limit(limitCount)
-    );
-    const snapshot = await getDocs(q);
-    
-    return snapshot.docs
-      .map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          timestamp: data.timestamp instanceof Timestamp 
-            ? data.timestamp.toDate().toISOString() 
-            : data.timestamp
-        } as Activity;
-      })
-      .filter(activity => activity.userId === userId);
+    const { data, error } = await supabase
+      .from('activity_logs')
+      .select('*')
+      .eq('user_id', userId)
+      .order('timestamp', { ascending: false })
+      .limit(limitCount);
+
+    if (error) throw error;
+
+    return (data || []).map(activity => ({
+      id: activity.id,
+      type: activity.type,
+      action: activity.action,
+      description: activity.description,
+      timestamp: activity.timestamp,
+      userId: activity.user_id,
+      userEmail: activity.user_email,
+      userName: activity.user_name,
+      targetId: activity.target_id,
+      targetType: activity.target_type,
+      metadata: activity.metadata,
+      ipAddress: activity.ip_address
+    }));
   } catch (error) {
     console.error('Error fetching user activities:', error);
     return [];

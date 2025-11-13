@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
-import { db } from "@/config/firebase";
+import { supabase } from "@/config/supabase";
 import { formatCurrency, formatDate } from "@/utils/dataUtils";
 import { SpendChartsWithSuspense as SpendCharts } from "@/components/ui/lazy-components";
 import { WebhookTestPanel } from "@/components/admin/WebhookTestPanel";
@@ -28,7 +27,7 @@ interface ActivityItem {
   id: string;
   type: string;
   description: string;
-  timestamp: Timestamp;
+  timestamp: string;
   userId?: string;
   userName?: string;
 }
@@ -71,58 +70,54 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
 
-      // Fetch riders data
-      const ridersSnapshot = await getDocs(collection(db, "riders"));
-      const riders = ridersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      
-      const totalRiders = riders.length;
-      const activeRiders = riders.filter(r => r.status === "active").length;
-      const pendingApplications = riders.filter(r => r.status === "pending" || r.status === "application").length;
+      // Fetch riders data from Supabase
+      const { data: riders } = await supabase.from('riders').select('*');
+
+      const totalRiders = riders?.length || 0;
+      const activeRiders = riders?.filter(r => r.status === "active").length || 0;
+      const pendingApplications = riders?.filter(r =>
+        r.status === "pending" || r.status === "application"
+      ).length || 0;
 
       // Fetch expenses data
       const currentMonth = new Date();
       const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-      
-      const expensesQuery = query(
-        collection(db, "expenses"),
-        where("submittedAt", ">=", Timestamp.fromDate(startOfMonth))
-      );
-      const expensesSnapshot = await getDocs(expensesQuery);
-      const expenses = expensesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      
-      const totalExpenses = expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
-      const pendingExpenses = expenses.filter(exp => exp.status === "pending").length;
+
+      const { data: expenses } = await supabase
+        .from('expenses')
+        .select('*')
+        .gte('submitted_at', startOfMonth.toISOString());
+
+      const totalExpenses = expenses?.reduce((sum, exp) => sum + (exp.amount || 0), 0) || 0;
+      const pendingExpenses = expenses?.filter(exp => exp.status === "pending").length || 0;
 
       // Fetch bikes data
-      const bikesSnapshot = await getDocs(collection(db, "bikes"));
-      const bikes = bikesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      
-      const availableBikes = bikes.filter(b => b.status === "available").length;
-      const bikesInUse = bikes.filter(b => b.status === "in-use").length;
-      const bikesInMaintenance = bikes.filter(b => b.status === "maintenance").length;
+      const { data: bikes } = await supabase.from('bikes').select('*');
+
+      const availableBikes = bikes?.filter(b => b.status === "available").length || 0;
+      const bikesInUse = bikes?.filter(b => b.status === "in-use").length || 0;
+      const bikesInMaintenance = bikes?.filter(b => b.status === "maintenance").length || 0;
 
       // Fetch budget data
-      const budgetQuery = query(
-        collection(db, "budgets"),
-        where("month", "==", currentMonth.getMonth() + 1),
-        where("year", "==", currentMonth.getFullYear())
-      );
-      const budgetSnapshot = await getDocs(budgetQuery);
-      const currentBudget = budgetSnapshot.docs[0]?.data();
-      
-      const monthlyBudget = currentBudget?.totalBudget || 50000;
+      const { data: budgets } = await supabase
+        .from('budgets')
+        .select('*')
+        .eq('month', currentMonth.getMonth() + 1)
+        .eq('year', currentMonth.getFullYear())
+        .limit(1);
+
+      const currentBudget = budgets?.[0];
+      const monthlyBudget = currentBudget?.total_budget || 50000;
       const budgetUsed = totalExpenses;
 
       // Fetch recent activity
-      const activityQuery = query(
-        collection(db, "activity"),
-        where("timestamp", ">=", Timestamp.fromDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)))
-      );
-      const activitySnapshot = await getDocs(activityQuery);
-      const activities = activitySnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() } as ActivityItem))
-        .sort((a, b) => b.timestamp?.toDate().getTime() - a.timestamp?.toDate().getTime())
-        .slice(0, 5);
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const { data: activities } = await supabase
+        .from('activity_logs')
+        .select('*')
+        .gte('timestamp', sevenDaysAgo.toISOString())
+        .order('timestamp', { ascending: false })
+        .limit(5);
 
       setMetrics({
         totalRiders,
@@ -136,7 +131,7 @@ const AdminDashboard = () => {
         bikesInUse,
         bikesInMaintenance,
       });
-      setRecentActivity(activities);
+      setRecentActivity(activities as ActivityItem[] || []);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {

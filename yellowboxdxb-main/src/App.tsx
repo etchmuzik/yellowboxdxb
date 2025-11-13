@@ -18,7 +18,6 @@ import { lazy } from "react";
 // Lazy load all page components for better code splitting
 const Index = lazy(() => import("./pages/Index"));
 const Login = lazy(() => import("./pages/Login"));
-const Setup = lazy(() => import("./pages/Setup").then(module => ({ default: module.Setup })));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const RiderDashboard = lazy(() => import("./pages/RiderDashboard"));
 const FinanceDashboard = lazy(() => import("./pages/FinanceDashboard"));
@@ -59,7 +58,6 @@ function App() {
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/login" element={<Login />} />
-                    <Route path="/setup" element={<Setup />} />
                     <Route
                       path="/"
                       element={<Index />}

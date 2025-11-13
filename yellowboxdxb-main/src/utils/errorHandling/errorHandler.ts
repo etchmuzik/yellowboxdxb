@@ -1,7 +1,6 @@
-import { FirestoreError } from 'firebase/firestore';
-import { FirebaseError } from 'firebase/app';
 import { toast } from 'sonner';
 import { ErrorCode, CustomError } from './errorTypes';
+import type { PostgrestError } from '@supabase/supabase-js';
 
 interface ErrorHandlerOptions {
   showToast?: boolean;
@@ -53,8 +52,9 @@ export class ErrorHandler {
       return error;
     }
 
-    if (error instanceof FirestoreError || error instanceof FirebaseError) {
-      return this.handleFirebaseError(error);
+    // Check if it's a Supabase PostgrestError
+    if (error && typeof error === 'object' && 'code' in error && 'message' in error && 'details' in error) {
+      return this.handleSupabaseError(error as PostgrestError);
     }
 
     if (error instanceof Error) {
@@ -72,37 +72,42 @@ export class ErrorHandler {
     );
   }
 
-  private handleFirebaseError(error: FirestoreError | FirebaseError): CustomError {
+  private handleSupabaseError(error: PostgrestError): CustomError {
     const errorMap: Record<string, { code: ErrorCode; message: string; isRetryable?: boolean }> = {
-      'permission-denied': {
+      // PostgreSQL error codes
+      '42501': { // insufficient_privilege
         code: ErrorCode.FIREBASE_PERMISSION_DENIED,
         message: 'You do not have permission to perform this action'
       },
-      'not-found': {
+      'PGRST116': { // not found
         code: ErrorCode.FIREBASE_NOT_FOUND,
         message: 'The requested resource was not found'
       },
-      'already-exists': {
+      '23505': { // unique_violation
         code: ErrorCode.FIREBASE_ALREADY_EXISTS,
         message: 'This resource already exists'
       },
-      'resource-exhausted': {
+      '53300': { // too_many_connections
         code: ErrorCode.FIREBASE_QUOTA_EXCEEDED,
-        message: 'Quota exceeded. Please try again later',
+        message: 'Too many connections. Please try again later',
         isRetryable: true
       },
-      'unavailable': {
+      '08000': { // connection_exception
         code: ErrorCode.FIREBASE_UNAVAILABLE,
         message: 'Service temporarily unavailable',
         isRetryable: true
       },
-      'unauthenticated': {
+      'PGRST301': { // JWT expired
         code: ErrorCode.AUTH_UNAUTHORIZED,
         message: 'Please log in to continue'
       },
-      'invalid-argument': {
+      '22P02': { // invalid_text_representation
         code: ErrorCode.VALIDATION_INVALID_FORMAT,
         message: 'Invalid data provided'
+      },
+      '23503': { // foreign_key_violation
+        code: ErrorCode.VALIDATION_INVALID_FORMAT,
+        message: 'Referenced resource does not exist'
       }
     };
 
@@ -115,7 +120,7 @@ export class ErrorHandler {
       mapped.code,
       error.message,
       mapped.message,
-      { originalCode: error.code },
+      { originalCode: error.code, details: error.details },
       mapped.isRetryable || false
     );
   }
