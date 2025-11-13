@@ -1,13 +1,11 @@
 
 import { useState, useEffect, useContext, ReactNode } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../config/firebase";
+import { supabase } from "../config/supabase";
 import { User } from "../types";
 import { toast } from "@/components/ui/use-toast";
 import { AuthContext, AuthContextType } from "../contexts/auth-context";
 import { getRoleChecker } from "../utils/auth-utils";
-import { useFirebaseAuth } from "./use-firebase-auth";
+import { useSupabaseAuth } from "./use-supabase-auth";
 
 // Helper function to normalize role names
 const normalizeRole = (role: string): User['role'] => {
@@ -26,38 +24,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   
-  const { loginWithFirebase, logoutFromFirebase, registerWithFirebase, loading: firebaseLoading } = useFirebaseAuth();
+  const { loginWithSupabase, logoutFromSupabase, registerWithSupabase, loading: supabaseLoading } = useSupabaseAuth();
   
   // Role check helpers
   const { isAdmin, isOperations, isFinance, isRider } = getRoleChecker(currentUser);
 
-  // Check Firebase auth state on mount
+  // Check Supabase auth state on mount
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
+    // Check current session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
         try {
-          // Get user data from Firestore
-          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-          
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            
-            // Ensure the user data matches our User interface
+          // Get user data from Supabase users table
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (userError) {
+            console.error("Error fetching user profile:", userError);
+            setCurrentUser(null);
+            setIsAuthenticated(false);
+          } else if (userData) {
+            // Map database user to User type
             const user: User = {
-              id: userData.id || firebaseUser.uid,
-              email: userData.email || firebaseUser.email || '',
-              name: userData.name || userData.displayName || '',
-              role: normalizeRole(userData.role)
+              id: userData.id,
+              email: userData.email || session.user.email || '',
+              name: userData.name || userData.full_name || session.user.user_metadata?.name || '',
+              role: normalizeRole(userData.role || 'Rider-Applicant')
             };
-            
-            // Get fresh token with claims
-            await firebaseUser.getIdToken(true);
-            
+
             setCurrentUser(user);
             setIsAuthenticated(true);
           } else {
-            // User document doesn't exist in Firestore
-            console.error("User document not found in Firestore");
+            // User document doesn't exist
+            console.error("User profile not found in database");
             setCurrentUser(null);
             setIsAuthenticated(false);
           }
@@ -73,36 +75,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          try {
+            // Get user data from Supabase users table
+            const { data: userData, error: userError } = await supabase
+              .from('users')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+
+            if (userError) {
+              console.error("Error fetching user profile:", userError);
+              setCurrentUser(null);
+              setIsAuthenticated(false);
+            } else if (userData) {
+              // Map database user to User type
+              const user: User = {
+                id: userData.id,
+                email: userData.email || session.user.email || '',
+                name: userData.name || userData.full_name || session.user.user_metadata?.name || '',
+                role: normalizeRole(userData.role || 'Rider-Applicant')
+              };
+
+              setCurrentUser(user);
+              setIsAuthenticated(true);
+            }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+            setCurrentUser(null);
+            setIsAuthenticated(false);
+          }
+        } else {
+          setCurrentUser(null);
+          setIsAuthenticated(false);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const firebaseUser = await loginWithFirebase(email, password);
-    
-    if (firebaseUser) {
-      setCurrentUser(firebaseUser);
+    const supabaseUser = await loginWithSupabase(email, password);
+
+    if (supabaseUser) {
+      setCurrentUser(supabaseUser);
       setIsAuthenticated(true);
       return true;
     }
-    
+
     return false;
   };
 
   const register = async (name: string, email: string, password: string, role: User['role']): Promise<boolean> => {
-    const firebaseUser = await registerWithFirebase(name, email, password, role);
-    
-    if (firebaseUser) {
-      setCurrentUser(firebaseUser);
+    const supabaseUser = await registerWithSupabase(name, email, password, role);
+
+    if (supabaseUser) {
+      setCurrentUser(supabaseUser);
       setIsAuthenticated(true);
       return true;
     }
-    
+
     return false;
   };
 
   const logout = async () => {
-    await logoutFromFirebase();
-    // Firebase Auth state change will handle clearing the user
+    await logoutFromSupabase();
+    // Supabase Auth state change will handle clearing the user
   };
 
   return (
@@ -117,7 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isOperations, 
         isFinance, 
         isRider,
-        loading: loading || firebaseLoading
+        loading: loading || supabaseLoading
       }}
     >
       {children}

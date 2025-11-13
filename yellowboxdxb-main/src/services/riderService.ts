@@ -1,5 +1,5 @@
 
-import { RiderFirestoreService } from "./riderFirestoreService";
+import { RiderSupabaseService as RiderFirestoreService } from "./supabase/riderSupabaseService";
 import { Rider, ApplicationStage } from "../types";
 import { triggerSync } from "./webhookService";
 

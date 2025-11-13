@@ -1,5 +1,5 @@
 
-import { ExpenseFirestoreService } from "./expenseFirestoreService";
+import { ExpenseSupabaseService as ExpenseFirestoreService } from "./supabase/expenseSupabaseService";
 import { SpendEvent, SpendCategory } from "../types";
 import { triggerSync } from "./webhookService";
 

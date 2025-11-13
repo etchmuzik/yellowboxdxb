@@ -1,34 +1,58 @@
 
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { db, auth } from "../config/firebase";
+import { supabase } from "../config/supabase";
 import { User } from "../types";
 
-const COLLECTION = "users";
+const TABLE_NAME = "users";
 
 export const getUsers = async (): Promise<User[]> => {
-  const usersSnapshot = await getDocs(collection(db, COLLECTION));
-  return usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*');
+
+  if (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+
+  return data || [];
 };
 
 export const getUserById = async (userId: string): Promise<User | null> => {
-  const userDoc = await getDoc(doc(db, COLLECTION, userId));
-  if (userDoc.exists()) {
-    return { id: userDoc.id, ...userDoc.data() } as User;
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      // No rows returned
+      return null;
+    }
+    console.error("Error fetching user by ID:", error);
+    throw error;
   }
-  return null;
+
+  return data;
 };
 
 export const getUserByEmail = async (email: string): Promise<User | null> => {
-  const usersRef = collection(db, COLLECTION);
-  const q = query(usersRef, where("email", "==", email));
-  const querySnapshot = await getDocs(q);
-  
-  if (!querySnapshot.empty) {
-    const userDoc = querySnapshot.docs[0];
-    return { id: userDoc.id, ...userDoc.data() } as User;
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .eq('email', email)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      // No rows returned
+      return null;
+    }
+    console.error("Error fetching user by email:", error);
+    throw error;
   }
-  return null;
+
+  return data;
 };
 
 export const createUser = async (userData: Omit<User, "id">): Promise<User> => {
@@ -38,15 +62,42 @@ export const createUser = async (userData: Omit<User, "id">): Promise<User> => {
     if (existingUser) {
       throw new Error("User with this email already exists");
     }
-    
-    // Create Firebase Auth user
-    const userCredential = await createUserWithEmailAndPassword(auth, userData.email, "password123");
-    const userId = userCredential.user.uid;
-    
-    // Store user data in Firestore
-    await setDoc(doc(db, COLLECTION, userId), userData);
-    
-    return { id: userId, ...userData };
+
+    // Create Supabase Auth user first
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: userData.email,
+      password: "password123", // Default password - user should change it
+      options: {
+        data: {
+          name: userData.name,
+          role: userData.role
+        }
+      }
+    });
+
+    if (authError) {
+      throw authError;
+    }
+
+    if (!authData.user) {
+      throw new Error("Failed to create auth user");
+    }
+
+    const userId = authData.user.id;
+
+    // Store user profile in database
+    const { data: insertedUser, error: insertError } = await supabase
+      .from(TABLE_NAME)
+      .insert([{ id: userId, ...userData }])
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error("Error creating user profile:", insertError);
+      throw insertError;
+    }
+
+    return insertedUser;
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;
@@ -54,7 +105,15 @@ export const createUser = async (userData: Omit<User, "id">): Promise<User> => {
 };
 
 export const updateUser = async (userId: string, userData: Partial<User>): Promise<void> => {
-  await updateDoc(doc(db, COLLECTION, userId), userData);
+  const { error } = await supabase
+    .from(TABLE_NAME)
+    .update(userData)
+    .eq('id', userId);
+
+  if (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
 };
 
 export const validateUserRegistration = (email: string, role: User['role'], currentUser: User | null): boolean => {
