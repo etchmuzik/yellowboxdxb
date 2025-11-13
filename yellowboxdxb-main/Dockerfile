@@ -25,8 +25,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install serve to run the static site
-RUN npm install -g serve
+# Install serve and curl for health checks
+RUN npm install -g serve && \
+    apk add --no-cache curl
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
@@ -36,7 +37,7 @@ EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+  CMD curl -f http://localhost:3000/ || exit 1
 
 # Start application with serve
 CMD ["serve", "-s", "dist", "-l", "3000", "--no-clipboard"]
