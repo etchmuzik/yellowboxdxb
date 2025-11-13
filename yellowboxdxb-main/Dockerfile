@@ -8,14 +8,17 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies with legacy peer deps flag
-RUN npm install --legacy-peer-deps
+# Clean install to avoid npm optional dependencies bug
+# Remove package-lock.json and clear cache before installing
+RUN rm -f package-lock.json && \
+    npm cache clean --force && \
+    npm install --legacy-peer-deps --no-package-lock
 
 # Copy source code
 COPY . .
 
-# Build application
-RUN npm run build
+# Build application (use build:production to skip redundant npm install)
+RUN npm run build:production
 
 # Production stage
 FROM node:20-alpine
