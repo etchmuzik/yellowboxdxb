@@ -2,8 +2,20 @@
 import { User } from "../types";
 
 export const getRoleChecker = (currentUser: User | null) => ({
-  isAdmin: () => currentUser?.role === "Admin",
-  isOperations: () => currentUser?.role === "Operations",
-  isFinance: () => currentUser?.role === "Finance",
-  isRider: () => currentUser?.role === "Rider-Applicant",
+  isAdmin: () => {
+    const role = currentUser?.role?.toLowerCase();
+    return role === "admin";
+  },
+  isOperations: () => {
+    const role = currentUser?.role?.toLowerCase();
+    return role === "operations";
+  },
+  isFinance: () => {
+    const role = currentUser?.role?.toLowerCase();
+    return role === "finance";
+  },
+  isRider: () => {
+    const role = currentUser?.role?.toLowerCase();
+    return role === "rider" || role === "rider-applicant";
+  },
 });

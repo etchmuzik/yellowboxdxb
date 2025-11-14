@@ -38,9 +38,10 @@ const RequireAuth = ({ children, fallbackPath, roles }: RequireAuthProps) => {
 
   // Check role-based access if roles are specified
   if (roles && roles.length > 0 && currentUser) {
-    const userRole = currentUser.role;
-    
-    if (!roles.includes(userRole)) {
+    const userRole = currentUser.role?.toLowerCase();
+    const normalizedRoles = roles.map(r => r.toLowerCase());
+
+    if (!normalizedRoles.includes(userRole)) {
       return (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
