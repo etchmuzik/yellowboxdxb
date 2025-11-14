@@ -8,13 +8,15 @@ import { getRoleChecker } from "../utils/auth-utils";
 import { useSupabaseAuth } from "./use-supabase-auth";
 
 // Helper function to normalize role names
+// Keep roles lowercase to match database constraint
 const normalizeRole = (role: string): User['role'] => {
   const normalizedRole = role?.toLowerCase();
   switch (normalizedRole) {
-    case 'admin': return 'Admin';
-    case 'operations': return 'Operations';
-    case 'finance': return 'Finance';
-    case 'rider-applicant': return 'Rider-Applicant';
+    case 'admin': return 'admin';
+    case 'operations': return 'operations';
+    case 'finance': return 'finance';
+    case 'rider':
+    case 'rider-applicant': return 'rider';
     default: return role as User['role'];
   }
 };
