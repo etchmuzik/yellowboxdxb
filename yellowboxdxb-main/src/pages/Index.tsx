@@ -15,17 +15,31 @@ const Index = () => {
   useEffect(() => {
     // If user is authenticated and not forcing landing page, redirect to appropriate dashboard
     if (!loading && isAuthenticated && !forceLanding) {
+      console.log('Index.tsx routing check:', {
+        isAdmin: isAdmin(),
+        isOperations: isOperations(),
+        isFinance: isFinance(),
+        isRider: isRider(),
+        currentUser: currentUser
+      });
+
       if (isAdmin()) {
+        console.log('Redirecting to /admin');
         navigate('/admin');
       } else if (isOperations()) {
+        console.log('Redirecting to /operations');
         navigate('/operations');
       } else if (isFinance()) {
+        console.log('Redirecting to /finance');
         navigate('/finance');
       } else if (isRider()) {
+        console.log('Redirecting to /rider');
         navigate('/rider');
+      } else {
+        console.log('No role match - user:', currentUser);
       }
     }
-  }, [loading, isAuthenticated, isAdmin, isOperations, isFinance, isRider, navigate, forceLanding]);
+  }, [loading, isAuthenticated, isAdmin, isOperations, isFinance, isRider, navigate, forceLanding, currentUser]);
 
   if (loading) {
     return (
