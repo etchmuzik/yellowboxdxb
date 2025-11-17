@@ -1,0 +1,424 @@
+RIDERS DATA: Table 1
+Column 1,JONIG DATE,NAME,TALABAT ID,KEETA ID,ZONE,BIKE,C PHONE NO,P PHONE NO,EID,PASSPORT,LICENSE NO,NATIONALITY,EMAIL,DOC FILE, Offboarding Date,,,,,,,,,,,,,
+1,12-24-2024,Muhammad Muzammal Fareed Muhammad Aslam,2504631,,Jumeirah,52379 DXB 2,542007958,562077387,784200033362409,CQ8979731,4788832,Pakistani,fareed.yb52397@gmail.com,1 Muhammad Muzammal Fareed Muhammad Aslam,,,,,,,,,,,,,,
+2,12-24-2024,Judge Singh Chanan Singh,2504643,,Business bay,53885 DXB 2,542007942,558994293,784198881737401,C0994836,778097,Indian,judge.yb53885@gmail.com,2 Judge Singh Chanan Singh,,,,,,,,,,,,,,
+3,12-24-2024,Mashkoor Hussain Tawaseen,1353588,,Al barsha 1,53886 DXB 2,542007947,553808498,784199440753798,NE6900132,417743,Pakistani,mashkoor.yb53886@gmail.com,3 Mashkoor Hussain Tawaseen,,,,,,,,,,,,,,
+4,12-24-2024,Siraj Mannil Kunhimohamed,2504613,,Deira,53889 DXB 2,542007957,551573348,784198648273740,N2794713,1793866,Indian,siraj.yb53889@gmail.com,4 Siraj Mannil Kunhimohamed,,,,,,,,,,,,,,
+5,12-24-2024,Jatinder Singh Balbir Singh,2504612,1760641953580910,Deira,53890 DXB 2,542007943,527002832,784199592152732,P0287423,4085234,Indian,jatinder.yb53890@gmail.com,5 Jatinder Singh Balbir Singh,,,,,,,,,,,,,,
+6,12-24-2024,Sayed Raheel Kazmi Sayed Tanveer Hussain Kazmi,2504608,,Business bay,54940 DXB 2,542007950,507498472,784200363881093,DN4853902,4342247,Pakistani,raheel.yb54940@gmail.com,6 Syed Raheel Kazmi Sayed Tanveer Hussain Kazmi,,,,,,,,,,,,,,
+7,12-24-2024,Faiz Ahmad Khan Faizan Ahmad Khan	,2508895,1758799355593264,Jumeirah,53891 DXB 2,542007953,558045128,784198613650203,S2178056,1855108,Indian,faiz.yb53891@gmail.com,7 Faiz Ahmad Khan Faizan Ahmad Khan,,,,,,,,,,,,,,
+8,1-9-2025,Muhammad Muneeb Ur Rehman Saghir Ahmed,1966331,,Downtown,53892 DXB 2,542201174,568744825,784200260631856,RT9158611,855857,Pakistani,muneed.yb53892@gmail.com,8 Muhammad Muneeb Ur Rehman Saghir Ahmed,06-10-2025,,,,,,,,,,,,,
+9,01-14-2025,RanJit Singh Babu Singh,1386308,,Downtown,54938 DXB 2,542201157,545724467,784199316701657,C0370329,4205126,Indian,ranjit.yb54938@gmail.com,9 RanJit Singh Babu Singh,,,,,,,,,,,,,,
+10,01-18-2025,Waqar Naeem Abdul Ghaffar,2544281,,Downtown,54939 DXB 2,542201179,553569242,784199431350570,DB9958702,3703631,Pakistani,waqar.yb54939@gmail.com,10 Waqar Naeem Abdul Ghaffar,,,,,,,,,,,,,,
+11,01-22-2025,Sakil Ahmed Md Showkot Ali,1732897,,Al barsha 1,54941 DXB 2,542201172,504265458,784199952048504,A00382523,880445,Bangladeshi,sakil.yb54941@gmail.com,11 Sakil Ahmed Md Showkot Ali,,,,,,,,,,,,,,
+12,01-23-2025,Husnain Bahadar Khan,1834259,,Al Satowa,54943 DXB 2,542201169,504992258,784200177975008,NW6805541,2804485,Pakistani,husnain.yb54943@gmail.com,12 Husnain Bahadar Khan,,,,,,,,,,,,,,
+13,02-DD-YYYY,Pawan Bharati Narjit Bharati,2637842,,Al karama,54942 DXB 2,542201182,545422136,784200144327606,12186921,41790078,Nepal,pawan.yb54942@gmail.com,13 Pawan Bharati Narjit Bharati,,,,,,,,,,,,,,
+14,02-DD-YYYY,Safdar Muhammad Iqbal,2650502,,Al barsha 1,54947 DXB 2,504084814,558039211,784199886846395,FF5574432,210980,Pakistani,safdar.yb54947@gmail.com,14 Safdar Muhammad Iqbal,,,,,,,,,,,,,,
+15,02-DD-YYYY,Md Ashfaque Raja Md Mansur Alam,2663590,,Marina,55970 DXB 2,504084398,568535926,784199123243919,Y1589186,4812816,Indian,ashfaque.yb55970@gmail.com,15 Md Ashfaque Raja Md Mansur Alam,,,,,,,,,,,,,,
+16,02-DD-YYYY,Abdul Raheem Mohammed Abdul Aleem,2663587,,Marina,55971 DXB 2,50408439,586152295,784199831875572,U8559954,279485,Indian,raheem.yb55971@gmail.com,16 Abdul Raheem Mohammed Abdul Aleem,,,,,,,,,,,,,,
+17,03-DD-YYYY,Muhammad Sanwal Kharal Munir Ahmad,1119038,1758808037593624,Marina,55706 DXB 2,504082038,528814133,784199957751557,UT4145312,4154119,Pakistani,sanwal.yb55706@gmail.com,17 Muhammad Sanwal Kharal Munir Ahmad,,,,,,,,,,,,,,
+18,03-DD-YYYY, Md Danish Khan,2813427,1758809174580041,Al Quoz ,55426 DXB 2,551288147,551288147,784198626407575,PA3529188,3371988,Nepal,danish.yb55426@gmail.com,18 Md Danish Khan,,,,,,,,,,,,,,
+19,03-DD-YYYY,Mohammad Shuaib Moazzam Naimi Mohammad Moazzam Naimi,2815064,1760792017512260,Al Wasal,55964 DXB 2,504089166,551375788,784199293701175,U2149816,4811553,Indian,shuaib.yb55964@gmail.com,19 Mohammad Shuaib Moazzam Naimi Mohammad Moazzam Naimi,,,,,,,,,,,,,,
+20,03-15-2025,Nazim Ali Feroz Khan,1506153,1757922904593574,Al Satowa,55429 DXB 2,503747106,564274837,784199539303216,UK1807904,4089914,Pakistani,nazim.yb55429@gmail.com,20 Nazim Ali Feroz Khan,,,,,,,,,,,,,,
+21,03-15-2025,Hassan Nabil Hassan Mohamed Fekry,2825233,,,55647 DXB 2,504089511,508420503,784199518380359,A39813832,4897469,EGYPT,hassan.yb55647@gmail.com,21 Hasan Nabil Hassan Mohamed Feky,,,,,,,,,,,,,,
+22,03-15-2025,Mohamed Manal Abdelsalam Ahmed Mohammadin,2825205,,Al karama,55707 DXB 2 / 55710 (26/6),542201168,505092931,784198914773589,A39957061,4897506,EGYPT,manal.yb55707@gmail.com,22 Mohamed Manal Abdelsalam Ahmed Mohammadin,,,,,,,,,,,,,,
+23,03-27-2025,Hasham Ramadan Atia Elsayed,2843689,,Al barsha 1,55104 DXB 2,503747986,521997922,784199698457969,A39335513,4906279,EGYPT,hasham.yb55104@gmail.com,23 Hasham Ramadan Atia Elsayed,,,,,,,,,,,,,,
+24,03-27-2025,Ahmed Mohamed Abdelmoneim Abdelal Bassiouny,2843722,,Al nahda,54946 DXB 2,504081578,567393058,784198898413459,A40237672,4906311,EGYPT,abdelmoneim.yb54946@gmail.com,24 Ahmed Mohamed Abdelmoneim Abdelal Bassiouny,,,,,,,,,,,,,,
+25,03-27-2025,Hassan Mohamed Ahmed Ahmed Rashed,2843687,,Al barsha 1,55967 DXB 2,504086928,544339204,784198503681086,A39390017,4906276,EGYPT,rashed.yb55967@gmail.com,25 Hassan Mohamed Ahmed Ahmed Rashed,,,,,,,,,,,,,,
+26,03-27-2025,Belal Ahmed Mohamed Abdelaziz Elkhouly,2843685,,,55635 DXB 2,504081488,542487291,784200060060033,A4015670,4906310,EGYPT,belal.yb55635@gmail.com,26 Belal Ahmed Mohamed Abdelaziz Elkhouly,,,,,,,,,,,,,,
+27,03-27-2025,Moataz Mohamed Mohamed Hassan Zithar,2843684,,,55427 DXB 2,542201156,543278677,784199371696974,A36744287,4905976,EGYPT,moataz.yb55427@gmail.com,27 Moataz Mohamed Mohamed Hassan Zithar,,,,,,,,,,,,,,
+28,03-27-2025,Mohamed Ahmed Elsayed Mohamed Elsabbagh,2843681,,,55704 DXB 2,503748975,569083807,784199119380691,A34721721,4906278,EGYPT,elsayed.yb55704@gmail.com,28 Mohamed Ahmed Elsayed Mohamed Elsabbagh,,,,,,,,,,,,,,
+29,04-18-2025,Mohamed Fouad Mahmoud Abdelgawad,3492118,,,55709 DXB 2,508682128,561220287,784199789530674,A27191607,4916902,EGYPT,"fouad.yb55709@gmail.com
+",29 Mohamed Fouad Mahmoud Abdelgawad,,,,,,,,,,,,,,
+30,04-18-2025,Abdelmaaboud Dahi Hosni Gadelkarim,3492110,,,55705 DXB 2,542201162,564877002,784200249603513,A38639569,4916899,EGYPT,abdelmaaboud.yb55705@gmail.com,30 Abdelmaaboud Dahi Hosni Gadelkarlm,,,,,,,,,,,,,,
+31,04-18-2025,Abdellatif Hesham Abdellatif Elghareib Elgyar,3492106,,,55102 DXB 2,504081579,563195507,784200068542818,A37988659,4918215,EGYPT,abdellatif.yb55102@gmail.com,31 Abdellatif Hesham Abdllatif Elghareib Elgyar,06-19-2025,2050,,,,,,,,,,,,
+32,04-18-2025,Mohamed Elsayed Mostafa Elkady,3492099,,,55637 DXB 2,504081360,502193237,784200017125079,A36378008,4918293,EGYPT,elkady.yb55637@gmail.com,32 Mohamed Elsayed Mostafa Elkady,,,,,,,,,,,,,,
+33,04-18-2025,Ahmed Maher Moustafa Hussein,3492091,,,55430 DXB 2,542201148,545733157,784199540081207,A36444464,4918065,EGYPT,maher.yb55430@gmail.com,33 Ahmed Maher Moustafa Hussein,,,,,,,,,,,,,,
+34,04-18-2025,Ahmed Ragab Ahmed Mohamed,3492087,1758890619554758,,55434 DXB 2 / 60826,508682586,505458533,784199620039612,A38025624,4918106,EGYPT,ragab.yb55434@gmail.com,34 Ahmed Ragab Ahmed Mohamed ,,,,,,,,,,,,,,
+35,04-18-2025,Mohamed Metwaly Mohamed Hussein Elsayed,3492082,,,55103 DXB 2,542201152,561220287,784199790475422,A39956965,4918064,EGYPT,metwaly.yb55103@gmail.com,35 Mohamed Metwaly Mohamed Hussein Elsayed,,,,,,,,,,,,,,
+36,04-26-2025,Amr Gaber Adel Mohamed Hamdy Elmaghrby,3504812,,,55645 DXB 2,542201153,501108561,784199670166869,A35245608,4923511,EGYPT,amr.yb55645@gmail.com,36 Amr Gaber Adel Mohamed Hamdy Elmaghrby,,,,,,,,,,,,,,
+37,04-26-2025,Mohamed Abdelhamid Gouda Salem,3504809,,,55636 DXB 2,503747183,505659549,784199219270370,A37697681,4923512,EGYPT,gouda.yb55636@gmail.com,37 Mohamed Abdelhamid Gouda Salem,06-19-2025,1000,,,,,,,,,,,,
+38,04-26-2025,Ershad Alam Mahtab Alam,3504743,,Business bay,54944 DXB 2,508463245,544611084,784199174379927,X5889311,4831319,Indian,ershad.yb54944@gmail.com,38 Ershad Alam Mahtab Alam,,,,,,,,,,,,,,
+39,05-09-2025,Gharib Said Gharib Mohamed Ali,3527444,,,55638 DXB 2,508681630,566383119,784199633564580,A31102030,4933674,EGYPT,"gharib.yb55638@gmail.com
+",39 Gharib Said Gharib Mohamed Ali,,,,,,,,,,,,,,
+40,05-09-2025,Hassan Fathi Rabie Abdellatif,3527440,,,55432 DXB 2,508682456,505675682,784200017039460,A38635027,4933746,EGYPT,fathi.yb55432@gmail.com,40 Hassan Fathi Rabie Abdellatif,,,,,,,,,,,,,,
+41,05-09-2025,Mohamed Hesham Saber Hamed Farag,3527434,,,55710 DXB 2,504089506,506341025,784200141838449,A40145201,4933870,EGYPT,saber.yb55710@gmail.com,41 Mohamed Hesham Saber Hamed Farag,,,,,,,,,,,,,,
+42,05-09-2025,Mahmoud Mohamed Mohamed Elsaid Eeed,3527429,,,55708 DXB 2,503748850,507625466,784199686572696,A40234714,4933635,EGYPT,"mahmoud.yb55708@gmail.com
+",42 Mahmoud Mohamed Mohamed Elsaid Eeed,06-19-2025,1400,,,,,,,,,,,,
+43,05-13-2025,Mohamed Reda Mohamed Ismail Mohamed,3663887,1757676905514571,,55639 DXB 2,503747428,552295245,784200035354362,A38330669,4933629,EGYPT,reda.yb55639@gmail.com,43 Mohamed Reda Mohamed Ismail Mohamed,,,,,,,,,,,,,,
+44,05-13-2025,Maged Eid Mohamed Aly Eissa,3663882,,,55423 DXB 2,503747582,567093904,784198393034032,A29561022,4936815,EGYPT,"maged.yb55423@gmail.com
+",44 Maged Eid Mohamed Aly Eissa,,,,,,,,,,,,,,
+45,05-13-2025,Sushil Tamang,1679979,,,55431 DXB 2,508462790,568576706,784199766512976,PA3782257,4227536,Nepal,sushil.yb55431@gmail.com,45 Sushil Tamang,,,,,,,,,,,,,,
+46,05-16-2025,Omar Hosny Abdelnaby Ali,3672060,,,55646 DXB 2,508462571,565718669,784199640668325,A29454048,292365,EGYPT,omar.yb55646@gmail.com,46 Omar Hosny Abdelnaby Ali,,,,,,,,,,,,,,
+47,05-20-2025,Mohamed Gamal Abdalla Abdelaal,3682493,1758889855518153,Al karama,55098 DXB 2,508463430,568077356,784200136747613,A33573751,4941092,EGYPT,gamal.yb55098@gmail.com,47 Mohamed Gamal Abdalla Abdelaal,,,,,,,,,,,,,,
+48,05-20-2025,Mohamed Sultan Ahmed Khalaf Ahmed,3682481,,,55974 DXB 2,504081851,542862710,784200018286987,A40144353,4941169,EGYPT,sultan.yb55974@gmail.com,48 Mohamed Sultan Ahmed Khalaf Ahmed,,,,,,,,,,,,,,
+49,05-20-2025,Andro Naseh Elgamal Attallah Nosir,3682469,,,62582 DXB 2,508463522,552126911,784200115128595,A04484308,4944022,EGYPT,andro.yb62582@gmail.com,49 Andro Naseh Elgamal Attallah Nosir,,,,,,,,,,,,,,
+50,05-20-2025,Mahmoud Abdelhakim Mahmoud Ahmed Elkrwashy,3682422,,Al karama,60823 DXB 2 / 55707 DXB,503746753,505594043,784199643687744,A38020532,4944220,EGYPT,abdelhakim.yb60823@gmail.com,50 Mahmoud Abdelhakim Mahmoud Ahmed Elkrwashy,,,,,,,,,,,,,,
+51,05-26-2025,Mohamed Mohamed Elsaid Abdelmakssoud Elgamal,3776304,1758889096554598,,60822 DXB 2 / 62855 DXB 2,504087019,528048063,784199625081403,A37594906,4944214,EGYPT,elgamal.yb60822@gmail.com,51 Mohamed Mohamed Elsaid Abdelmakssoud Elgamal,,,,,,,,,,,,,,
+52,05-26-2025,Ibrahim Mohamed Ibrahim Hussein,3777061,,,62586 DXB 2,508681833,545940650,784200039779416,A40764383,4947528,EGYPT,ibrahim.yb62586@gmail.com,52 Ibrahim Mohamed Ibrahim Hussein,,,,,,,,,,,,,,
+53,06-17-2025,Melvin Steven Dias Steven Dias,3796893,,,55709 DXB 2,508466903,585825026,784199084098062,10148177,3551787,Indian,melvin.yb55709@gmail.com,53 Melvin Steven Dias Steven Dias,,,,,,,,,,,,,,
+54,06-23-2025,Mahmoud Ahmed Abdelhamid Abouyousef,3838289,,,55974 DXB 2,542201164,561431744,784200261465809,A39051502,4962121,EGYPT,abdelhamid.yb55974@gmail.com,54 Mahmoud Ahmed Abdelhamid Abouyousef,,,,,,,,,,,,,,
+55,06-23-2025,Ahmed Samir Ahmed Mohamed Badawy,3838277,,,55708 DXB 2,508472968,563484152,784200160424204,A40231642,4962141,EGYPT,"samir.yb55708@gmail.com
+",55 Ahmed Samir Ahmed Mohamed Badawy,,,,,,,,,,,,,,
+56,06-23-2025,Ahmed Gamil Mohamed Mahrous Eliwa,3838270,,,55636 DXB 2,503746817,504914059,784199685645006,A40504571,4962208,EGYPT,gamil.yb55636@gmail.com,56 Ahmed Gamil Mohamed Mahrous Eliwa,,,,,,,,,,,,,,
+57,07-02-2025,Hossam Hassan Abrahim Hassan,3860418,,,55971 DXB 2,508472899,563256991,784199847041623,A39018563,4971052,EGYPT,hossam.yb55971@gmail.com,57 Hossam Hassan Abrahim Hassan,,,,,,,,,,,,,,
+58,07-07-2025,Ahmed Elsaid Ahmed Hussein Ahmed,3871678,,,55102 DXB 2,508469807,547307322,784199840659231,A38707444,4969031,EGYPT,ahmed.yb55432@gmail.com,58 Ahmed Elsaid Ahmed Hussein Ahmed,,,,,,,,,,,,,,
+59,07-15-2025,Mahmoud Sayed Imam Abdelsalam,2086583,,,55705 DXB 2,508463549,507917039,784199573919455,A39302792,273390,EGYPT,"sayed.yb55705@gmail.com
+",59 Mahmoud Sayed Imam Abdelsalam,,,,,,,,,,,,,,
+60,07-15-2025,Galal Abdelaal Hassanin Sayed Ahmed,2087153,,,  55635 DXB 2,508465296,509869540,784198987456500,A35007137,273477,EGYPT,galal.yb55635@gmail.com,60 Galal Abdelaal Hassanin Sayed Ahmed,,,,,,,,,,,,,,
+61,07-15-2025,Omar Hashem Abdelkawy Mohamed,3890991,,,62586 DXB 2,508467531,542454431,784200430420719,A29029483,1277915,EGYPT,omar.yb62586@gmail.com,61 Omar Hashem Abdelkawy Mohamed,,,,,,,,,,,,,,
+62,07-18-2025,Mohammed Imran Mohammed Basheer,2834803,1758806562580423,,55101 DXB 2,508682751,567916407,784199042573701,B9125134,4894990,Indian,imran.yb55101@gmail.com,62 Mohammed Imran Mohammed Basheer,,,,,,,,,,,,,,
+63,07-18-2025,Mohammed Mahmood Mohammed Ghouse,2834797,1758800311512135,,55427 DXB 2,508465738,542338598,784199630730572,S9673967,4889975,Indian,mohammed.yb55427@gmail.com,63 Mohammed Mahmood Mohammed Ghouse,,,,,,,,,,,,,,
+64,07-18-2025,Ziad Yasser Elnabawi Fadel Mohamed,3900818,,,55645 DXB 2 / 55434,508472643,509326506,784200396263103,A39456655,4980567,EGYPT,ziad.yb55645@gmail.com,64 Ziad Yasser Elnabawi Fadel Mohamed,,,,,,,,,,,,,,
+65,07-23-2025,Mohamed Said Elsayed Mohamed Elgendy,3912179,,,62582 DXB 2,508463780,524306901,784200218424990,A39644960,4980552,EGYPT,said.yb62582@gmail.com,65 Mohamed Said Elsayed Mohamed Elgendy,,,,,,,,,,,,,,
+66,07-23-2025,Islam Ashraf Selim Rezk,3912173,,,55430 DXB 2,508463006,557568784,784200254749508,A39686520,4985380,EGYPT,islam.yb55430@gmail.com,66 Islam Ashraf Selim Rezk,,,,,,,,,,,,,,
+67,07-23-2025,Mohamed Maarouf Abdelghany Ahmed,3912169,,,62863 DXB 2,508472987,501408315,784199765404134,A39203043,4985378,EGYPT,maarouf.yb62863@gmail.com,67 Mohamed Maarouf Abdelghany Ahmed,,,,,,,,,,,,,,
+68,07-23-2025,Ahmed Youssef Ahmed Mohamed,3912162,,,62581 DXB 2,508466732,528264875,784199033982457,A40660561,4985394,EGYPT,youssef.yb62581@gmail.com,68 Ahmed Youssef Ahmed Mohamed,,,,,,,,,,,,,,
+69,07-23-2025,Khaled Hegazi Elmandouh Abdelgawad Younes,3912152,,,60813 DXB 2,508682096,521232807,784199954515674,A28031108,4985421,EGYPT,khaled.yb60813@gmail.com,69 Khaled Hegazi Elmandouh Abdelgawad Younes,,,,,,,,,,,,,,
+70,07-30-2025,Muhammad Imran Khan Sabir Ali,1208804,,,62851 DXB 2,508473268,508472064,784199609859634,HT4143462,77268,Pakistani,imran.yb62851@gmail.com,70 Muhammad Imran Khan Sabir Ali,,,,,,,,,,,,,,
+71,07-30-2025,Muhammad Umar Fiaz,1834228,,,62852 DXB2,508682809,564877264,784199174251829,BN2224582,212024,Pakistani,umar.yb62852@gmail.com,71 Muhammad Umar Fiaz,,,,,,,,,,,,,,
+72,07-30-2025,Ammar Nawaz Haq Nawaz,1834225,,,62859 DXB 2,508472521,528533136,784198851632426,CQ9613103,3962547,Pakistani,ammar.yb62859@gmail.com,72 Ammar Nawaz Haq Nawaz,,,,,,,,,,,,,,
+73,07-31-2025,Muhammad Shahzad Muhammad Aslam,3927068,1758804974580650,,55637 DXB 2,542007956,562305970,784200361769696,VU5156381,4960218,Pakistani,shahzad.yb55637@gmail.com,73 Muhammad Shahzad Muhammad Aslam,,,,,,,,,,,,,,
+74,08-04-2025,Hassan Ibrahim Hassan Hassan Tal,3989869,,,62580 DXB 2,522394268,557209229,784199035720632,A38911941,4990022,EGYPT,tal.yb62580@gmail.com,74 Hassan Ibrahim Hassan Hassan Tal,,,,,,,,,,,,,,
+75,08-04-2025,Ahmed Samih Zaky Ibrahim,3682456,,,62857 DXB 2 / 55647 DXB 2,522485153,563533127,784199288858162,A36754134,1014400,EGYPT,samih.yb62857@gmail.com,75 Ahmed Samih Zaky Ibrahim,,,,,,,,,,,,,,
+76,08-04-2025,Mahmoud Ehab Mohamed Badr,3989870,,,Assigned Electric Bicycles,522641750,582587189,784199467488773,A29953971,Bicycle,EGYPT,ehab.yb1994@gmail.com,76 Mahmoud Ehab Mohamed Badr,,,,,,,,,,,,,,
+77,08-04-2025,Mohamed Sobhi Ahmed Mohamed,3990013,,,Assigned Electric Bicycles,522630874,543760841,784198025617774,A30138562,Bicycle,EGYPT,sobhi.yb1980@gmail.com,77 Mohamed Sobhi Ahmed Mohamed,,,,,,,,,,,,,,
+78,08-04-2025,Mohamed Seddik Mohamed Seddik,3989959,,,Assigned Electric Bicycles,522516540,502905301,784199628954499,A40488810,Bicycle,EGYPT,seddik.yb1996@gmail.com,78 Mohamed Seddik Mohamed Seddik,,,,,,,,,,,,,,
+79,08-04-2025,Mahmoud Mohamed Sayed Ahmed Eldeken,3989957,,,Assigned Electric Bicycles,521320555,503865766,784198841814225,A04451869,Bicycle,EGYPT,eldeken.yb1988@gmail.com,79 Mahmoud Mohamed Sayed Ahmed Eldeken,,,,,,,,,,,,,,
+80,08-04-2025,Tarek Salah Mohamed Abouarab Abdin Elkhatib,3989958,,,Assigned Electric Bicycles,521306222,529202246,784199893022121,A40533865,Bicycle,EGYPT,tarek.yb1998@gmail.com,80 Tarek Salah Mohamed Abouarab Abdin Elkhatib,,,,,,,,,,,,,,
+81,08-04-2025,Karim Mohamed Nabawy Elmalla,3989867,,,Assigned Electric Bicycles,521309888,507209544,784198990360384,A40356671,Bicycle,EGYPT,karim.yb1989@gmail.com,81 Karim Mohamed Nabawy Elmalla,,,,,,,,,,,,,,
+82,08-06-2025,Abdul Rehman Muhammad Islam,1834258,,,60819 DXB 2,508472835,568850822,784199091884116,GG9156873,4367007,Pakistani,abdulrehman.yb60819@gmail.com,82 Abdul Rehman Muhammad Islam,,,,,,,,,,,,,,
+83,08-06-2025,Muhammad Yasir Muhammad Jameel,1224004,,,55432 DXB 2,522719426,522195136,784199876071483,BU6822352,4169844,Pakistani,muhammadyasir.yb55432@gmail.com,83 Muhammad Yasir Muhammad Jameel,,,,,,,,,,,,,,
+84,08-06-2025,Muhammad Rashid Mahmood Muhammad Safdar Khan,762216,,,62849 DXB 2,522761353,527279952,784199226168716,YP0157463,3835902,Pakistani,muhammadrashid.yb62849@gmail.com,84 Muhammad Rashid Mahmood Muhammad Safdar Khan,,,,,,,,,,,,,,
+85,08-06-2025,Mahmoud Nadi Mahmoud Abdelaziz,2203294,,,62858 DXB 2,522476151,545423924,784199495583835,A34044407,276895,EGYPT,nadi.yb62858@gmail.com,85 Mahmoud Nadi Mahmoud Abdelaziz,,,,,,,,,,,,,,
+86,08-28-2025,Amr Nasser Marei Ibrahim,3522384,,,60818 DXB 2,522354658,503088637,784200288375148,A39106324,1014392,EGYPT,amrnasser.yb60818@gmail.com,86 Amr Nasser Marei Ibrahim,,,,,,,,,,,,,,
+87,08-12-2025,Moaz Mohamed Abdelfattah Mahmoud Ali,4007099,,,60825 DXB 2,521307999,509686383,784200180001107,A40448338,4999663,EGYPT,moaz.yb60825@gmail.com,87 Moaz Mohamed Abdelfattah Mahmoud Ali,,,,,,,,,,,,,,
+88,08-12-2025,Sherif Kamal Sonealla Aly Dwidar,4007090,,,60815 DXB 2,521305666,588103379,784198632277632,A38699070,4990163,EGYPT,sherif.yb60815@gmail.com,88 Sherif Kamal Sonealla Aly Dwidar,,,,,,,,,,,,,,
+89,08-12-2025,Mohamed Khairy Refaiey Mohamed,4007081,,,60814 DXB 2,521309666,508542077,784199745083388,A40714372,4999948,EGYPT,khairy.yb60814@gmail.com,89 Mohamed Khairy Refaiey Mohamed,,,,,,,,,,,,,,
+90,08-14-2025,Attiq Ur Rehman Muhammad Rafiq,4012972,1758806028593388,Al barsha 1,62850 DXB 2,521308666,501203685,784199814186948,BC1464733,4962270,Pakistani,attiq.yb62850@gmail.com,90 ATTIQ UR REHMAN MUHAMMAD RAFIQ,,,,,,,,,,,,,,
+91,08-14-2025,Mahmoud Mohamed Hamdy Abdellatif Elwakil,4012937,,Deira,Assigned Electric Bicycles,521302555,567393058,784198869183065,A41321629,Bicycle,EGYPT,mahmoudelwakel360@gmail.com,91 MAHMOUD MOHAMED HAMDY ABDELLATIF ELWAKIL,,,,,,,,,,,,,,
+92,08-18-2025,Abdelrahman Mabrouk Mansour Abdelsayed,4016752,,Deira,Assigned Electric Bicycles,522714589,509903674,784199756099844,A34166245,Bicycle,EGYPT,abdelrahmanmabrouk667@gmail.com,92 ABDELRAHMAN MABROUK MANSOUR ABDELSAYED,,,,,,,,,,,,,,
+93,08-18-2025,Abdelhamid Mohamed Abdelhamid Ali,4016735,,,62865 DXB 2,508472671,551209983,784199315053068,A31543060,5003258,EGYPT,abdelhamid.yb62865@gmail.com,93 ABDELHAMID MOHAMED ABDELHAMID ALI,,,,,,,,,,,,,,
+94,08-18-2025,Mohamed Osama Abdelhamid Abdelhamid,4016725,,,62846 DXB 2,522773168,562698906,784199955326683,A40242327,5003244,EGYPT,osama.yb62846@gmail.com,94 MOHAMED OSAMA ABDELHAMID ABDELHAMID,,,,,,,,,,,,,,
+95,08-21-2025,Amar Mohamed Abdulmajed Nagy Alshahawy,4023037,1759411061554930,Deira,62856 DXB 2,522803648,522493379,784199491595361,A38330309,Bicycle,EGYPT,amar25elshahawy@gmail.com,95 Amar Mohamed Abdulmajed Nagy Alshahawy,,,,,,,,,,,,,,
+96,08-21-2025,Ahmed Elsayed Mohamed Ahmed Fadl,2203293,,,62584 DXB 2,522076398,552933848,784199937819078,A33656671,276893,EGYPT,elsayed.yb62584@gmail.com,96 Ahmed Elsayed Mohamed Ahmed Fadl,,,,,,,,,,,,,,
+97,08-21-2025,Монамеed Salah Монамed Selim Moussa,4023026,,,62844 DXB 2,522451189,544753466,784199456376682,A40739651,5005793,EGYPT,salah.yb62844@gmail.com,97 МОНАМЕED SALAH МОНАМED SELIM MOUSSA,,,,,,,,,,,,,,
+98,08-21-2025,Mohamed Ahmed Mohamed Ali,4023007,,,62861 DXB 2 / 53889,522681739,566432827,784199668739271,A40761094,5006392,EGYPT,mohamedahmed.yb62861@gmail.com,98 МОНАМED AHMED MOHAMED ALI,,,,,,,,,,,,,,
+99,08-25-2025,Abdelrahman Ahmed Mohamed Khalil,4027950,,,62860 DXB 2,522458712,524568703,784199614484717,A40649392,5008170,EGYPT,abdelrahman.yb62860@gmail.com,99 ABDELRAHMAN AHMED MOHAMED KHALIL,,,,,,,,,,,,,,
+100,08-25-2025,Abdelsalam Abdelnaser Kandil Abdelsalam Kandil,4027935,,Al barsha 1,Assigned Electric Bicycles,522408119,502940377,784199729793325,A40620754,Bicycle,EGYPT,abdelsalam.yb8119@gmail.com,100 ABDELSALAM ABDELNASER KANDIL ABDELSALAM KANDIL,,,,,,,,,,,,,,
+101,08-27-2025,Elsayed Wageh Abdelbaset Elsayed Elmokly,4034417,,,60810 DXB 2,522476731,557058508,784199933145759,A40525404,5010684,EGYPT,elsayedwageh.yb6731@gmail.com,101 ELSAYED WAGEH ABDELBASET ELSAYED ELMOKLY,,,,,,,,,,,,,,
+102,08-29-2025,Gomaa Lotfy Abdelrady Ibrahim,4038340,1762275702554227,,62857 DXB 2,522532917,562517739,784199284105253,A41018134,5057913,EGYPT,gomaa.yb32917@gmail.com,102 GOMAA LOTFY ABDELRADY IBRAHIM,,,,,,,,,,,,,,
+103,09-02-2025,Ahmed Abdelhamid Mohamed Shamseldin,4045093,,,60817 DXB 2,522178504,586266071,784199310019429,A38206497,5012996,EGYPT,ahmed.yb60817@gmail.com,103 AHMED ABDELHAMID MOHAMED SHAMSELDIN,,,,,,,,,,,,,,
+104,09-02-2025,Mostafa Mahmoud Sayed Ahmed Elsenousy,4045190,,,60820 DXB 2,521729158,507006849,784198762494627,A41211060,5014501,EGYPT,mostafa.yb94627@gmail.com,104 MOSTAFA MAHMOUD SAYED AHMED ELSENOUSY,,,,,,,,,,,,,,
+105,09-15-2025,Mukhtiar Ahmad Abdul Hameed,829390,,,60828 DXB 2,522649953,521696327,784198948606136,EF1168793,3844555,Pakistani,mukhtiar.yb60828@gmail.com,105 Mukhtiar Ahmad Abdul Hameed,,,,,,,,,,,,,,
+106,09-12-2025,Mirza Inayathulla Baig Mirza Zafarulla Baig,,1757678974593004,,62583 DXB 2,522845698,529166535,784199450115334,U6716242,4857273,Indian,inayathulla.yb62583@gmail.com,106 Mirza Inayathulla Baig Mirza Zafarulla Baig,,,,,,,,,,,,,,
+107,09-12-2025,Usman Ahmad Razzaq Ahmad,,1757680265593816,,62864 DXB 2,521951836,552637520,784200465695276,WU1171861,292543,Pakistani,usman.yb62864@gmail.com,107 Usman Ahmad Razzaq Ahmad,,,,,,,,,,,,,,
+108,26-09-2025,Ahmed Fathi Elsaid Abdelaziz Elnashar,,1758888283580359,,62587 DXB 2,542201140,,,,,EGYPT,ahmedfathi.yb62587@gmail.com,,,,,,,,,,,,,,,
+109,14-10-2025,Mohamed Ali Mohamed Ali,,1760466804514280,, 60821 DXB 2,542201154,,784198716484229,A39638223,1022291,EGYPT,mohamedali.yb60821@gmail.com,,,,,,,,,,,,,,,
+110,17-10-2025,Ahsan Ul Haq Liaqat Ali,1932441,,,55098 DXB 2,508464973,547013256,784198736807466,,,Pakistani,ahsan.yb55098@gmail.com,,,,,,,,,,,,,,,
+111,17-10-2025,Ghulam Murtaza Muhammad Yaqoob,1933201,,,55970 DXB 2,508681899,554855979,784198979859646,AQ0975513,768158,Pakistani,ghulam.yb55970@gmail.com,,,,,,,,,,,,,,,
+112,20-10-2025,Ahmed Sabri Fekri Ahmed,,1760640709545530,,60822 DXB 2,504089110,,784200159136124,,,EGYPT,,,,,,,,,,,,,,,,
+113,20-10-2025,Ibrahim Ibrahim Abdelfattah Ibrahim Ismail,4203732,,,60824 DXB 2,508472426,,784200024176636,A37320587,5041294,EGYPT,ibrahim.yb60824@gmail.com,,,,,,,,,,,,,,,
+114,20-10-2025,Ahmed Mohamed Fathy Elsemelawy,,1760790007545090,,55094 DXB 2,542201180,,784200131369611,A36635720,4859047,EGYPT,,,,,,,,,,,,,,,,
+115,20-10-2025,Ahmed Mohamed Abdelaziz Elsayed Ahmed Elsemelawy,,1760791043593880,,53892 DXB 2,508462571,,784199860699083,A34589251,4858981,EGYPT,,,,,,,,,,,,,,,,
+116,25-10-2025,Mahmoud Tarek Mahrous Hassaballah,4210735,,,62579  DXB 2,521305222,509434058,784199995215052,,5052736,EGYPT,tarek.yb62579@gmail.com,,,,,,,,,,,,,,,
+117,25-10-2025,Mahmoud Mohamed Hamdy Abdellatif Elwakil,,,,62866 DXB 2,521302555,547053739,784198869183065,A41321629,5052326,EGYPT,,,,,,,,,,,,,,,,
+118,26-10-2025,Ahmed Abdelwahab Moursi Abdelwahab Khater,,,,55706 DXB 2,508464189,544663902,784200119790630,A34317165,4921509,EGYPT,,,,,,,,,,,,,,,,
+119,04-11-2025,Ajinkya Jalindar Kamble Jalindar Sukhdeo Kamble,,,,60827 DXB 2,522097636,564646971,784199990756811,Y8187738,1035723,Indian,,,,,,,,,,,,,,,,
+120,04-11-2025,Waseem Nawaz Rabnawaz,,,,62854 DXB 2,504081974,522398363,784199039414265,          CC9619843,3751823,Pakistani,,,,,,,,,,,,,,,,
+,,Uneeb Mirza Afzal Mirza,,,,55104 DXB 2,,,784200198378042,Y6728622,4869116,Indian,,,,,,,,,,,,,,,,
+,,Etienne Amick Ntawan,,,,,521973125,547208711,784198493839769,AA294038,3972778,,,,,,,,,,,,,,,,,
+,,Mohammad Anas Abdul Samad,,,,,525675023,523648670,784200039464720,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Ahsan Ul Haq Liaqat Ali,,,,,,,784198736807466,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Uneeb Mirza Afzal Mirza,55104 DXB 2,,,,,,784200198378042,Y6728622,4869116,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Ahmed Sabri Fekri Ahmed,,,,,,,784200159136124,,4310533,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Ibrahim Ibrahim Abdelfattah Ibrahim Ismail,,,,,,,784200024176636,A37320587,5041294,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Ahmed Mohamed Abdelaziz Elsayed Ahmed Elsemelawy,,,,53892 DXB 2,,,784199860699083,A34589251,4858981,,,,,,,,,,,,,,,,,
+,,Ahmed Mohamed Fathy Elsemelawy,,,,55094 DXB 2,,,784200131369611,A36635720,4859047,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Mahmoud Mohamed Hamdy Abdellatif Elwakil,,,,,,,784198869183065,A41321629,5052736,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Ahmed Abdelwahab Moursi Abdelwahab Khater,,,,,,,,,4921509,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Gomaa Lotfy Abdelrady Ibrahim,,,,,,,78419928410253,A41018134,5057913,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,MAHMOUD MOHAMED HAMDY ABDELLATIF ELWAKIL,784-1988-6918306-5,5052326,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,AJINKYA JALINDAR KAMBLE JALINDAR SUKHDEO KAMBLE,784199990756811,Y8187738,1035723,522097636,564646971,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,WASEEM NAWAZ RABNAWAZ,784199039414265,          CC9619843,3751823,504081974,522398363,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,SALIK,ETIENNE AMICK NTAWAN,784-1984-9383976-9,AA294038,39722778,,547208711,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,MOHAMMAD ANAS ABDUL SAMAD,784200039464720,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,MUHAMMAD TAYYAB MUHAMMAD SHAFIQ,784200024007583,AU7135013,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Karim Rafik Soliman Ahmed Ashmawy,784199724378080,507209544,558154551,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Etienne Amick Ntawan,784198493839769,521973125,547208711,,,,,AA294038,3972778,,,,,,,,,,,,,,,,,
+,,Mohammad Anas Abdul Samad,784200039464720,525675023,523648670,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,Subraida Nandkumar Subraida Kadirapa,,,,54939DXB2,,506587874,784197263161727,V2033601,882291,Indian,nandkumar.yb54939@gmail.com,! # Subraida Nandkumar Subraida Kadirapa,,,,,,,,,,,,,,
+
+
+OB: Table 1
+Timestamp,Email Address,FP Name,Date,Name,Emirates ID number,Nationality,City,Date of Birth,Age,Applicant category,Application Status,Remarks,Onboarded Date,Rider ID,Alloted Training Date,Alloted Training Slot,Trainer Name,Actual Training Date,Test Results,Reason
+7/2/2025 10:34:54,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-02,Hossam Hassan Abrahim Hassan,784199847041623,Egypt,Replacement,7/14/1998,27,New joiner,Approved,Training in DIP,07-02-2025,3860418,07-04-2025,10:00:00 AM,Dhanish,07-04-2025,Pass,
+7/7/2025 10:40:14,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-07,Ahmed Elsaid Ahmed Hussein Ahmed,784199840659231,Egypt,Dubai,5/11/1998,27,New joiner,Approved,Training in DIP,07-07-2025,3871678,07-08-2025,10:00:00 AM,Dhanish,07-08-2025,Pass,tCamp Completed
+7/10/2025 10:16:35,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-10,Mohammed Imran Mohammed Basheer,784199042573701,India,Replacement,12/18/1990,34,Existing with another partner,,,,,,,,,,
+7/10/2025 10:19:36,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-10,Mohammed Mahmood Mohammed Ghouse,784199630730572,India,Replacement,8/9/1996,29,Existing with another partner,,,,,,,,,,
+7/11/2025 10:16:48,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-11,Mohammed Imran Mohammed Basheer,784199042573701,India,Replacement,12/18/1990,34,Existing with another partner,,,,,,,,,,
+7/11/2025 10:17:47,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-11,Mohammed Mahmood Mohammed Ghouse,784199630730572,India,Replacement,8/9/1996,29,Existing with another partner,,,,,,,,,,
+7/14/2025 10:11:46,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-14,Mohammed Imran Mohammed Basheer,784199042573701,India,Replacement,12/18/1990,34,Existing with another partner,,,,,,,,,,
+7/14/2025 10:12:48,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-14,Mohammed Mahmood Mohammed Ghouse,784199630730572,India,Replacement,8/9/1996,29,Existing with another partner,,,,,,,,,,
+7/14/2025 10:14:28,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-14,Mahmoud Sayed Imam Abdelsalam,784199573919455,Egypt,Dubai,3/15/1995,30,Existing with another partner,,,,,,,,,,
+7/14/2025 10:15:57,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-14,Galal Abdelaal Hassanin Sayed Ahmed,784198987456500,Egypt,Dubai,3/11/1989,36,Existing with another partner,,,,,,,,,,
+7/15/2025 10:08:34,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-15,Mohammed Imran Mohammed Basheer,784199042573701,India,Replacement,12/18/1990,34,Existing with another partner,,,,,,,,,,
+7/15/2025 10:10:06,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-15,Mohammed Mahmood Mohammed Ghouse,784199630730572,India,Replacement,8/9/1996,29,Existing with another partner,,,,,,,,,,
+7/15/2025 10:11:23,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-15,Mahmoud Sayed Imam Abdelsalam,784199573919455,Egypt,Dubai,3/15/1995,30,Contract Change,Reactivated,,07-15-2025,2086583,,,,,,
+7/15/2025 10:12:22,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-15,Galal Abdelaal Hassanin Sayed Ahmed,784198987456500,Egypt,Dubai,3/11/1989,36,Contract Change,Reactivated,,07-15-2025,2087153,,,,,,
+7/15/2025 10:14:13,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-15,Omar Hashem Abdelkawy Mohamed,784200430420719,Egypt,Replacement,7/1/2004,21,New joiner,Approved,Training in DIP,07-15-2025,3890991,07-16-2025,10:00:00 AM,Dhanish,07-16-2025,Pass,tCamp Completed
+7/18/2025 10:10:58,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-18,Mohammed Imran Mohammed Basheer,784199042573701,India,Replacement,12/18/1990,34,Contract Change,Reactivated,,07-18-2025,2834803,,,,,,
+7/18/2025 10:12:14,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-18,Mohammed Mahmood Mohammed Ghouse,784199630730572,India,Replacement,8/9/1996,29,Contract Change,Reactivated,,07-18-2025,2834797,,,,,,
+7/18/2025 10:13:57,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-18,Ziad Yasser Elnabawi Fadel Mohamed,784200396263103,Egypt,Dubai,12/15/2003,21,New joiner,Approved,Training in DIP,07-18-2025,3900818,07-21-2025,10:00:00 AM,Dhanish,07-22-2025,Pass,tCamp Completed
+7/23/2025 10:44:23,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-23,Mohamed Said Elsayed Mohamed Elgendy,784200218424990,Egypt,Dubai,9/8/2002,23,New joiner,Approved,Training in DIP,07-23-2025,3912179,07-24-2025,10:00:00 AM,Dhanish,07-24-2025,Pass,
+7/23/2025 10:45:45,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-23,Islam Ashraf Selim Rezk,784200254749508,Egypt,Dubai,6/11/2002,23,New joiner,Approved,Training in DIP,07-23-2025,3912173,07-24-2025,10:00:00 AM,Dhanish,07-24-2025,Pass,
+7/23/2025 10:46:55,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-23,Mohamed Maarouf Abdelghany Ahmed,784199765404134,Egypt,Dubai,6/10/1997,28,New joiner,Approved,Training in DIP,07-23-2025,3912169,07-24-2025,10:00:00 AM,Dhanish,07-24-2025,Pass,
+7/23/2025 10:48:10,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-23,Ahmed Youssef Ahmed Mohamed,784199033982457,Egypt,Dubai,1/18/1990,35,New joiner,Approved,Training in DIP,07-23-2025,3912162,07-24-2025,10:00:00 AM,Dhanish,07-24-2025,Pass,
+7/23/2025 10:49:27,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-23,Khaled Hegazi Elmandouh Abdelgawad Younes,784199954515674,Egypt,Dubai,11/1/1999,25,New joiner,Approved,Training in DIP,07-23-2025,3912152,07-24-2025,10:00:00 AM,Dhanish,07-24-2025,Pass,
+7/29/2025 9:29:20,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-29,Muhammad Imran Khan Sabir Ali,784199609859634,Pakistan,Dubai,6/23/1996,29,Contract Change,Reactivated,,07-29-2025,1208804,,,,,,
+7/29/2025 9:30:57,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-29,Muhammad Umar Fiaz,784199174251829,Pakistan,Dubai,5/21/1991,34,Contract Change,Reactivated,,07-29-2025,1834228,,,,,,
+7/29/2025 9:32:26,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-29,Ammar Nawaz Haq Nawaz,784198851632426,Pakistan,Dubai,7/5/1988,37,Contract Change,Reactivated,,07-29-2025,1834225,,,,,,
+7/30/2025 10:40:15,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-07-30,Muhammad Shahzad Muhammad Aslam,784200361769696,Pakistan,Dubai,8/14/2003,22,New joiner,Approved,Training in DIP,07-30-2025,3927068,07-31-2025,10:00:00 AM,Dhanish,07-31-2025,Pass,
+8/4/2025 10:35:25,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Mahmoud Nadi Mahmoud Abdelaziz,784199495583835,Egypt,Dubai,5/16/1994,31,Existing with another partner,,,,,,,,,,
+8/4/2025 10:36:08,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Ahmed Samih Zaky Ibrahim,784199288858162,Egypt,Dubai,7/5/1992,33,Contract Change,Reactivated,,08-04-2025,3682456,,,,,,
+8/4/2025 10:36:41,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Amr Nasser Marei Ibrahim,784200288375148,Egypt,Dubai,12/3/2002,22,Existing with another partner,,,,,,,,,,
+8/4/2025 10:38:44,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Mahmoud Ehab Mohamed Badr,784199467488773,Egypt,Dubai,1/1/1994,31,New joiner,Approved,Training in DIP,08-04-2025,3989870,08-05-2025,10:00:00 AM,Dhanish,08-08-2025,Pass,tCamp Completed
+8/4/2025 10:39:44,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Mohamed Sobhi Ahmed Mohamed,784198025617774,Egypt,Dubai,5/18/1980,45,New joiner,Approved,Online Training,08-04-2025,3990013,08-05-2025,10:00:00 AM,Monisha,08-05-2025,Pass,Training
+8/4/2025 10:40:19,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Mohamed Seddik Mohamed Seddik,784199628954499,Egypt,Dubai,1/16/1996,29,New joiner,Approved,Online Training,08-04-2025,3989959,08-05-2025,10:00:00 AM,Monisha,08-05-2025,Pass,Training
+8/4/2025 10:40:55,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Mahmoud Mohamed Sayed Ahmed Eldeken,784198841814225,Egypt,Dubai,2/20/1988,37,New joiner,Approved,Training in DIP,08-04-2025,3989957,08-05-2025,10:00:00 AM,Dhanish,08-13-2025,Pass,tCamp Completed
+8/4/2025 10:41:24,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Tarek Salah Mohamed Abouarab Abdin Elkhatib,784199893022121,Egypt,Dubai,10/20/1998,26,New joiner,Approved,Online Training,08-04-2025,3989958,08-05-2025,10:00:00 AM,Monisha,08-05-2025,Pass,Training
+8/4/2025 10:42:00,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Karim Mohamed Nabawy Elmalla,784198990360384,Egypt,Dubai,9/4/1989,36,New joiner,Approved,Training in DIP,08-04-2025,3989867,08-05-2025,10:00:00 AM,Dhanish,08-13-2025,Pass,tCamp Completed
+8/4/2025 10:43:20,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-04,Hassan Ibrahim Hassan Hassan Tal,784199035720632,Egypt,Dubai,2/1/1990,35,New joiner,Approved,Training in DIP,08-04-2025,3989869,08-05-2025,10:00:00 AM,Dhanish,08-06-2025,Pass,tCamp Completed
+8/6/2025 9:57:57,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-06,Abdul Rehman Muhammad Islam,784199091884116,Pakistan,Dubai,5/20/1990,35,Contract Change,Reactivated,,08-06-2025,1834258,,,,,,
+8/6/2025 9:59:19,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-06,Muhammad Yasir Muhammad Jameel,784199876071483,Pakistan,Dubai,4/7/1998,27,Contract Change,Reactivated,,08-06-2025,1224004,,,,,,
+8/6/2025 10:07:21,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-06,Muhammad Rashid Mahmood Muhammad Safdar Khan,784199226168716,Pakistan,Dubai,4/11/1992,33,Contract Change,Reactivated,,08-06-2025,762216,,,,,,
+8/6/2025 10:10:24,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-06,Mahmoud Nadi Mahmoud Abdelaziz,784199495583835,Egypt,Dubai,5/16/1994,31,Contract Change,Reactivated,,08-06-2025,2203294,,,,,,
+8/12/2025 10:16:35,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-12,Amr Nasser Marei Ibrahim,784200288375148,Egypt,Dubai,12/3/2002,22,Existing with another partner,,,,,,,,,,
+8/12/2025 10:18:56,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-12,Moaz Mohamed Abdelfattah Mahmoud Ali,784200180001107,Egypt,Dubai,3/1/2001,24,New joiner,Approved,Training in DIP,08-12-2025,4007099,08-13-2025,10:00:00 AM,Dhanish,08-13-2025,Pass,tCamp Completed
+8/12/2025 10:20:13,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-12,Sherif Kamal Sonealla Aly Dwidar,784198632277632,Egypt,Dubai,9/9/1986,39,New joiner,Approved,Training in DIP,08-12-2025,4007090,08-13-2025,10:00:00 AM,Dhanish,08-13-2025,Pass,tCamp Completed
+8/12/2025 10:21:15,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-12,Mohamed Khairy Refaiey Mohamed,784199745083388,Egypt,Dubai,9/10/1997,28,New joiner,Approved,Training in DIP,08-12-2025,4007081,08-13-2025,10:00:00 AM,Dhanish,08-13-2025,Pass,tCamp Completed
+8/15/2025 10:39:45,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-15,ATTIQ UR REHMAN MUHAMMAD RAFIQ,784199814186948,Pakistan,Dubai,7/1/1998,27,New joiner,Approved,Training in DIP,08-15-2025,4012972,08-18-2025,10:00:00 AM,Dhanish,08-18-2025,Pass,
+8/15/2025 11:00:00,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-15,MAHMOUD MOHAMED HAMDY ABDELLATIF ELWAKIL,784198869183065,Egypt,Dubai,8/16/1988,37,New joiner,Approved,Training in DIP,08-15-2025,4012937,08-18-2025,10:00:00 AM,Dhanish,08-18-2025,Pass,tCamp Completed
+8/18/2025 10:26:27,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-18,ABDELRAHMAN MABROUK MANSOUR ABDELSAYED,784199756099844,Egypt,Dubai,4/14/1997,28,New joiner,Approved,Training in DIP,08-18-2025,4016752,08-19-2025,10:00:00 AM,Dhanish,08-19-2025,Pass,tCamp Completed
+8/18/2025 10:27:27,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-18,ABDELHAMID MOHAMED ABDELHAMID ALI,784199315053068,Egypt,Dubai,9/1/1993,32,New joiner,Approved,Training in DIP,08-18-2025,4016735,08-19-2025,10:00:00 AM,Dhanish,08-22-2025,Pass,tCamp Completed
+8/18/2025 10:28:35,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-18,MOHAMED OSAMA ABDELHAMID ABDELHAMID,784199955326683,Egypt,Dubai,7/24/1999,26,New joiner,Approved,Training in DIP,08-18-2025,4016725,08-19-2025,10:00:00 AM,Dhanish,08-22-2025,Pass,tCamp Completed
+8/18/2025 10:31:30,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-18,Amr Nasser Marei Ibrahim,784200288375148,Egypt,Dubai,12/3/2002,22,Existing with another partner,,,,,,,,,,
+8/21/2025 10:35:47,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-21,Amar Mohamed Abdulmajed Nagy Alshahawy,784199491595361,Egypt,Dubai,4/16/1994,31,New joiner,Approved,Training in DIP,08-21-2025,4023037,08-22-2025,10:00:00 AM,Dhanish,08-29-2025,Pass,tCamp Completed
+8/21/2025 10:36:34,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-21,Ahmed Elsayed Mohamed Ahmed Fadl,784199937819078,Egypt,Dubai,3/7/1999,26,Contract Change,Reactivated,,08-21-2025,2203293,,,,,,
+8/21/2025 10:37:43,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-21,МОНАМЕED SALAH МОНАМED SELIM MOUSSA,784199456376682,Egypt,Dubai,3/6/1994,31,New joiner,Approved,Training in DIP,08-21-2025,4023026,08-22-2025,10:00:00 AM,Dhanish,08-22-2025,Pass,tCamp Completed
+8/21/2025 10:38:57,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-21,МОНАМED AHMED MOHAMED ALI,784199668739271,Egypt,Dubai,1/11/1996,29,New joiner,Approved,Training in DIP,08-21-2025,4023007,08-22-2025,10:00:00 AM,Dhanish,08-22-2025,Pass,tCamp Completed
+8/21/2025 10:40:02,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-21,Amr Nasser Marei Ibrahim,784200288375148,Egypt,Dubai,12/3/2002,22,Existing with another partner,,,,,,,,,,
+8/25/2025 10:15:36,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-25,ABDELRAHMAN AHMED MOHAMED KHALIL,784199614484717,Egypt,Dubai,10/19/1996,28,New joiner,Approved,Training in DIP,08-25-2025,4027950,08-26-2025,10:00:00 AM,Dhanish,08-26-2025,Pass,tCamp Completed
+8/25/2025 10:43:09,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-25,ABDELSALAM ABDELNASER KANDIL ABDELSALAM KANDIL,784199729793325,Egypt,Dubai,7/23/1997,28,New joiner,Approved,Training in DIP,08-25-2025,4027935,08-26-2025,10:00:00 AM,Dhanish,08-27-2025,Pass,tCamp Completed
+8/26/2025 10:39:43,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-26,Mohamed Manal Abdelsalam Ahmed Mohammadin,784198914773589,Egypt,Dubai,9/26/1989,35,Rejoiner,Reactivated,,08-26-2025,2825205,,,,,,
+8/26/2025 10:41:57,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-26,Amr Nasser Marei Ibrahim,784200288375148,Egypt,Dubai,12/3/2002,22,Existing with another partner,,,,,,,,,,
+8/27/2025 10:54:04,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-27,ELSAYED WAGEH ABDELBASET ELSAYED ELMOKLY,784199933145759,Egypt,Dubai,12/20/1999,25,New joiner,Approved,Training in DIP,08-27-2025,4034417,08-28-2025,10:00:00 AM,Dhanish,08-28-2025,Pass,tCamp Completed
+8/28/2025 10:32:17,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-28,Amr Nasser Marei Ibrahim,784200288375148,Egypt,Dubai,12/3/2002,22,Contract Change,Reactivated,,08-28-2025,3522384,,,,,,
+8/29/2025 10:43:52,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-08-29,GOMAA LOTFY ABDELRADY IBRAHIM,784199284105253,Egypt,Dubai,1/10/1992,33,New joiner,Approved,Training in DIP,08-29-2025,4038340,09-01-2025,12:30:00 PM,Dhanish,09-02-2025,Pass,tCamp Completed
+9/2/2025 10:53:09,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-09-02,AHMED ABDELHAMID MOHAMED SHAMSELDIN,784199310019429,Egypt,Dubai,10/27/1993,31,New joiner,Approved,Training in DIP,09-02-2025,4045093,09-03-2025,10:00:00 AM,,,,
+9/2/2025 10:54:46,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-09-02,MOSTAFA MAHMOUD SAYED AHMED ELSENOUSY,784198762494627,Egypt,Dubai,8/1/1987,38,New joiner,Approved,Training in DIP,09-02-2025,4045190,09-03-2025,10:00:00 AM,Dhanish,09-04-2025,,tCamp Enrolled
+9/15/2025 10:21:38,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-09-15,Mukhtiar Ahmad Abdul Hameed,784198948606136,Pakistan,Dubai,1/1/89,36,Contract Change,Reactivated,,09-15-2025,829390,,,,,,
+10/16/2025 10:41:41,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-10-16,Ahsan Ul Haq Liaqat Ali,784198736807466,Pakistan,Dubai,1/1/87,38,Contract Change,Reactivated,,10-16-2025,1932441,,,,,,
+10/16/2025 10:44:08,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-10-16,Ghulam Murtaza Muhammad Yaqoob,784198979859646,Pakistan,Dubai,6/9/89,36,Contract Change,Reactivated,,10-16-2025,1933201,,,,,,
+10/17/2025 10:41:48,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-10-17,Ibrahim Ibrahim Abdelfattah Ibrahim Ismail,784200024176636,Egypt,Dubai,2/26/00,25,New joiner,Approved,Training in DIP,10-17-2025,4203732,10-20-2025,10:00:00 AM,Dhanish,10-21-2025,Pass,tCamp Completed
+10/21/2025 10:58:21,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-10-21,Mahmoud Tarek Mahrous Hassaballah,784199995215052,Egypt,Dubai,10/16/99,26,New joiner,Approved,Training in DIP,10-21-2025,4210735,10-22-2025,10:00:00 AM,Dhanish,10-22-2025,Pass,tCamp Completed
+9/15/2025 10:21:38,fp.yellowbox.ext@talabat.com,Yellow Box Delivery Services LLC,2025-09-15,Mukhtiar Ahmad Abdul Hameed,784200351109088,Pakistan,Dubai,1/1/89,22.3,Contract Change,Reactivated,,09-15-2025,5332094.1,,,,,,
+
+New Hiring: Table 1
+MIRZA INAYATHULLA BAIG MIRZA ZAFARULLA BAIG,52 357 4621,21-08-2025,,
+MUKHTIAR AHMAD ABDUL HAMEED,52 169 6327,22-08-2025,,
+
+
+Offboarding: Table 1
+TERMINATION DATA,,,,,
+ID,NAME,Fleet Partner,Month,Deactivation Date,Primary Reason
+3527440,Hassan Fathi Rabie Abdellatif-YB,Yellow Box Delivery Services LLC (Dubai),October 2025,10-14-2025,Termination
+3663887,Mohamed Reda Mohamed Ismail Mohamed-YB,Yellow Box Delivery Services LLC (Dubai),September 2025,09-04-2025,Termination
+1834259,Husnain Bahadar Khan-YB,Yellow Box Delivery Services LLC (Dubai),September 2025,09-04-2025,Termination
+3777061,Ibrahim Mohamed Ibrahim Hussein-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+3682469,Andro Naseh Elgamal Attallah Nosir-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+3527434,Mohamed Hesham Saber Hamed Farag-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+3504812,Amr Gaber Adel Mohamed Hamdy Elmaghrby-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+3492099,Mohamed Elsayed Mostafa Elkady-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+3492118,Mohamed Fouad Mahmoud Abdelgawad-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+3492110,Abdelmaaboud Dahi Hosni Gadelkarim-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+2825205,Mohamed Manal Abdelsalam Ahmed Mohammadin-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+2663587,Abdul Raheem Mohammed Abdul Aleem-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+2504613,Siraj Mannil Kunhimohamed-YB,Yellow Box Delivery Services LLC,August 2025,08-08-2025,Termination
+2825233,Hassan Nabil Hassan Mohamed Fekry-YB,Yellow Box Delivery Services LLC (Dubai),August 2025,08-01-2025,Resignation
+3492091,Ahmed Maher Moustafa Hussein-YB,Yellow Box Delivery Services LLC (Dubai),August 2025,08-01-2025,Resignation
+2843685,Belal Ahmed Mohamed Abdelaziz Elkhouly-YB,Yellow Box Delivery Services LLC (Dubai),July 2025,07-23-2025,Resignation
+2843684,Moataz Mohamed Mohamed Hassan Zithar-YB,Yellow Box Delivery Services LLC (Dubai),July 2025,07-23-2025,Resignation
+3504809,Mohamed Abdelhamid Gouda Salem-YB,Yellow Box Delivery Services LLC (Dubai),June 2025,06-30-2025,Resignation
+3492106,Abdellatif Hesham Abdellatif Elghareib Elgyar-YB,Yellow Box Delivery Services LLC (Dubai),June 2025,06-30-2025,Resignation
+3527429,Mahmoud Mohamed Mohamed Elsaid Eeed-YB,Yellow Box Delivery Services LLC (Dubai),June 2025,06-30-2025,Resignation
+1966331,Muhammad Muneeb Ur Rehman Saghir Ahmed-YB,Yellow Box Delivery Services LLC (Dubai),June 2025,06-10-2025,Termination
+
+CANCEL: Table 1
+rider_id,NAME,EID,Deactivation Date,Primary Reason
+1966331,Muhammad Muneeb Ur Rehman Saghir Ahmed,784200260631856,06-10-2025,Termination
+2504613,Siraj Mannil Kunhimohamed,784198648273740,7-30-2025,Resignation
+2663587,Abdul Raheem Mohammed Abdul Aleem,784199831875572,3-10-2025,Resignation
+2825233,Hassan Nabil Hassan Mohamed Fekry,784199518380359,06-30-2025,Resignation
+2843684,Moataz Mohamed Mohamed Hassan Zithar,784199371696974,07-23-2025,Resignation
+2843685,Belal Ahmed Mohamed Abdelaziz Elkhouly,784200060060033,07-23-2025,Resignation
+3492091,Ahmed Maher Moustafa Hussein,784199540081207,07-23-2025,Resignation
+3492099,Mohamed Elsayed Mostafa Elkady,784200017125079,07-23-2025,Resignation
+3492106,Abdellatif Hesham Abdellatif Elghareib Elgyar,784200068542818,06-30-2025,Resignation
+3492110,Abdelmaaboud Dahi Hosni Gadelkarim,784200249603513,06-30-2025,Resignation
+3492118,Mohamed Fouad Mahmoud Abdelgawad,784199789530674,06-30-2025,Resignation
+3504809,Mohamed Abdelhamid Gouda Salem,784199219270370,06-30-2025,Resignation
+3504812,Amr Gaber Adel Mohamed Hamdy Elmaghrby,784199670166869,06-30-2025,Resignation
+3527429,Mahmoud Mohamed Mohamed Elsaid Eeed,784199686572696,06-30-2025,Resignation
+3527434,Mohamed Hesham Saber Hamed Farag,784200141838449,06-30-2025,Resignation
+3527440,Hassan Fathi Rabie Abdellatif,784200017039460,07-15-2025,Resignation
+3682469,Andro Naseh Elgamal Attallah Nosir,784200115128595,07-15-2025,Resignation
+3682481,Mohamed Sultan Ahmed Khalaf Ahmed,784200018286987,07-30-2025,Resignation
+3777061,Ibrahim Mohamed Ibrahim Hussein,784200039779416,07-15-2025,Resignation
+1834259,Husnain Bahadar Khan,784200177975008,09-15-2025,Termination
+2663590,Md Ashfaque Raja Md Mansur Alam,784199123243919,08-05-2025,Resignation
+1119038,Muhammad Sanwal Kharal Munir Ahmad,784199957751557,10-01-2025,Resignation
+3663887,Mohamed Reda Mohamed Ismail Mohamed,784200035354362,09-15-2025,Termination / keeta
+2508895,Faiz Ahmad Khan,784198613650203,10-01-2025,keeta
+2813427, Md Danish Khan,784198626407575,10-01-2025,keeta
+1506153,Nazim Ali Feroz Khan,784199539303216,10-01-2025,keeta
+3492087,Ahmed Ragab Ahmed Mohamed,784199620039612,10-01-2025,keeta
+3682493,Mohamed Gamal Abdalla Abdelaal,784200136747613,10-01-2025,keeta
+3776304,Mohamed Mohamed Elsaid Abdelmakssoud Elgamal,784199625081403,10-01-2025,keeta
+4023037,Amar Mohamed Abdulmajed Nagy Alshahawy,784199491595361,10-01-2025,keeta
+2834803,Mohammed Imran Mohammed Basheer,784199042573701,10-01-2025,keeta
+2834797,Mohammed Mahmood Mohammed Ghouse,784199630730572,10-01-2025,keeta
+3927068,Muhammad Shahzad Muhammad Aslam,784200361769696,10-01-2025,keeta
+4012972,ATTIQ UR REHMAN MUHAMMAD RAFIQ,784199814186948,10-01-2025,keeta
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,   
+
+TALABAT TO KEETA: Table 1
+S-NO,TALABAT ID,KEETA ID,RIDER NAME,
+1,3663887,1757676905514571,Mohamed Reda Mohamed Ismail Mohamed,
+2,1506153,1757922904593574,Nazim Ali Feroz Khan,
+3,2508895,1758799355593264,Faiz Ahmad Khan Faizan Ahmad Khan,
+4,3527429,1758889096554598,Mohamed Mohamed Elsaid Abdelmakssoud Elgamal,
+5,3927068,1758804974580650,Muhammad Shahzad Muhammad Aslam,
+6,3682493,1758889855518153,Mohamed Gamal Abdalla Abdelaal,
+7,2834803,1758806562580423,Mohammed Imran Mohammed Basheer,
+8,4012972,1758806028593388,ATTIQ UR REHMAN MUHAMMAD RAFIQ,
+9,3492087,1758890619554758,Ahmed Ragab Ahmed Mohamed,
+10,2834797,1758800311512135,Mohammed Mahmood Mohammed Ghouse,
+11,2813427,1758809174580041,Md Danish Khan,
+12,4023037,1759411061554930,Amar Mohamed Abdulmajed Nagy Alshahawy,
+13,2815064,1760792017512268,Mohammad Shuaib Moazzam Naimi Mohammad Moazzam Naimi,
+14,2504612,1760641953580917,Jatinder Singh Balbir Singh,
+15,4012937,1761057529518314,Mahmoud Mohamed Hamdy Abdellatif Elwakil,

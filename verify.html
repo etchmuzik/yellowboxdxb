@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify YELLOWBOX App</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>YELLOWBOX App Verification</h1>
+    <div id="results"></div>
+    
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+        const results = document.getElementById('results');
+        let html = '';
+        
+        // Check if fleetData exists
+        if (typeof fleetData !== 'undefined') {
+            html += '<p class="success">✓ data.js loaded successfully</p>';
+            html += `<p>Riders count: ${fleetData.riders.length}</p>`;
+        } else {
+            html += '<p class="error">✗ data.js not loaded</p>';
+        }
+        
+        // Check if functions exist
+        const functions = ['initializeDashboard', 'renderOnboardingTable', 'renderProfilesTable', 'initPayments'];
+        functions.forEach(fn => {
+            if (typeof window[fn] !== 'undefined') {
+                html += `<p class="success">✓ Function ${fn} exists</p>`;
+            } else {
+                html += `<p class="error">✗ Function ${fn} missing</p>`;
+            }
+        });
+        
+        // Check app.js line count
+        fetch('app.js')
+            .then(r => r.text())
+            .then(text => {
+                const lines = text.split('\n').length;
+                html += `<p class="success">✓ app.js has ${lines} lines</p>`;
+                if (lines < 1100) {
+                    html += '<p class="error">⚠ app.js seems incomplete (should be ~1178 lines)</p>';
+                }
+                results.innerHTML = html;
+            });
+    </script>
+</body>
+</html>
