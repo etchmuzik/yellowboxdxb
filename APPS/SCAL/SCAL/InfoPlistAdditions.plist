@@ -1,0 +1,10 @@
+<!-- 🚨 ADD THESE TO YOUR INFO.PLIST FILE -->
+<!-- Right-click Info.plist → Open As → Source Code, then add these: -->
+
+<key>NSCameraUsageDescription</key>
+<string>This app uses the camera to identify food items for logging your meals accurately.</string>
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This app accesses your photo library to analyze food images for meal logging and dietary tracking.</string>
+
+<!-- 🎯 These permissions are REQUIRED for App Store approval -->
